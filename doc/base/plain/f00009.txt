@@ -1,0 +1,18 @@
+if  new File keyDir exists
+ois new FileInputStream keyDir
+try
+secretKey SecretKey ois readObject
+System out println read
+
+ClassNotFoundException
+IndexOutOfBoundException
+eprintStackTrace
+finally
+ois close
+
+int notCharIndex  query index Of
+if not Char Index
+int last = query index Of  not Char Index
+String temp = query substring notCharIndex + 2 last
+notKeywords = temp split
+System out println not Key words

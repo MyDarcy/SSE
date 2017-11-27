@@ -1,0 +1,10 @@
+if  new File keyDir exists
+ois new ObjectInputStream new  keyDir
+try
+secretKey SecretKey ois readObject
+System out println read
+
+ClassNotFoundException
+eprintStackTrace
+finally
+ois close

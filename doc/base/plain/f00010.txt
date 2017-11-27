@@ -1,0 +1,7 @@
+eprintStackTrace
+finally
+ois close
+
+int notCharIndex  query index Of
+if not Char Index
+int last = query index Of  not Char Index

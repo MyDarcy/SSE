@@ -1,0 +1,8 @@
+private int lengthOfDict
+public static final String base
+private static final String keyDir
+
+public static byte  encrypt byte toBeEncrypted throws BadPaddingException IllegalBlockSizeException InvalidKeyException
+Initialization cipher init Cipher ENCRYPT_MODE Initialization secretKey
+byte encryptedBytes = Initialization cipher doFinal toBeEncrypted
+return encryptedBytes

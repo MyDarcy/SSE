@@ -1,0 +1,11 @@
+if  new File keyDir exists
+ois new FileInputStream keyDir
+try
+secretKey SecretKey ois readObject
+System out println read
+
+ClassNotFoundException
+IndexOutOfBoundException
+eprintStackTrace
+finally
+ois close

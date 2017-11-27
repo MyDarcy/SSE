@@ -1,0 +1,14 @@
+private int lengthOfDict
+
+private static final String keyDir
+
+public class BitSetTest
+
+public static void main String  args
+int length = 100
+BitSet bitSet = new BitSet length + 1
+
+Random random = new Random
+for int i = 0 i  length i++
+if random next Boolean
+bitSet set i

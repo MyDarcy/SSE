@@ -1,0 +1,21 @@
+if  new File keyDir exists
+ois new FileInputStream keyDir
+try
+secretKey SecretKey ois readObject
+System out println read
+
+ClassNotFoundException
+eprintStackTrace
+finally
+ois close
+
+List String  lines = Files readAllLines
+for String line lines
+TokenStream tokenStream = analyzer tokenStream field line
+tokenStream reset
+CharTermAttribute ch = tokenStream addAttribute CharTermAttribute
+
+while tokenStream incrementToken
+System out println ch toString
+tokenStream end
+tokenStream close

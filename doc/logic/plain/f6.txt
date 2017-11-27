@@ -1,0 +1,9 @@
+if  new File keyDir exists
+ois new ObjectInputStream new FileInputStream keyDir
+try
+secretKey SecretKey ois readObject
+System out println read
+
+
+finally
+ois close

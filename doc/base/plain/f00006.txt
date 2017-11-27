@@ -1,0 +1,14 @@
+if  new File keyDir exists
+ois new ObjectInputStream new FileInputStream keyDir
+try
+secretKey SecretKey ois readObject
+System out println read
+
+
+finally
+ois close
+
+while tokenStream incrementToken
+System out println ch to String
+tokenStream end
+tokenStream close

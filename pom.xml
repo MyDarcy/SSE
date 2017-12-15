@@ -101,6 +101,12 @@
       <version>3.6.2</version>
     </dependency>-->
 
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>1.2</version>
+    </dependency>
+
 
 
     <dependency>
@@ -122,7 +128,7 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
-          <encoding>utf8</encoding>
+          <encoding>UTF-8</encoding>
           <!--<compilerArgument>-XDignore.symbol.file=true -Xlint</compilerArgument>
           <testCompilerArgument>-XDignore.symbol.file=true -Xlint</testCompilerArgument>-->
         </configuration>

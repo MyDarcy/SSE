@@ -117,7 +117,7 @@
   </dependencies>
 
   <build>
-    <finalName>maven-third</finalName>
+    <finalName>SSE</finalName>
 
     <plugins>
       <plugin>

@@ -11,6 +11,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 
@@ -27,14 +29,25 @@ public class Initialization {
 	public static int DICTIONARY_SIZE;
 	public static final int DUMMY_KEYWORD_NUMBER = 10;
 
+
 	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	public static final String SECRET_KEY_DIR = BASE + "\\" + "doc\\muse\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\" + "doc\\muse\\plain";
-	public static final String ENCRYPTED_DIR = BASE + "\\" + "doc\\muse\\encrypted";
+	public static final String PLAIN_DIR = BASE + "\\" + "doc\\muse\\plain40";
+	public static final String ENCRYPTED_DIR = BASE + "\\" + "doc\\muse\\encrypted40";
 
+	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
 	public static Cipher cipher;
 	public static KeyGenerator keyGenerator;
 	public static SecretKey secretKey;
+
+	// 包含指定的关键词的文档的数目.
+	public static Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
+	// 统计所有文档的长度. 这里可以使用list, 即使当前有多少个文档并不知情.
+	public static Map<String, Integer> fileLength = new HashMap<>();
+	// keyword在document中出现的频率. 这里也可以使用Map<Map>来记录有文档中包含的特定的关键词有多少个.
+	// public static int[][] keywordFrequency;
+	// filename -> {keyword: count}
+	public static Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
 
 	/**
 	 * 主要是为了密钥的生成。
@@ -115,22 +128,71 @@ public class Initialization {
 	public static MySecretKey getMySecretKey() throws IOException {
 
 		File parentFile = new File(PLAIN_DIR);
-		HashSet<String> set = new HashSet<>();
+		// 全局关键词集合.
+		HashSet<String> globalDictSet = new HashSet<>();
+		Matcher matcher = WORD_PATTERN.matcher("");
+
+		// long start1 = System.currentTimeMillis();
 		if (parentFile.exists()) {
 			File[] files = parentFile.listFiles();
+
 			for (int i = 0; i < files.length; i++) {
-				List<String> strings = Files.readAllLines(files[i].toPath());
-				for (String line : strings) {
-					String[] words = line.split("\\s+");
-					for (String str : words) {
-						if (str != null && !str.equals("")) {
-							set.add(str);
+				// 用于计算有多少个文档包含此关键词, 即当前文档的关键词集合.
+				Set<String> currentDocumentSet = new HashSet<>();
+				List<String> allLines = Files.readAllLines(files[i].toPath());
+				// 当前文档中出现关键词的频率.
+				Map<String, Integer> currentDocumentKeywordFrequency = new HashMap<>();
+				int wordCount = 0;
+				for (String line : allLines) {
+					//Matcher matcher = WORD_PATTERN.matcher(line);
+					// reset要匹配的字符串.
+					matcher = matcher.reset(line);
+					while (matcher.find()) {
+						// 忽略大小写.
+						String keyword = matcher.group().toLowerCase();
+						wordCount++;
+						// 更新当前文档关键词集合.
+						currentDocumentSet.add(keyword);
+						// 放在后面addAll来更新.
+						// setDict.add(keyword);
+						// 更新当前文档关键字频率字典.
+						if (!currentDocumentKeywordFrequency.containsKey(keyword)) {
+							currentDocumentKeywordFrequency.put(keyword, 1);
+						} else {
+							currentDocumentKeywordFrequency.put(keyword, currentDocumentKeywordFrequency.get(keyword) + 1);
 						}
+					}
+				}
+        // 利用当前文档的关键词集合来更新总的字典集合。
+				globalDictSet.addAll(currentDocumentSet);
+				// 当前文档处理完毕,那么缓存当前文档的长度.
+				fileLength.put(files[i].getName(), wordCount);
+				// 当前文档中包含关键词的情况. 用于计算TF
+				keywordFrequencyInDocument.put(files[i].getName(), currentDocumentKeywordFrequency);
+
+				// 更新有多少个文档包含keyword; 用于计算IDF
+				for (String word : currentDocumentSet) {
+					if (!numberOfDocumentContainsKeyword.containsKey(word)) {
+						numberOfDocumentContainsKeyword.put(word, 1);
+					} else {
+						numberOfDocumentContainsKeyword.put(word, numberOfDocumentContainsKeyword.get(word) + 1);
 					}
 				}
 			}
 		}
-		List<String> dict = set.stream().sorted().collect(toList());
+
+		// 统计1000个文档只用了3276ms
+		// System.out.println("manage documents time consume:" + (System.currentTimeMillis() - start1));
+
+		System.out.println("fileLength:" + fileLength);
+		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
+		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
+
+		// 测试关键词频率map中的结果是否和fileLength中数值相等.
+		boolean result = testInfo(fileLength, keywordFrequencyInDocument);
+		System.out.println("testInfo:" + result);
+
+		List<String> dict = globalDictSet.stream().sorted().collect(toList());
 
 		System.out.println("dict.size():" + dict.size());
 		System.out.println(dict);
@@ -140,7 +202,6 @@ public class Initialization {
 		Initialization.dict = dict;
 
 		Initialization.DICTIONARY_SIZE = dict.size();
-
 
 		/*Arrays.stream(parentFile.listFiles()).map(File::toPath).flatMap(Files::readAllLines).collect()*/
 
@@ -155,14 +216,15 @@ public class Initialization {
 				bitSet.set(i);
 			}
 		}
+		//
 		bitSet.set(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
-		// System.out.println(bitSet.length());
-
+		System.out.println("bitSet.length:"+ bitSet.length());
 
 		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
-		Matrix m1 = Matrix.random(DUMMY_KEYWORD_NUMBER, DUMMY_KEYWORD_NUMBER);
-		Matrix m2 = Matrix.random(DUMMY_KEYWORD_NUMBER, DUMMY_KEYWORD_NUMBER);
+
+		Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
+		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
 		sk.S = bitSet;
 		sk.M1 = m1;
 		sk.M2 = m2;
@@ -170,6 +232,22 @@ public class Initialization {
 		return sk;
 	}
 
+	/**
+	 * 测试fileLength和 keywordFrequencyInDocument中的信息是否匹配。
+	 * @param fileLength
+	 * @param keywordFrequencyInDocument
+	 * @return
+	 */
+	private static boolean testInfo(Map<String, Integer> fileLength, Map<String, Map<String, Integer>> keywordFrequencyInDocument) {
+		for (String key : keywordFrequencyInDocument.keySet()) {
+			Map<String, Integer> keywordFrequency = keywordFrequencyInDocument.get(key);
+			Integer total = keywordFrequency.entrySet().stream().map((Map.Entry<String, Integer> item) -> item.getValue()).reduce(Integer::sum).get();
+			if (!total.equals(fileLength.get(key))) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public SecretKey getSecretKey() {
 		SecretKey secretKey = null;
@@ -245,6 +323,14 @@ public class Initialization {
 		MySecretKey mySecretKey = Initialization.getMySecretKey();
 		System.out.println(mySecretKey);
 
+		long start = System.currentTimeMillis();
+		mySecretKey.M1.transpose();
+		System.out.println("Matrix transpose time consume:" + (System.currentTimeMillis() - start) + "ms");
+		start = System.currentTimeMillis();
+		mySecretKey.M1.inverse();
+		System.out.println("Matrix reverse time consume:" + (System.currentTimeMillis() - start) + "ms");
+
+
 		System.out.println();
 		System.out.println(Initialization.secretKey);
 	}
@@ -253,6 +339,25 @@ public class Initialization {
 /*
 D:\MrDarcy\ForGraduationWorks\Code\SSE\src\main\java>javac com\darcy\Scheme2017MUSE\base\Initialization.java
 
+D:\MrDarcy\ForGraduationWorks\Code\SSE\src\main\java>javac com\darcy\Scheme2017MUSE\base\Initialization.java
 
 
- */
+# 40
+   没有忽略大小写
+5906
+time cousume:3785ms
+MySecretKey{S.length=5906, M1.rank=5905, M2.rank=5905, secretKey=javax.crypto.spec.SecretKeySpec@16172}
+Matrix transpose time consume:2944ms
+Matrix reverse time consume:667690ms
+
+javax.crypto.spec.SecretKeySpec@16172
+
+  忽略大小写
+5469
+time cousume:2462ms
+MySecretKey{S.length=5469, M1.rank=5468, M2.rank=5468, secretKey=javax.crypto.spec.SecretKeySpec@16172}
+Matrix transpose time consume:1196ms
+Matrix reverse time consume:522970ms
+
+# 100
+*/

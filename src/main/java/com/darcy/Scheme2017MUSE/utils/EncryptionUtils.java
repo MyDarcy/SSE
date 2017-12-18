@@ -1,4 +1,7 @@
-package com.darcy.Scheme2017MUSE.base;
+package com.darcy.Scheme2017MUSE.utils;
+
+
+import com.darcy.Scheme2017MUSE.base.Initialization;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

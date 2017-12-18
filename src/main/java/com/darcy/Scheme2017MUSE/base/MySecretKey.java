@@ -19,10 +19,19 @@ public class MySecretKey {
 
 	@Override
 	public String toString() {
+		/*long start = System.currentTimeMillis();
+		int rank1 = M1.rank();
+		System.out.println("matrix rank time consume:" + (System.currentTimeMillis() - start));
+		start = System.currentTimeMillis();
+		int rank2 = M2.rank();*/
+		int rank = (Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER + 1);
+		long end = System.currentTimeMillis();
 		return "MySecretKey{" +
 				"S.length=" + S.length() +
-				", M1.rank=" + M1.rank() +
-				", M2.rank=" + M2.rank() +
+				", M1.rank=" + rank +
+				", M2.rank=" + rank +
+				", secretKey=" + secretKey +
+				/*", time=" + (end - start) +*/
 				'}';
 	}
 

@@ -125,7 +125,7 @@ public class FilesTransfer {
 		// 从原文件夹
 		String sourceDir = "D:\\MrDarcy\\ForGraduationWorks\\Data\\cnn_stories\\cnn\\stories";
 		// 复制到目标文件夹
-		String destinationDir = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE\\doc\\muse\\plain";
+		String destinationDir = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE\\doc\\muse\\plain1000";
 		// 要复制的文件的个数
 		int count = 1000;
 
@@ -133,11 +133,9 @@ public class FilesTransfer {
 		String[] fileList = sourceParent.list();
 
 		long start = System.currentTimeMillis();
+		System.out.println("start.");
 		for (int i = 0; i < count; i++) {
 			System.out.println("start copy:" + fileList[i]);
-			if (new File(sourceDir + "\\" + fileList[i]).exists()) {
-				continue;
-			}
 			File sourceFile = new File(sourceDir + "\\" + fileList[i]);
 			File destinationFile = new File(destinationDir + "\\" + fileList[i]);
 			FileChannel in = null;

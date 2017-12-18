@@ -1,6 +1,7 @@
-package com.darcy.Scheme2016FineGrained.FMS_I;
+package com.darcy.Scheme2017MUSE.base;
 
 import Jama.Matrix;
+import com.sun.org.apache.xml.internal.security.Init;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -9,23 +10,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.regex.Matcher;
 
 /*
  * author: darcy
- * date: 2017/11/7 21:33
+ * date: 2017/11/18 19:33
  * description: 
 */
 public class IndexBuilding {
 
-	public Initialization initialization;
+	/*public Initialization initialization;
 	public MySecretKey mySecretKey;
 
 	public IndexBuilding(Initialization initialization, MySecretKey mySecretKey) {
 		this.initialization = initialization;
+		this.mySecretKey = mySecretKey;
+	}*/
+
+	public MySecretKey mySecretKey;
+	public IndexBuilding(MySecretKey mySecretKey) {
 		this.mySecretKey = mySecretKey;
 	}
 
@@ -64,78 +68,61 @@ public class IndexBuilding {
 			for (int i = 0; i < files.length; i++) {
 				byte[] bytes = Files.readAllBytes(files[i].toPath());
 				byte[] decrypt = EncryptionUtils.decrypt(bytes);
-				System.out.println(new String(decrypt));
-				System.out.println();
+				/*System.out.println(new String(decrypt));
+				System.out.println();*/
 			}
 		}
 	}
 
-	public List<Index> generateIndex() throws IOException {
+	public Map<String, Index> generateIndex() throws IOException {
 		File parentFile = new File(Initialization.PLAIN_DIR);
 		File[] files = parentFile.listFiles();
-		List<Index> indexes = new ArrayList<>(files.length);
+		// 之前使用list来存储文档索引.
+		//List<Index> indexes = new ArrayList<>(files.length);
+
+		Map<String, Index> indexMap = new HashMap<>(files.length);
 		Random random = new Random(31);
 
 		// System.out.println(mySecretKey.S);
 
+		System.out.println("generate index:");
 		for (int i = 0; i < files.length; i++) {
-			System.out.println(i);
-			List<String> strings = Files.readAllLines(files[i].toPath());
-			Matrix P = new Matrix(1, Initialization.lengthOfDict + 1);
+			System.out.println(files[i].getName());
+
+			Matrix P = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER + 1);
 			// 按照规定，该位需要置1
-			P.set(0, Initialization.lengthOfDict, 1);
+			P.set(0, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 
-			int lengthOfFile = 0;
-			for (String line : strings) {
-				String[] words = line.split("\\s+");
-				for (String word : words) {
-					if (word != null && !word.equals("")) {
-						/*int index = Initialization.dict.indexOf(word);
-						if (index != -1) {
-							P.set(0, index, 1);
-						} else {
-							P.set(0, index, 0);
-						}*/
-						lengthOfFile++;
-					}
-				}
-			}
+			// 字典长度.
+			int lengthOfFile = Initialization.fileLength.get(files[i].getName());
 
-			Map<String, Integer> frequency = Initialization.keywordFrequencyInDocument.get(i);
-			int upper = 100;
-			for (String key : frequency.keySet()) {
+			Map<String, Integer> keywordFrequencyInCurrentDocument =
+					Initialization.keywordFrequencyInDocument.get(files[i].getName());
+			// 用以向上取整以方便计算.
+			int upper = 10000;
+			for (String key : keywordFrequencyInCurrentDocument.keySet()) {
 				int index = Initialization.dict.indexOf(key);
 				if (index != -1) {
 					/**
 					 * 论文中评分 * 10 向上取整. 评分是不超过D的整数.
-					 *
 					 * 目前可以看到相关度评分都是 0.xx或者0.0xx
 					 */
-					int score = (int)Math.ceil(upper * score(lengthOfFile, frequency.get(key),
+					int score = (int)Math.ceil(upper * score(lengthOfFile, keywordFrequencyInCurrentDocument.get(key),
 							Initialization.numberOfDocumentContainsKeyword.get(key), files.length));
-					System.out.println("keyword:" + key + "\tscore:" + score);
+					/*System.out.println("keyword:" + key + "\tscore:" + score);*/
 					P.set(0, index, score);
 				}
 			}
 
-			Matrix pa = new Matrix(1, Initialization.lengthOfDict + 1);
-			Matrix pb = new Matrix(1, Initialization.lengthOfDict + 1);
+			Matrix pa = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER + 1);
+			Matrix pb = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER + 1);
 
 			/**
 			 * S[i] = 1, pa[i] + pb[i] = P[i]
 			 * S[i] = 0, pa[i] = pb[i] = P[i]
 			 */
-			for (int j = 0; j < Initialization.lengthOfDict + 1; j++) {
+			for (int j = 0; j < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER + 1; j++) {
 				if (mySecretKey.S.get(j)) {
-					// 如果P[j] = 0的话，那么矩阵的值可能为负值.
-					/*if (Double.compare(P.get(0, j), 0) == 0) {
-						pa.set(0, j, 0);
-						pb.set(0, j, 0);
-					} else {
-						double v1 = random.nextDouble();
-						pa.set(0, j, v1);
-						pb.set(0, j, 1 - v1);
-					}*/
 					double v1 = random.nextDouble();
 					pa.set(0, j, P.get(0, j) * v1);
 					pb.set(0, j, P.get(0, j) * (1 - v1));
@@ -154,10 +141,10 @@ public class IndexBuilding {
 			MatrixUitls.print(pb);
 			System.out.println(index);
 			System.out.println();*/
-			indexes.add(index);
+			indexMap.put(files[i].getName(), index);
 			System.out.println();
 		}
-		return indexes;
+		return indexMap;
 	}
 
 	/**
@@ -175,18 +162,24 @@ public class IndexBuilding {
 
 
 	public static void main(String[] args) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, IOException {
-		Initialization init = new Initialization();
-		MySecretKey mySecretKey = init.getMySecretKey();
-		IndexBuilding indexBuilding = new IndexBuilding(init, mySecretKey);
+		// 获取秘密钥.
+		MySecretKey mySecretKey = Initialization.getMySecretKey();
+		IndexBuilding indexBuilding = new IndexBuilding(mySecretKey);
+
+		long start = System.currentTimeMillis();
+		// 加密文件.
 		indexBuilding.encryptFiles();
+		System.out.println("encrypted files time:" + (System.currentTimeMillis() - start));
 
-		System.out.println("decrypt");
-
+		start = System.currentTimeMillis();
 		indexBuilding.decryptFiles();
+		System.out.println("decrypted files time:" + (System.currentTimeMillis() - start));
 
 		System.out.println("generateIndex");
-
+		start = System.currentTimeMillis();
 		indexBuilding.generateIndex();
+		System.out.println("generateIndex time:" + (System.currentTimeMillis() - start));
+    // 40个文件的索引构造时间大约是 buildIndex time:91135
 	}
 
 }

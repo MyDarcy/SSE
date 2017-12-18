@@ -1,4 +1,4 @@
-package com.darcy.Scheme2016FineGrained.FMS_II;
+package com.darcy.Scheme2017MUSE.base;
 
 
 import Jama.Matrix;
@@ -14,6 +14,8 @@ import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,20 +24,27 @@ import static java.util.stream.Collectors.toList;
  * date: 2017/11/7 16:53
  * description: 
 */
-public class Initialization {
+public class InitializationBackup {
 
 	public static int lengthOfDict;
 	public static List<String> dict;
 
-	public static final String base = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static final String keyDir = base + "\\" + "doc\\logic\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = base + "\\" + "doc\\logic\\plain";
-	public static final String ENCRYPTED_DIR = base + "\\" + "doc\\logic\\encrypted";
+	public static int DICTIONARY_SIZE;
+	public static final int DUMMY_KEYWORD_NUMBER = 10;
 
+	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static final String SECRET_KEY_DIR = BASE + "\\" + "doc\\muse\\key\\aesKey.dat";
+	public static final String PLAIN_DIR = BASE + "\\" + "doc\\muse\\plain40";
+	public static final String ENCRYPTED_DIR = BASE + "\\" + "doc\\muse\\encrypted40";
+
+	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
 	public static Cipher cipher;
 	public static KeyGenerator keyGenerator;
 	public static SecretKey secretKey;
 
+	/**
+	 * 主要是为了密钥的生成。
+	 */
 	static {
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
@@ -60,8 +69,8 @@ public class Initialization {
 			keyGenerator.init(128);
 
 			// 存储密钥的文件存在.
-			if (new File(keyDir).exists()) {
-				ois = new ObjectInputStream(new FileInputStream(keyDir));
+			if (new File(SECRET_KEY_DIR).exists()) {
+				ois = new ObjectInputStream(new FileInputStream(SECRET_KEY_DIR));
 				try {
 					secretKey = (SecretKey) ois.readObject();
 					// System.out.println("read");
@@ -79,9 +88,9 @@ public class Initialization {
 
 
 			// 是否写入密钥到文件中.
-			if (!new File(keyDir).exists()) {
-				System.out.println(new File(keyDir).getAbsolutePath());
-				oos = new ObjectOutputStream(new FileOutputStream(new File(keyDir)));
+			if (!new File(SECRET_KEY_DIR).exists()) {
+				System.out.println(new File(SECRET_KEY_DIR).getAbsolutePath());
+				oos = new ObjectOutputStream(new FileOutputStream(new File(SECRET_KEY_DIR)));
 				oos.writeObject(secretKey);
 				System.out.println("write");
 			}
@@ -109,18 +118,7 @@ public class Initialization {
 	}
 
 
-	/**
-	 * @param lengthOfDict 字典的长度.
-	 */
-	public Initialization(int lengthOfDict) {
-		Initialization.lengthOfDict = lengthOfDict;
-	}
-
-	public Initialization() {
-	}
-
-
-	public MySecretKey getMySecretKey() throws IOException {
+	public static MySecretKey getMySecretKey() throws IOException {
 
 		File parentFile = new File(PLAIN_DIR);
 		HashSet<String> set = new HashSet<>();
@@ -129,36 +127,36 @@ public class Initialization {
 			for (int i = 0; i < files.length; i++) {
 				List<String> strings = Files.readAllLines(files[i].toPath());
 				for (String line : strings) {
-					String[] words = line.split("\\s+");
+					/*String[] words = line.split("\\s+");
 					for (String str : words) {
 						if (str != null && !str.equals("")) {
 							set.add(str);
 						}
+					}*/
+					Matcher matcher = WORD_PATTERN.matcher(line);
+					while (matcher.find()) {
+						set.add(matcher.group());
 					}
 				}
 			}
 		}
-		/*try {
-			Arrays.stream(parentFile.listFiles())
-					.map(File::toPath)
-					.flatMap(Files::readAllLines)
-					.map((String s) -> {return s.split("\\s+");})
-		} catch (IOException e) {
-
-		}*/
 		List<String> dict = set.stream().sorted().collect(toList());
-		/*System.out.println("dict.size():" + dict.size());
-		System.out.println(dict);*/
+
+		System.out.println("dict.size():" + dict.size());
+		System.out.println(dict);
 
 		// 初始化字典的长度和字典本身.
-		Initialization.lengthOfDict = dict.size();
-		Initialization.dict = dict;
+		InitializationBackup.lengthOfDict = dict.size();
+		InitializationBackup.dict = dict;
+
+		InitializationBackup.DICTIONARY_SIZE = dict.size();
+
 
 		/*Arrays.stream(parentFile.listFiles()).map(File::toPath).flatMap(Files::readAllLines).collect()*/
 
 		MySecretKey sk = new MySecretKey();
 		// 最末尾为1是因为BitSet是自增的, 必须length+1置位, 那么总的length才能是length + 1;
-		BitSet bitSet = new BitSet(lengthOfDict + 1);
+		BitSet bitSet = new BitSet(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
 		Random random = new Random(31);
 
 		// lengthOfDict + 1的长度.
@@ -167,15 +165,20 @@ public class Initialization {
 				bitSet.set(i);
 			}
 		}
-		bitSet.set(lengthOfDict + 1);
-		// System.out.println(bitSet.length());
+		//
+		bitSet.set(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
+		System.out.println(bitSet.length());
 
-
-		Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
-		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
+		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
+		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
+		long start = System.currentTimeMillis();
+		Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
+		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
+		System.out.println("time cousume:" + (System.currentTimeMillis() - start) + "ms");
 		sk.S = bitSet;
 		sk.M1 = m1;
 		sk.M2 = m2;
+		sk.secretKey = secretKey;
 		return sk;
 	}
 
@@ -187,8 +190,8 @@ public class Initialization {
 		try {
 
 			// 存储密钥的文件存在.
-			if (new File(keyDir).exists()) {
-				ois = new ObjectInputStream(new FileInputStream(keyDir));
+			if (new File(SECRET_KEY_DIR).exists()) {
+				ois = new ObjectInputStream(new FileInputStream(SECRET_KEY_DIR));
 				try {
 					secretKey = (SecretKey) ois.readObject();
 					System.out.println("read");
@@ -224,9 +227,9 @@ public class Initialization {
 
 
 			// 是否写入密钥到文件中.
-			if (!new File(keyDir).exists()) {
-				System.out.println(new File(keyDir).getAbsolutePath());
-				oos = new ObjectOutputStream(new FileOutputStream(new File(keyDir)));
+			if (!new File(SECRET_KEY_DIR).exists()) {
+				System.out.println(new File(SECRET_KEY_DIR).getAbsolutePath());
+				oos = new ObjectOutputStream(new FileOutputStream(new File(SECRET_KEY_DIR)));
 				oos.writeObject(secretKey);
 				System.out.println("write");
 			}
@@ -249,42 +252,39 @@ public class Initialization {
 		return secretKey;
 	}
 
-	public static MySecretKey getMySecretKey(int lengthOfDict) {
-		MySecretKey sk = new MySecretKey();
-		// 最末尾为1是因为BitSet是自增的, 必须length+1置位, 那么总的length才能是length + 1;
-		BitSet bitSet = new BitSet(lengthOfDict + 1);
-		Random random = new Random(31);
-
-		// lengthOfDict + 1的长度.
-		for (int i = 0; i <= lengthOfDict; i++) {
-			if (random.nextBoolean()) {
-				bitSet.set(i);
-			}
-		}
-		bitSet.set(lengthOfDict + 1);
-		// System.out.println(bitSet.length());
-
-		Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
-		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
-		sk.S = bitSet;
-		sk.M1 = m1;
-		sk.M2 = m2;
-		return sk;
-	}
-
 	public static void main(String[] args) throws IOException {
-		int M = 100;
-		Initialization initialization = new Initialization(M);
-		MySecretKey mySecretKey = initialization.getMySecretKey();
+
+		MySecretKey mySecretKey = InitializationBackup.getMySecretKey();
 		System.out.println(mySecretKey);
-/*		if (new File(".\\doc").exists()) {
-			System.out.println(new File(".\\doc").getAbsolutePath());
-		  new File("D:\\MrDarcy\\IntelliJIDEA\\SSE\\doc\\aesKey.dat").createNewFile();
-		}*/
+
+		long start = System.currentTimeMillis();
+		mySecretKey.M1.transpose();
+		System.out.println("Matrix transpose time consume:" + (System.currentTimeMillis() - start) + "ms");
+		start = System.currentTimeMillis();
+		mySecretKey.M1.inverse();
+		System.out.println("Matrix reverse time consume:" + (System.currentTimeMillis() - start) + "ms");
+
 
 		System.out.println();
-		System.out.println(initialization.getSecretKey());
-
-
+		System.out.println(InitializationBackup.secretKey);
 	}
 }
+
+/*
+D:\MrDarcy\ForGraduationWorks\Code\SSE\src\main\java>javac com\darcy\Scheme2017MUSE\base\Initialization.java
+
+D:\MrDarcy\ForGraduationWorks\Code\SSE\src\main\java>javac com\darcy\Scheme2017MUSE\base\Initialization.java
+
+
+# 40
+5906
+time cousume:3785ms
+MySecretKey{S.length=5906, M1.rank=5905, M2.rank=5905, secretKey=javax.crypto.spec.SecretKeySpec@16172}
+Matrix transpose time consume:2944ms
+Matrix reverse time consume:667690ms
+
+javax.crypto.spec.SecretKeySpec@16172
+
+
+# 100
+*/

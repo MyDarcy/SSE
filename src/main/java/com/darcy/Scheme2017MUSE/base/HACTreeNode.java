@@ -11,10 +11,26 @@ import Jama.Matrix;
  *  is the pruning vector, u.PL and u.PR, respectively, point to the lef and right
  *  child nodes of u.  u.FD stores the unique identifer of a document, and u.sig stores
  *  a digest of the u.FD document.
+ *
+ *  HAC-tree中节点u是一个五元组〈VM,PL,PR,FD,sig〉, 其中，u.VM是是一个剪枝向量，u.PL和u.PR分别是指向节点u的左右孩子节点。
+ *  u.FD代表的是文档额唯一的ID。u.sig代表的是u.FD文档的消息摘要。此外，u.VC是聚类C_u的聚类中心向量，u.N表示聚类C_u中文档的数目，
+ *  聚类C_u代表的是以u为根节点的子树中所有的叶子结点代表的文档，同时注意u.VC和u.N仅仅存在于HAC-Tree的构造阶段，
+ *  不需要存储在HAC-Tree中。根据节点u的类型，我们详细的描述HAC-Tree节点如下
+ *      如果u是叶子结点，那么u.PL= u.PR= ϕ , u.FD 存储的是文档的id，u.VM和u.VC都存储的是当前文档的向量，u.N=1, u.sig
+ *  存储的是当前文档的消息摘要，消息摘要主要用于后续的搜搜结果的验证。
+ *      如果u是一个内部的中间节点，那么u.FD= ϕ, u.sig= ϕ, u.PL和u.PR代表节点u的左右孩子节点。u.N= u.PL.N + u.PR.N,
+ *  而u.VM则是从聚类C_u中提取的最大向量。u.VC则是聚类C_u的聚类中心向量。
+ *  u.VM= (max) ⃗{u.PL.VM,u.PR.VM}    (9)
+ *  u.VC=  (u.PL.N × u.PL.VC+u.PR.N+u.PR.VC)/(u.PL.N+u.PR.N)    (10)
+
 */
 public class HACTreeNode {
 	// 剪枝向量.
 	public Matrix pruningVector;
+	// 聚类中心向量
+	public Matrix clusterCenterVector;
+	public int numberOfNodeInCurrentCluster;
+
 
 	// 左子树， 右子树的指针.
 	public HACTreeNode left;
@@ -32,6 +48,34 @@ public class HACTreeNode {
 		this.right = right;
 		this.fileDescriptor = fileDescriptor;
 		this.signature = signature;
+	}
+
+	public HACTreeNode(Matrix pruningVector, Matrix clusterCenterVector, int numberOfNodeInCurrentCluster, HACTreeNode left, HACTreeNode right, String fileDescriptor, String signature) {
+		this.pruningVector = pruningVector;
+		this.clusterCenterVector = clusterCenterVector;
+		this.numberOfNodeInCurrentCluster = numberOfNodeInCurrentCluster;
+		this.left = left;
+		this.right = right;
+		this.fileDescriptor = fileDescriptor;
+		this.signature = signature;
+	}
+
+	@Override
+	public String toString() {
+		int pruningVectorLength = Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER + 1;
+		int clusterCenterVectorLength = Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER + 1;
+		if (clusterCenterVector == null) {
+			clusterCenterVectorLength = 0;
+		}
+		return "HACTreeNode{" +
+				"pruningVector.length=" + pruningVectorLength +
+				", clusterCenterVector.length=" + clusterCenterVectorLength +
+				", numberOfNodeInCurrentCluster=" + numberOfNodeInCurrentCluster +
+				", left=" + left +
+				", right=" + right +
+				", fileDescriptor='" + fileDescriptor + '\'' +
+				", signature='" + signature + '\'' +
+				'}';
 	}
 }
 

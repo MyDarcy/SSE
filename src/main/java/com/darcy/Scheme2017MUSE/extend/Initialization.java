@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.base;
+package com.darcy.Scheme2017MUSE.extend;
 
 
 import Jama.Matrix;
@@ -26,16 +26,24 @@ public class Initialization {
 	public static int lengthOfDict;
 	public static List<String> dict;
 
+	// 从文档中提取的关键词的数目
 	public static int DICTIONARY_SIZE;
+	// 添加用于混淆的冗余关键词的数目
 	public static final int DUMMY_KEYWORD_NUMBER = 10;
 
-
+	// 项目目录.
 	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static final String SECRET_KEY_DIR = BASE + "\\" + "doc\\muse\\base\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\" + "doc\\muse\\base\\plain40";
-	public static final String ENCRYPTED_DIR = BASE + "\\" + "doc\\muse\\base\\encrypted40";
+	// 密钥目录
+	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	// 明文文件目录
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
+	// 密文文件目录.
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
 
+	// 匹配关键词
 	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
+
+	// 加密原语等.
 	public static Cipher cipher;
 	public static KeyGenerator keyGenerator;
 	public static SecretKey secretKey;
@@ -194,7 +202,7 @@ public class Initialization {
 
 		List<String> dict = globalDictSet.stream().sorted().collect(toList());
 
-		System.out.println("dict.size():" + dict.size());
+		System.out.println("initialization dict.size():" + dict.size());
 		System.out.println(dict);
 
 		// 初始化字典的长度和字典本身.
@@ -202,34 +210,51 @@ public class Initialization {
 		Initialization.dict = dict;
 
 		Initialization.DICTIONARY_SIZE = dict.size();
+		// 拓展字典
+		List<String> extendDictPart = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
+		dict.addAll(extendDictPart);
 
 		/*Arrays.stream(parentFile.listFiles()).map(File::toPath).flatMap(Files::readAllLines).collect()*/
 
 		MySecretKey sk = new MySecretKey();
-		// 最末尾为1是因为BitSet是自增的, 必须length+1置位, 那么总的length才能是length + 1;
-		BitSet bitSet = new BitSet(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
-		Random random = new Random(31);
 
-		// lengthOfDict + 1的长度.
-		for (int i = 0; i <= lengthOfDict; i++) {
+		BitSet bitSet = new BitSet(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		Random random = new Random(31);
+		for (int i = 0; i < (DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER); i++) {
 			if (random.nextBoolean()) {
 				bitSet.set(i);
 			}
 		}
-		//
-		bitSet.set(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
+		// 设置了该位， 此BitSet的长度才是 (DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1)的长度.
+		bitSet.set(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
 		System.out.println("bitSet.length:"+ bitSet.length());
 
 		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
 
-		Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
-		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1);
+		Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
 		sk.S = bitSet;
 		sk.M1 = m1;
 		sk.M2 = m2;
 		sk.secretKey = secretKey;
 		return sk;
+	}
+
+	private static List<String> generateExtendDictPart(int dummyKeywordNumber) {
+		Random random = new Random(31);
+		List<String> result = new ArrayList<>(dummyKeywordNumber);
+		for (int i = 0; i < dummyKeywordNumber; i++) {
+			// 生成的字符串的长度是3~10位。
+			int length = 3 + random.nextInt(8);
+			char[] array = new char[length];
+			for (int j = 0; j < length; j++) {
+				array[j] = (char) (97 + random.nextInt(26));
+			}
+			result.add(new String(array));
+		}
+		System.out.println("generate extend dict part:" + result);
+		return result;
 	}
 
 	/**
@@ -254,7 +279,6 @@ public class Initialization {
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
 		try {
-
 			// 存储密钥的文件存在.
 			if (new File(SECRET_KEY_DIR).exists()) {
 				ois = new ObjectInputStream(new FileInputStream(SECRET_KEY_DIR));
@@ -286,11 +310,10 @@ public class Initialization {
 			 */
 				keyGenerator.init(128);
 
-				// 使用第一步获得的KeyGenerator类型的对象中generateKey( )方法可以获得密钥。其类型为SecretKey类型，可用于以后的加密和解密。
-
+				// 使用第一步获得的KeyGenerator类型的对象中generateKey( )方法可以获得密钥。
+				// 其类型为SecretKey类型，可用于以后的加密和解密。
 				secretKey = keyGenerator.generateKey();
 			}
-
 
 			// 是否写入密钥到文件中.
 			if (!new File(SECRET_KEY_DIR).exists()) {
@@ -299,7 +322,6 @@ public class Initialization {
 				oos.writeObject(secretKey);
 				System.out.println("write");
 			}
-
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -320,6 +342,10 @@ public class Initialization {
 
 	public static void main(String[] args) throws IOException {
 
+		// test
+		/*generateExtendDictPart(10);*/
+
+		// test1
 		MySecretKey mySecretKey = Initialization.getMySecretKey();
 		System.out.println(mySecretKey);
 

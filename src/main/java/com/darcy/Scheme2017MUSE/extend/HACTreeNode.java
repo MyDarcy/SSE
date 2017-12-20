@@ -28,8 +28,8 @@ import java.security.MessageDigest;
 */
 public class HACTreeNode {
 
-	// 剪枝向量.
-	public Matrix pruningVector;
+	/*// 剪枝向量.
+	public Matrix pruningVector;*/
 
 	// 剪枝向量
 	// 因为需要对剪枝向量通过可逆矩阵来加密。
@@ -51,7 +51,7 @@ public class HACTreeNode {
 
 	// 对文档内容签名的值，以用于验证.
 	// 字符串的signature转为消息摘要的形式.
-	public String signature;
+	/*public String signature;*/
 	public MessageDigest digest;
 
 
@@ -98,7 +98,7 @@ public class HACTreeNode {
 				'}';
 	}
 
-	public HACTreeNode(Matrix pruningVector, HACTreeNode left, HACTreeNode right, String fileDescriptor, String signature) {
+	/*public HACTreeNode(Matrix pruningVector, HACTreeNode left, HACTreeNode right, String fileDescriptor, String signature) {
 		this.pruningVector = pruningVector;
 		this.left = left;
 		this.right = right;
@@ -114,7 +114,7 @@ public class HACTreeNode {
 		this.right = right;
 		this.fileDescriptor = fileDescriptor;
 		this.signature = signature;
-	}
+	}*/
 
 	/*@Override
 	public String toString() {

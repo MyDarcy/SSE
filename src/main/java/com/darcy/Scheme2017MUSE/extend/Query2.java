@@ -2,7 +2,10 @@ package com.darcy.Scheme2017MUSE.extend;
 
 import Jama.Matrix;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.PriorityQueue;
 import java.util.regex.Matcher;
@@ -14,22 +17,41 @@ import java.util.regex.Matcher;
 */
 public class Query2 {
 
-	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-		MySecretKey mySecretKey = Initialization.getMySecretKey();
-		HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
-		HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
-		String query = "Pope Francis honorary citizenship Democratic Revolution";
-		Matrix queryVector = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER + 1, 1);
-		Matcher matcher = Initialization.WORD_PATTERN.matcher(query);
-		while (matcher.find()) {
-			int index = Initialization.dict.indexOf(matcher.group().toLowerCase());
-			queryVector.set(index, 0, 1);
-		}
+	public static void test2() {
+		try {
+			MySecretKey mySecretKey = Initialization.getMySecretKey();
+			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
+			hacTreeIndexBuilding.encryptFiles();
+			hacTreeIndexBuilding.generateAuxiliaryMatrix();
+			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
 
-		int requestNumber = 4;
-		PriorityQueue<HACTreeNode> result = new SearchAlgorithm().search(root, queryVector, requestNumber);
-		for (HACTreeNode node : result) {
-			System.out.println(node.fileDescriptor);
+			String query = "Pope Francis honorary citizenship Democratic Revolution";
+
+			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
+			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
+			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
+
+			int requestNumber = 4;
+			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
+			for (HACTreeNode node : priorityQueue) {
+				System.out.println(node.fileDescriptor);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			e.printStackTrace();
 		}
+	}
+
+	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
+
+		test2();
+
 	}
 }

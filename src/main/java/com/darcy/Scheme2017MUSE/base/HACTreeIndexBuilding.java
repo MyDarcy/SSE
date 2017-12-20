@@ -169,7 +169,9 @@ public class HACTreeIndexBuilding {
 	}
 
 	private static double correspondingScore(HACTreeNode node1, HACTreeNode node2) {
-		Matrix matrix = node1.pruningVector.times(node2.pruningVector.transpose());
+		// 应该是中心向量和中心向量之间的乘积。
+		/*Matrix matrix = node1.pruningVector.times(node2.pruningVector.transpose());*/
+		Matrix matrix = node1.clusterCenterVector.times(node2.clusterCenterVector.transpose());
 		/*System.out.println(matrix.getRowDimension() + "\t" + matrix.getColumnDimension());*/
 		return matrix.get(0, 0);
 	}

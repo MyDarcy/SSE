@@ -204,7 +204,7 @@ public class HACTreeIndexBuilding {
 		System.out.println("start construct hac-tree.");
 		int round = 1;
 		while (currentProcessingHACTreeNodeSet.size() > 1) {
-			System.out.println("the " + (round++) + " reduce to build tree.");
+			System.out.println("the " + (round++) + "'s reduce to build tree.");
 			/*System.out.println();*/
 			while (currentProcessingHACTreeNodeSet.size() > 1) {
 				HACTreeNodePair nodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
@@ -297,10 +297,22 @@ public class HACTreeIndexBuilding {
 		return Arrays.asList(parent1, parent2);
 	}
 
+	/**
+	 * 节点和节点之间的相关性评分。
+	 * @param node1
+	 * @param node2
+	 * @return
+	 */
 	private double correspondingScore(HACTreeNode node1, HACTreeNode node2) {
-		Matrix matrix = node1.pruningVector.times(node2.pruningVector.transpose());
-		/*System.out.println(matrix.getRowDimension() + "\t" + matrix.getColumnDimension());*/
+		// 剪枝向量与剪枝向量的乘积就是相关性评分。
+		/*Matrix matrix1 = node1.pruningVectorPart1.times(node2.pruningVectorPart1.transpose());
+		Matrix matrix2 = node1.pruningVectorPart2.times(node2.pruningVectorPart2.transpose());
+		return matrix1.get(0, 0) + matrix2.get(0, 0);*/
+
+		// 应该是使用相关性评分来求节点与节点之间的关系。
+		Matrix matrix = node1.clusterCenterVector.times(node2.clusterCenterVector.transpose());
 		return matrix.get(0, 0);
+		/*System.out.println(matrix.getRowDimension() + "\t" + matrix.getColumnDimension());*/
 	}
 
 	/**

@@ -1,6 +1,8 @@
 package com.darcy.Scheme2017MUSE.extend;
 
 import Jama.Matrix;
+
+import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 
@@ -47,7 +49,7 @@ public class HACTreeIndexBuilding {
 		System.out.println("two transpose:" + (System.currentTimeMillis() - start) + "ms");
 
 		start = System.currentTimeMillis();
-		AuxiliaryMatrix.M2Inverse = mySecretKey.M2.inverse();
+		AuxiliaryMatrix.M1Inverse = mySecretKey.M1.inverse();
 		AuxiliaryMatrix.M2Inverse = mySecretKey.M2.inverse();
 		System.out.println("two inverse:" + (System.currentTimeMillis() - start) + "ms");
 
@@ -152,6 +154,8 @@ public class HACTreeIndexBuilding {
 				}
 			}
 
+			/*MatrixUitls.print(P);*/
+
 			double[] sample = distribution.sample(Initialization.DUMMY_KEYWORD_NUMBER);
 			for (int j = 0; j < (Initialization.DUMMY_KEYWORD_NUMBER); j++) {
 				P.set(0, Initialization.DICTIONARY_SIZE + j, sample[j]);
@@ -166,15 +170,22 @@ public class HACTreeIndexBuilding {
 			 * S[i] = 0, pa[i] = pb[i] = P[i]
 			 */
 			for (int j = 0; j < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; j++) {
+				// 置1
 				if (mySecretKey.S.get(j)) {
 					double v1 = random.nextDouble();
-					pa.set(0, j, v1);
-					pb.set(0, j, P.get(0, j) - v1);
+					// 不是简单的v1和 p-v1,
+					pa.set(0, j, P.get(0, j) * v1);
+					pb.set(0, j, P.get(0, j) * (1 - v1));
+
+					// 置0
 				} else {
 					pa.set(0, j, P.get(0, j));
 					pb.set(0, j, P.get(0, j));
 				}
 			}
+			/*MatrixUitls.print(pa);
+			MatrixUitls.print(pb);
+			System.out.println();*/
 
 			// 获取消息摘要.
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
@@ -201,6 +212,10 @@ public class HACTreeIndexBuilding {
 			currentProcessingHACTreeNodeSet.add(currentNode);
 		}
 
+		/**
+		 * 到这里已经加密了一轮文档,
+		 */
+
 		System.out.println("start construct hac-tree.");
 		int round = 1;
 		while (currentProcessingHACTreeNodeSet.size() > 1) {
@@ -209,6 +224,10 @@ public class HACTreeIndexBuilding {
 			while (currentProcessingHACTreeNodeSet.size() > 1) {
 				HACTreeNodePair nodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
 				List<Matrix> parentNodePruningVectors = getParentNodePruningVector(nodePair);
+
+				/*MatrixUitls.print(parentNodePruningVectors.get(0));
+				MatrixUitls.print(parentNodePruningVectors.get(1));*/
+
 				Matrix parentNodeCenterVector = getParentNodeCenterVector(nodePair);
 				int parentNumberOfNodeInCurrentCluster = nodePair.node1.numberOfNodeInCurrentCluster + nodePair.node2.numberOfNodeInCurrentCluster;
 				// 存疑，这样构造出来的剪枝向量有效吗？
@@ -283,7 +302,9 @@ public class HACTreeIndexBuilding {
 
 	/**
 	 * 获取两个子节点剪枝向量对应位置max值组成的父节点的剪枝向量.
-	 * 但是此时的剪枝向量是经过
+	 *
+	 * 但是问题是，使用矩阵加密后，仍然是这样的构造父节点的剪枝向量吗
+	 * 这样有效吗?
 	 * @param pair
 	 * @return
 	 */
@@ -292,7 +313,7 @@ public class HACTreeIndexBuilding {
 		Matrix parent2 = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
 			parent1.set(0, i, Double.max(pair.node1.pruningVectorPart1.get(0, i), pair.node2.pruningVectorPart1.get(0, i)));
-			parent1.set(0, i, Double.max(pair.node1.pruningVectorPart2.get(0, i), pair.node2.pruningVectorPart2.get(0, i)));
+			parent2.set(0, i, Double.max(pair.node1.pruningVectorPart2.get(0, i), pair.node2.pruningVectorPart2.get(0, i)));
 		}
 		return Arrays.asList(parent1, parent2);
 	}

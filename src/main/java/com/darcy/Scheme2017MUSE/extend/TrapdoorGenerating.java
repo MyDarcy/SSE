@@ -2,6 +2,7 @@ package com.darcy.Scheme2017MUSE.extend;
 
 import Jama.Matrix;
 import com.darcy.Scheme2017MUSE.utils.MathUtils;
+import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 
 import java.io.IOException;
 import java.util.*;
@@ -34,10 +35,9 @@ public class TrapdoorGenerating {
 	 * @return
 	 */
 	public Trapdoor generateTrapdoor(String query) {
+		System.out.println("TrapdoorGenerating trapdoorGenerating start.");
+		long start = System.currentTimeMillis();
 
-		/**
-		 * 先根据重要性进行排序.这里重要性是根据用户指定的来生成的.
-		 */
 		List<String> keywordList = new ArrayList<>();
 		Matcher matcher = Initialization.WORD_PATTERN.matcher(query);
 		while (matcher.find()) {
@@ -48,18 +48,24 @@ public class TrapdoorGenerating {
 
 		Matrix Q = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 
+
 		for (int i = 0; i < keywordList.size(); i++) {
 			String keyword = keywordList.get(i);
 			int index = Initialization.dict.indexOf(keyword);
 			if (index != -1) {
+				System.out.printf("%-10s\t%-10s\t%.8f\n", keyword, "idf-value", idfs.get(keyword));
 				Q.set(index, 0, idfs.get(keyword));
 			}
 		}
+
+		MatrixUitls.print(Q.transpose());
+
 
 		Random random = new Random(31);
 
 		Matrix qa = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 		Matrix qb = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
+
 
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
 			// S[i] == 0;
@@ -70,10 +76,13 @@ public class TrapdoorGenerating {
 
 				//S[i] == 1;
 			} else {
-				qa.set(i, 0, Q.get(i, 0) );
-				qb.set(i, 0, Q.get(i, 0) );
+				qa.set(i, 0, Q.get(i, 0));
+				qb.set(i, 0, Q.get(i, 0));
 			}
 		}
+
+		MatrixUitls.print(qa.transpose());
+		MatrixUitls.print(qb.transpose());
 
 		/*System.out.println(mySecretKey.M1.getRowDimension() + "\t" + mySecretKey.M2.getColumnDimension());
 		System.out.println(inverseM1.getRowDimension() + "\t" +inverseM2.getColumnDimension());
@@ -81,6 +90,8 @@ public class TrapdoorGenerating {
 
 		Matrix part1 = AuxiliaryMatrix.M1Inverse.times(qa);
 		Matrix part2 = AuxiliaryMatrix.M2Inverse.times(qb);
+		System.out.println("total time:" + (System.currentTimeMillis() - start));
+		System.out.println("TrapdoorGenerating trapdoorGenerating finished.");
 		return new Trapdoor(part1, part2);
 	}
 

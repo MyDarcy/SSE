@@ -125,9 +125,9 @@ public class FilesTransfer {
 		// 从原文件夹
 		String sourceDir = "D:\\MrDarcy\\ForGraduationWorks\\Data\\cnn_stories\\cnn\\stories";
 		// 复制到目标文件夹
-		String destinationDir = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE\\doc\\muse\\plain1000";
+		String destinationDir = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE\\doc\\muse\\extend\\plain16";
 		// 要复制的文件的个数
-		int count = 1000;
+		int count = 16;
 
 		File sourceParent = new File(sourceDir);
 		String[] fileList = sourceParent.list();

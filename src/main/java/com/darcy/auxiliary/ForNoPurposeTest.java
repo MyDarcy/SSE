@@ -14,5 +14,19 @@ public class ForNoPurposeTest {
 		System.out.println(str.split(",").length);
 
 		System.out.println("'java'");
+
+		System.out.println(Double.MIN_VALUE);
+		System.out.println(Double.MIN_VALUE > 0);
+		System.out.println(Double.NEGATIVE_INFINITY);
+		System.out.println(-100 > Double.NEGATIVE_INFINITY);
+
+		// str = "Pope Francis honorary citizenship Democratic Revolution church president conferences";
+		str = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
+		String replaceStr = str.replace(' ', '|');
+		StringBuilder targetStr = new StringBuilder("").append("(").append(replaceStr).append(")");
+		System.out.println(replaceStr);
+		System.out.println(targetStr);
+		// (clinton|broadcasting|voice|Francis|honorary|citizenship|Democratic|Revolution|church|president|conferences)
+
 	}
 }

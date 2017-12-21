@@ -1,6 +1,7 @@
 package com.darcy.Scheme2017MUSE.extend;
 
 import Jama.Matrix;
+import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,16 +17,19 @@ import java.util.PriorityQueue;
 */
 public class SearchAlgorithm {
 
-	double thresholdScore = 0;
+	double thresholdScore = Double.NEGATIVE_INFINITY;
 
 	/**
 	 * 实现方式1: 采用堆的性性质.
+	 *
 	 * @param root
 	 * @param trapdoor
 	 * @param requestNumber
 	 * @return
 	 */
 	public PriorityQueue<HACTreeNode> search(HACTreeNode root, Trapdoor trapdoor, int requestNumber) {
+		System.out.println("SearchAlgorithm search start.");
+		long start = System.currentTimeMillis();
 		PriorityQueue<HACTreeNode> minHeap = new PriorityQueue<>(new Comparator<HACTreeNode>() {
 			@Override
 			public int compare(HACTreeNode o1, HACTreeNode o2) {
@@ -61,6 +65,9 @@ public class SearchAlgorithm {
 		});
 		maxHeap.addAll(minHeap);
 		// 服务器端排序，然后返回top-K个最相关的文档.
+
+		System.out.println("total time:" + (System.currentTimeMillis() - start) + "ms");
+		System.out.println("SearchAlgorithm search end.");
 		return maxHeap;
 	}
 
@@ -75,7 +82,7 @@ public class SearchAlgorithm {
 			} else if (minHeap.size() == (requestNumber - 1)) {
 				minHeap.add(root);
 				thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
-
+				System.out.println("thresholdSocre:" + thresholdScore);
 				// 仍然时叶子节点，但是候选结果集合中已经有了N个文档.
 			} else {
 				// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
@@ -87,7 +94,13 @@ public class SearchAlgorithm {
 				}
 			}
 		} else {
-			if (scoreForPruning(root, trapdoor) > thresholdScore) {
+			double score = scoreForPruning(root, trapdoor);
+			/*MatrixUitls.print(root.pruningVectorPart1);
+			MatrixUitls.print(root.pruningVectorPart2);
+			MatrixUitls.print(trapdoor.trapdoorPart1.transpose());
+			MatrixUitls.print(trapdoor.trapdoorPart2.transpose());*/
+			System.out.printf("%-10s\t%.8f\t%-20s\t%.8f\n", "score", score, "thresholdScore", thresholdScore);
+			if (score > thresholdScore) {
 				if (root.left != null) {
 					dfs(root.left, trapdoor, requestNumber, minHeap);
 				}

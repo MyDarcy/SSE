@@ -24,15 +24,18 @@ public class Query2 {
 			hacTreeIndexBuilding.encryptFiles();
 			hacTreeIndexBuilding.generateAuxiliaryMatrix();
 			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
+			System.out.println(root);
 
-			String query = "Pope Francis honorary citizenship Democratic Revolution";
+			String query = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
 
+			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
 			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
-			int requestNumber = 4;
+			int requestNumber = 10;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
+			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
 			for (HACTreeNode node : priorityQueue) {
 				System.out.println(node.fileDescriptor);
 			}

@@ -13,7 +13,7 @@ public class MatrixUitls {
 		double[][] array = matrix.getArray();
 		for (int i = 0; i < array.length; i++) {
 			for (int j = 0; j < array[i].length; j++) {
-				System.out.printf("%-6f\t", array[i][j]);
+				System.out.printf("%.8f\t", array[i][j]);
 			}
 			System.out.println();
 		}

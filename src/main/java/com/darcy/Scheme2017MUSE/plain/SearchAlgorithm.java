@@ -1,4 +1,6 @@
-package com.darcy.Scheme2017MUSE.extend;
+package com.darcy.Scheme2017MUSE.plain;
+
+import Jama.Matrix;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,18 +21,18 @@ public class SearchAlgorithm {
 	 * 实现方式1: 采用堆的性性质.
 	 *
 	 * @param root
-	 * @param trapdoor
+	 * @param queryVector
 	 * @param requestNumber
 	 * @return
 	 */
-	public PriorityQueue<HACTreeNode> search(HACTreeNode root, Trapdoor trapdoor, int requestNumber) {
+	public PriorityQueue<HACTreeNode> search(HACTreeNode root, Matrix queryVector, int requestNumber) {
 		System.out.println("SearchAlgorithm search start.");
 		long start = System.currentTimeMillis();
 		PriorityQueue<HACTreeNode> minHeap = new PriorityQueue<>(new Comparator<HACTreeNode>() {
 			@Override
 			public int compare(HACTreeNode o1, HACTreeNode o2) {
-				double score1 = scoreForPruning(o1, trapdoor);
-				double score2 = scoreForPruning(o2, trapdoor);
+				double score1 = scoreForPruning(o1, queryVector);
+				double score2 = scoreForPruning(o2, queryVector);
 				if (Double.compare(score1, score2) > 0) {
 					return 1;
 				} else if (Double.compare(score1, score2) == 0) {
@@ -41,15 +43,15 @@ public class SearchAlgorithm {
 			}
 		});
 
-		dfs(root, trapdoor, requestNumber, minHeap);
+		dfs(root, queryVector, requestNumber, minHeap);
 
 		// 既然这个就是跟查询之间相关性评分最高的文档. 那么只需要利用此优先级队列或者相反的
 		// 优先级队列就可以求出最不相关的文档.
 		PriorityQueue maxHeap = new PriorityQueue(new Comparator<HACTreeNode>() {
 			@Override
 			public int compare(HACTreeNode node1, HACTreeNode node2) {
-				double score1 = scoreForPruning(node1, trapdoor);
-				double score2 = scoreForPruning(node2, trapdoor);
+				double score1 = scoreForPruning(node1, queryVector);
+				double score2 = scoreForPruning(node2, queryVector);
 				if (Double.compare(score1, score2) > 0) {
 					return -1;
 				} else if (Double.compare(score1, score2) == 0) {
@@ -67,7 +69,7 @@ public class SearchAlgorithm {
 		return maxHeap;
 	}
 
-	private void dfs(HACTreeNode root, Trapdoor trapdoor, int requestNumber, PriorityQueue<HACTreeNode> minHeap) {
+	private void dfs(HACTreeNode root, Matrix queryVecotr, int requestNumber, PriorityQueue<HACTreeNode> minHeap) {
 		// 是叶子结点.
 		if (root.left == null && root.right == null) {
 			// 并且候选结果集合中没有top-K个元素.
@@ -81,7 +83,7 @@ public class SearchAlgorithm {
 			} else if (minHeap.size() == (requestNumber - 1)) {
 				minHeap.add(root);
 				System.out.println("= (N-1) add:" + root.fileDescriptor);
-				thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
+				thresholdScore = scoreForPruning(minHeap.peek(), queryVecotr);
 				System.out.println("thresholdSocre:" + thresholdScore);
 				System.out.println();
 
@@ -89,18 +91,18 @@ public class SearchAlgorithm {
 			} else {
 				// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
 				// 候选结果集合的。
-				if (scoreForPruning(root, trapdoor) > thresholdScore) {
+				if (scoreForPruning(root, queryVecotr) > thresholdScore) {
 					HACTreeNode minScoreNode = minHeap.poll();
-					double score = scoreForPruning(minScoreNode, trapdoor);
+					double score = scoreForPruning(minScoreNode, queryVecotr);
 					System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
 					System.out.println();
 
 					minHeap.add(root);
-					thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
+					thresholdScore = scoreForPruning(minHeap.peek(), queryVecotr);
 				}
 			}
 		} else {
-			double score = scoreForPruning(root, trapdoor);
+			double score = scoreForPruning(root, queryVecotr);
 			/*MatrixUitls.print(root.pruningVectorPart1);
 			MatrixUitls.print(root.pruningVectorPart2);
 			MatrixUitls.print(trapdoor.trapdoorPart1.transpose());
@@ -109,11 +111,11 @@ public class SearchAlgorithm {
 			if (score > thresholdScore) {
 				if (root.left != null) {
 					System.out.println("left");
-					dfs(root.left, trapdoor, requestNumber, minHeap);
+					dfs(root.left, queryVecotr, requestNumber, minHeap);
 				}
 				if (root.right != null) {
 					System.out.println("right");
-					dfs(root.right, trapdoor, requestNumber, minHeap);
+					dfs(root.right, queryVecotr, requestNumber, minHeap);
 				}
 			} else {
 				System.out.println("score:" + score + " no bigger than thresholdScore:" + thresholdScore);
@@ -126,14 +128,14 @@ public class SearchAlgorithm {
 	/**
 	 * 计算跟查询向量之间最不相关的文档.
 	 * @param resultList
-	 * @param trapdoor
+	 * @param queryVector
 	 * @return
 	 */
-	private HACTreeNode getMinScoreNode(List<HACTreeNode> resultList, Trapdoor trapdoor) {
+	private HACTreeNode getMinScoreNode(List<HACTreeNode> resultList, Matrix queryVector) {
 		HACTreeNode result = null;
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < resultList.size(); i++) {
-			double currentScore = scoreForPruning(resultList.get(i), trapdoor);
+			double currentScore = scoreForPruning(resultList.get(i), queryVector);
 			if (currentScore < min) {
 				min = currentScore;
 				result = resultList.get(i);
@@ -145,13 +147,12 @@ public class SearchAlgorithm {
 	/**
 	 * 根节点和Trapdoor之间的相关性评分.
 	 * @param root
-	 * @param trapdoor
+	 * @param queryVector
 	 * @return
 	 */
-	private double scoreForPruning(HACTreeNode root, Trapdoor trapdoor) {
-		/*return root.pruningVector.times(queryVector).get(0, 0);*/
-		return root.pruningVectorPart1.times(trapdoor.trapdoorPart1).get(0, 0)
-				+ root.pruningVectorPart2.times(trapdoor.trapdoorPart2).get(0, 0);
+	private double scoreForPruning(HACTreeNode root, Matrix queryVector) {
+		return root.pruningVector.times(queryVector).get(0, 0);
+
 	}
 
 
@@ -159,16 +160,14 @@ public class SearchAlgorithm {
 	 * 搜索的时候用于更新最低阈值分数。
 	 *
 	 * @param resultList
-	 * @param trapdoor
+	 * @param queryVector
 	 * @return
 	 */
-	private double updateThresholdScore(List<HACTreeNode> resultList, Trapdoor trapdoor) {
+	private double updateThresholdScore(List<HACTreeNode> resultList, Matrix queryVector) {
 
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < resultList.size(); i++) {
-			/*double score = resultList.get(i).pruningVector.times(queryVector).get(0, 0);*/
-			double score = resultList.get(i).pruningVectorPart1.times(trapdoor.trapdoorPart1).get(0, 0)
-					+ resultList.get(i).pruningVectorPart2.times(trapdoor.trapdoorPart2).get(0, 0);
+			double score = resultList.get(i).pruningVector.times(queryVector).get(0, 0);
 			// 更新最小相关性评分.
 			if (score < min) {
 				min = score;

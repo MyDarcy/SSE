@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.extend;
+package com.darcy.Scheme2017MUSE.plain;
 
 import Jama.Matrix;
 
@@ -32,7 +32,7 @@ public class TrapdoorGenerating {
 	 * @param query
 	 * @return
 	 */
-	public Trapdoor generateTrapdoor(String query) {
+	public Matrix generateTrapdoor(String query) {
 		System.out.println("TrapdoorGenerating trapdoorGenerating start.");
 		long start = System.currentTimeMillis();
 
@@ -57,42 +57,9 @@ public class TrapdoorGenerating {
 			}
 		}
 
-		/*System.out.println("Q Qa Qb transponse.");
-		MatrixUitls.print(Q.transpose());*/
-
-
-		Random random = new Random(31);
-
-		Matrix qa = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
-		Matrix qb = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
-
-
-		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
-			// S[i] == 0;
-			if (!mySecretKey.S.get(i)) {
-				double v1 = random.nextDouble();
-				qa.set(i, 0, Q.get(i, 0) * v1);
-				qb.set(i, 0, Q.get(i, 0) * (1 - v1));
-
-				//S[i] == 1;
-			} else {
-				qa.set(i, 0, Q.get(i, 0));
-				qb.set(i, 0, Q.get(i, 0));
-			}
-		}
-
-		/*MatrixUitls.print(qa.transpose());
-		MatrixUitls.print(qb.transpose());*/
-
-		/*System.out.println(mySecretKey.M1.getRowDimension() + "\t" + mySecretKey.M2.getColumnDimension());
-		System.out.println(inverseM1.getRowDimension() + "\t" +inverseM2.getColumnDimension());
-		System.out.println(qa.getRowDimension() + "\t" +qb.getColumnDimension());*/
-
-		Matrix part1 = AuxiliaryMatrix.M1Inverse.times(qa);
-		Matrix part2 = AuxiliaryMatrix.M2Inverse.times(qb);
 		System.out.println("generate trapdoor total time:" + (System.currentTimeMillis() - start));
 		System.out.println("TrapdoorGenerating trapdoorGenerating finished.");
-		return new Trapdoor(part1, part2);
+		return Q;
 	}
 
 	private Map<String, Double> generateIDFs(List<String> keywordList) {

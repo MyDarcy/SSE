@@ -1,7 +1,7 @@
 package com.darcy.auxiliary;
 
-import com.darcy.Scheme2017MUSE.extend.Initialization;
-import com.darcy.Scheme2017MUSE.extend.MySecretKey;
+import com.darcy.Scheme2017MUSE.plain.Initialization;
+import com.darcy.Scheme2017MUSE.plain.MySecretKey;
 
 import java.io.File;
 import java.io.IOException;
@@ -103,7 +103,7 @@ public class SearchResultTest {
 				"001ee59c375363263821474d40e4386ab91d5145.story";*/
 
 		// 40-10-0.02
-		String filenames = "0015194573f9b4430319683cde41e4aa17092a9d.story\n" +
+		/*String filenames = "0015194573f9b4430319683cde41e4aa17092a9d.story\n" +
 				"0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story\n" +
 				"0001d1afc246a7964130f43ae940af6bc6c57f01.story\n" +
 				"00027e965c8264c35cc1bc55556db388da82b07f.story\n" +
@@ -112,13 +112,52 @@ public class SearchResultTest {
 				"00128f1ba30d5e9e0f17df83285a1bc2072e2f01.story\n" +
 				"0020ede07ee7ad1f6cf654c7dc678e7341d0c0e5.story\n" +
 				"001f9c554f1a29169413d0d2f138212a14c6dcf1.story\n" +
-				"0005d61497d21ff37a17751829bd7e3b6e4a7c5c.story";
+				"0005d61497d21ff37a17751829bd7e3b6e4a7c5c.story";*/
+
+		// 40-10-0.01
+		/*String filenames = "001d9259673bd2ffb613217d19b98ca3563874ac.story\n" +
+				"0010c870d3fc53ea7f2a4a50f6496dc2df17e02f.story\n" +
+				"00200e794fa41d3f7ce92cbf43e9fd4cd652bb09.story\n" +
+				"00156d9892fb27f1d2e100cbdd8a3997f8273781.story\n" +
+				"0003ad6ef0c37534f80b55b4235108024b407f0b.story\n" +
+				"0002c17436637c4fe1837c935c04de47adb18e9a.story\n" +
+				"0015194573f9b4430319683cde41e4aa17092a9d.story\n" +
+				"001732b374f362d3961a510da315601e4b5e7e84.story\n" +
+				"001adf6209be103cb198b8599f236b4d5760a5fe.story\n" +
+				"001a6162391594e2a8607fba135bdfa154e57904.story";*/
+
+		// 40-10-plain search.
+		/*String filenames = "000c835555db62e319854d9f8912061cdca1893e.story\n" +
+				"000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story\n" +
+				"0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story\n" +
+				"000940f2bb357ac04a236a232156d8b9b18d1667.story\n" +
+				"0009ebb1967511741629926ef9f5faea2bb6be24.story\n" +
+				"001cdbaf0607878f332e0202fadf5b82d2997c02.story\n" +
+				"00128f1ba30d5e9e0f17df83285a1bc2072e2f01.story\n" +
+				"00189f37b1c8bdc2b132b40270bb28ffcc622af1.story\n" +
+				"00083697263e215e5e7eda753070f08aa374dd45.story\n" +
+				"0001d1afc246a7964130f43ae940af6bc6c57f01.story";*/
+
+		// 40-10-plain search
+		String filenames = "000c835555db62e319854d9f8912061cdca1893e.story\n" +
+				"0009ebb1967511741629926ef9f5faea2bb6be24.story\n" +
+				"003be5a8108fcd3f133ddef14a5fc593701566f3.story\n" +
+				"000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story\n" +
+				"00083697263e215e5e7eda753070f08aa374dd45.story\n" +
+				"0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story\n" +
+				"00330ad079a460a329fa0977f2db3810044f23af.story\n" +
+				"0040eb79bd5424f52e1ec43050539e4e12189cbf.story\n" +
+				"000940f2bb357ac04a236a232156d8b9b18d1667.story\n" +
+				"003ae6f81b90eae41831361deae8a5da3705dc4f.story";
 
 		String[] filenameArray = filenames.split("\\n");
 		for (int i = 0; i < filenameArray.length; i++) {
 			System.out.println(filenameArray[i]);
 		}
-		String basePath = Initialization.BASE + "\\doc\\muse\\extend\\plain40\\";
+
+		// String basePath = Initialization.BASE + "\\doc\\muse\\extend\\plain40\\";
+		String basePath = Initialization.BASE + "\\doc\\muse\\extend\\plain100\\";
+
 		// String keywordPatternStr = "(clinton|broadcasting|voice|Francis|honorary|citizenship|Democratic|Revolution|church|president|conferences)".toLowerCase();
 		// String keywordPatternStr = "(church|China|hospital|performance|British|interview|Democratic|citizenship)".toLowerCase();
 		String keywordPatternStr = "(church|China|hospital|performance|British|interview|Democratic|citizenship|broadcasting|voice)";

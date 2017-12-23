@@ -1,11 +1,10 @@
-package com.darcy.Scheme2017MUSE.extend;
+package com.darcy.Scheme2017MUSE.plain;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
+import Jama.Matrix;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -26,8 +25,7 @@ public class Query2 {
 		try {
 			MySecretKey mySecretKey = Initialization.getMySecretKey();
 			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
-			hacTreeIndexBuilding.encryptFiles();
-			hacTreeIndexBuilding.generateAuxiliaryMatrix();
+
 			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
 			System.out.println(root);
 
@@ -40,13 +38,13 @@ public class Query2 {
 
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
-			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
+			Matrix queryVector = trapdoorGenerating.generateTrapdoor(query);
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-       int requestNumber = 10;
+       int requestNumber = 6;
 			// int requestNumber = 6;
-			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
+			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, queryVector, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
 			for (HACTreeNode node : priorityQueue) {
 				System.out.println(node.fileDescriptor);
@@ -58,17 +56,9 @@ public class Query2 {
 
 			// 验证搜索结果是否包含特定的文档。
 			searchResultVerify(filenameList, keywordPatternStr);
-
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
 			e.printStackTrace();
 		}
 	}
@@ -104,9 +94,9 @@ public class Query2 {
 		return "(" + result.substring(0, result.lastIndexOf('|')) + ")";
 	}
 
+
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-
+		System.out.println("plain search.");
 		test2();
-
 	}
 }

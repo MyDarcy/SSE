@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.extend;
+package com.darcy.Scheme2017MUSE.noextend;
 
 import Jama.Matrix;
 import org.apache.commons.math3.distribution.RealDistribution;
@@ -31,12 +31,6 @@ public class HACTreeIndexBuilding {
 		this.mySecretKey = mySecretKey;
 	}
 
-	// 添加的冗余关键词的权重取值范围
-	// 论文中取值 -0.01~0.01 -0.03~0.03 -0.05~0.05
-	// 最佳取值 -0.01~0.01
-	// 这里我取值 0.005~0.005. 发现搜出来的结果没法看。
-	// 0.02的效果比0.01的效果好。
-	public RealDistribution distribution = new UniformRealDistribution(-0.02, 0.02);
 	public Random random = new Random(31);
 
 	/**
@@ -160,7 +154,9 @@ public class HACTreeIndexBuilding {
 
 			/*MatrixUitls.print(P);*/
 
-			double[] sample = distribution.sample(Initialization.DUMMY_KEYWORD_NUMBER);
+			// 这里设置Dummy-keyword-number置为0;
+			// 所以不能使用realDistribution来生成数据，
+			double[] sample = new double[Initialization.DUMMY_KEYWORD_NUMBER];
 			for (int j = 0; j < (Initialization.DUMMY_KEYWORD_NUMBER); j++) {
 				P.set(0, Initialization.DICTIONARY_SIZE + j, sample[j]);
 			}

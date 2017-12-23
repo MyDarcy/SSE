@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.extend;
+package com.darcy.Scheme2017MUSE.noextend;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -44,7 +44,7 @@ public class Query2 {
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-       int requestNumber = 10;
+       int requestNumber = 6;
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
@@ -58,7 +58,6 @@ public class Query2 {
 
 			// 验证搜索结果是否包含特定的文档。
 			searchResultVerify(filenameList, keywordPatternStr);
-
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -105,6 +104,7 @@ public class Query2 {
 	}
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
+		System.out.println("noextend search.");
 
 		test2();
 

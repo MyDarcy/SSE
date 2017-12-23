@@ -1,0 +1,138 @@
+Query2 start generating trapdoor.
+TrapdoorGenerating trapdoorGenerating start.
+church    	idf-value 	3.71357207
+china     	idf-value 	3.04452244
+hospital  	idf-value 	2.39789527
+performance	idf-value 	2.63905733
+british   	idf-value 	1.79175947
+interview 	idf-value 	1.60943791
+democratic	idf-value 	2.39789527
+citizenship	idf-value 	3.71357207
+broadcasting	idf-value 	3.04452244
+voice     	idf-value 	2.19722458
+generate trapdoor total time:127
+TrapdoorGenerating trapdoorGenerating finished.
+SearchAlgorithm search start.
+score     	0.23388739	thresholdScore      	-Infinity
+left
+score     	4.59358061	thresholdScore      	-Infinity
+left
+score     	4.59358061	thresholdScore      	-Infinity
+left
+score     	1.57828370	thresholdScore      	-Infinity
+left
+< (N-1) add:00156d9892fb27f1d2e100cbdd8a3997f8273781.story
+
+right
+< (N-1) add:001a6162391594e2a8607fba135bdfa154e57904.story
+
+right
+score     	4.11481831	thresholdScore      	-Infinity
+left
+< (N-1) add:00200e794fa41d3f7ce92cbf43e9fd4cd652bb09.story
+
+right
+< (N-1) add:001adf6209be103cb198b8599f236b4d5760a5fe.story
+
+right
+score     	3.86714887	thresholdScore      	-Infinity
+left
+score     	4.14665510	thresholdScore      	-Infinity
+left
+< (N-1) add:0003ad6ef0c37534f80b55b4235108024b407f0b.story
+
+right
+< (N-1) add:0015194573f9b4430319683cde41e4aa17092a9d.story
+
+right
+score     	-2.19285475	thresholdScore      	-Infinity
+left
+< (N-1) add:001ee59c375363263821474d40e4386ab91d5145.story
+
+right
+< (N-1) add:001f9c554f1a29169413d0d2f138212a14c6dcf1.story
+
+right
+score     	0.23388739	thresholdScore      	-Infinity
+left
+score     	0.23388739	thresholdScore      	-Infinity
+left
+score     	-0.06369191	thresholdScore      	-Infinity
+left
+score     	-5.13697216	thresholdScore      	-Infinity
+left
+score     	1.42219292	thresholdScore      	-Infinity
+left
+< (N-1) add:001732b374f362d3961a510da315601e4b5e7e84.story
+
+right
+= (N-1) add:00027e965c8264c35cc1bc55556db388da82b07f.story
+thresholdSocre:-0.47410187841974344
+
+right
+score     	-4.46536646	thresholdScore      	-0.47410188
+score:-4.465366456435562 no bigger than thresholdScore:-0.47410187841974344
+
+right
+score     	0.03149903	thresholdScore      	-0.47410188
+left
+score     	-0.15501171	thresholdScore      	-0.47410188
+left
+== (N) remove:001f9c554f1a29169413d0d2f138212a14c6dcf1.story socre:-0.47410187841974344
+
+right
+right
+score     	-3.07165780	thresholdScore      	0.48787611
+score:-3.0716577971856776 no bigger than thresholdScore:0.48787610586593566
+
+right
+score     	-2.15718557	thresholdScore      	0.48787611
+score:-2.1571855671698055 no bigger than thresholdScore:0.48787610586593566
+
+right
+score     	1.62877611	thresholdScore      	0.48787611
+left
+score     	1.62181104	thresholdScore      	0.48787611
+left
+score     	1.40092667	thresholdScore      	0.48787611
+left
+score     	1.54373403	thresholdScore      	0.48787611
+left
+== (N) remove:00027e965c8264c35cc1bc55556db388da82b07f.story socre:0.48787610586593566
+
+right
+right
+score     	-1.27377855	thresholdScore      	0.74855626
+score:-1.2737785492965372 no bigger than thresholdScore:0.7485562621654465
+
+right
+score     	3.93614492	thresholdScore      	0.74855626
+left
+score     	4.97329373	thresholdScore      	0.74855626
+left
+== (N) remove:00189f37b1c8bdc2b132b40270bb28ffcc622af1.story socre:0.7485562621654465
+
+right
+== (N) remove:001ee59c375363263821474d40e4386ab91d5145.story socre:0.827145544566835
+
+right
+score     	-2.92339560	thresholdScore      	1.43473347
+score:-2.9233955981328412 no bigger than thresholdScore:1.4347334729605916
+
+right
+score     	0.50792442	thresholdScore      	1.43473347
+score:0.5079244185498986 no bigger than thresholdScore:1.4347334729605916
+
+total time:22ms
+SearchAlgorithm search end.
+Query2 priorityQueue.size():10
+001d9259673bd2ffb613217d19b98ca3563874ac.story
+0010c870d3fc53ea7f2a4a50f6496dc2df17e02f.story
+00200e794fa41d3f7ce92cbf43e9fd4cd652bb09.story
+00156d9892fb27f1d2e100cbdd8a3997f8273781.story
+0003ad6ef0c37534f80b55b4235108024b407f0b.story
+0002c17436637c4fe1837c935c04de47adb18e9a.story
+0015194573f9b4430319683cde41e4aa17092a9d.story
+001732b374f362d3961a510da315601e4b5e7e84.story
+001adf6209be103cb198b8599f236b4d5760a5fe.story
+001a6162391594e2a8607fba135bdfa154e57904.story

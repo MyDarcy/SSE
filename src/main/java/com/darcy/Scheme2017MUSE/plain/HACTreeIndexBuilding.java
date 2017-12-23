@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.extend;
+package com.darcy.Scheme2017MUSE.plain;
 
 import Jama.Matrix;
 import org.apache.commons.math3.distribution.RealDistribution;
@@ -8,10 +8,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
@@ -35,75 +32,13 @@ public class HACTreeIndexBuilding {
 	// 论文中取值 -0.01~0.01 -0.03~0.03 -0.05~0.05
 	// 最佳取值 -0.01~0.01
 	// 这里我取值 0.005~0.005. 发现搜出来的结果没法看。
-	// 0.02的效果比0.01的效果好。
-	public RealDistribution distribution = new UniformRealDistribution(-0.02, 0.02);
+	public RealDistribution distribution = new UniformRealDistribution(-0.01, 0.01);
 	public Random random = new Random(31);
 
-	/**
-	 * 求MySecretKey中两个矩阵的转置矩阵和逆矩阵, 因为在构造索引阶段要用。
-	 */
-	public void generateAuxiliaryMatrix() {
-		System.out.println("HACTreeIndexBuilding generateAuxiliaryMatirx start.");
-		long start = System.currentTimeMillis();
-		long nstart = start;
 
-		AuxiliaryMatrix.M1Transpose = mySecretKey.M1.transpose();
-		AuxiliaryMatrix.M2Transpose = mySecretKey.M2.transpose();
-		System.out.println("two transpose:" + (System.currentTimeMillis() - start) + "ms");
+	// 去掉矩阵的求逆和转置运算。
 
-		start = System.currentTimeMillis();
-		AuxiliaryMatrix.M1Inverse = mySecretKey.M1.inverse();
-		AuxiliaryMatrix.M2Inverse = mySecretKey.M2.inverse();
-		System.out.println("two inverse:" + (System.currentTimeMillis() - start) + "ms");
-
-		System.out.println("total time:" + (System.currentTimeMillis() - nstart) + "ms");
-		System.out.println("HACTreeIndexBuilding generateAuxiliaryMatrix finished.");
-	}
-
-	/**
-	 * 加密文档，
-	 * 同时生成name -> fileBytes的映射, 因为要生成消息摘要的使用要用到文档的内容，
-	 * 为了避免两次IO读取操作，所以牺牲了内存的性能。
-	 *
-	 * @throws IOException
-	 * @throws BadPaddingException
-	 * @throws InvalidKeyException
-	 * @throws IllegalBlockSizeException
-	 */
-	public void encryptFiles() throws IOException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-		System.out.println("HACTreeIndexBuilding encryptFiles start.");
-		long start = System.currentTimeMillis();
-		File parentDir = new File(Initialization.PLAIN_DIR);
-		if (parentDir.exists()) {
-			File[] files = parentDir.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				Path path = files[i].toPath();
-				byte[] bytes = Files.readAllBytes(path);
-				// 先缓存加密文件.
-				fileBytesMap.put(files[i].getName(), bytes);
-				// 获取加密后的bytes.
-				byte[] encrypt = EncryptionUtils.encrypt(bytes);
-
-				/*System.out.println(path.getFileName());*/
-				String encryptedFileName = Initialization.ENCRYPTED_DIR + "\\encrypted_" + path.getFileName().toString();
-				// 二进制文件的后缀是.dat
-				encryptedFileName = encryptedFileName.substring(0, encryptedFileName.lastIndexOf('.')) + ".dat";
-
-				/*System.out.println(encryptedFileName);*/
-
-				Files.write(new File(encryptedFileName).toPath(), encrypt);
-
-				// 显示文件加密后的内容.
-				/*byte[] decrypt = EncryptionUtils.decrypt(encrypt);
-				String text = new String(decrypt);
-				System.out.println(text);
-				System.out.println();*/
-			}
-		}
-
-		System.out.println("total time:" + (System.currentTimeMillis() - start) + "ms");
-		System.out.println("HACTreeIndexBuilding encryptFiles finish.");
-	}
+  // 去掉加密操作。
 
 	/**
 	 *  *  HAC-tree中节点u是一个五元组〈VM,PL,PR,FD,sig〉, 其中，u.VM是是一个剪枝向量，u.PL和u.PR分别是指向节点u的左右孩子节点。
@@ -160,60 +95,15 @@ public class HACTreeIndexBuilding {
 
 			/*MatrixUitls.print(P);*/
 
-			double[] sample = distribution.sample(Initialization.DUMMY_KEYWORD_NUMBER);
+			/*double[] sample = distribution.sample(Initialization.DUMMY_KEYWORD_NUMBER);*/
+			double[] sample = new double[Initialization.DUMMY_KEYWORD_NUMBER];
 			for (int j = 0; j < (Initialization.DUMMY_KEYWORD_NUMBER); j++) {
 				P.set(0, Initialization.DICTIONARY_SIZE + j, sample[j]);
 			}
 
-			// 获取可逆矩阵加密后的Matrix.
-			Matrix pa = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
-			Matrix pb = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
 
-			/**
-			 * S[i] = 1, pa[i] + pb[i] = P[i]
-			 * S[i] = 0, pa[i] = pb[i] = P[i]
-			 */
-			for (int j = 0; j < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; j++) {
-				// 置1
-				if (mySecretKey.S.get(j)) {
-					double v1 = random.nextDouble();
-					// 不是简单的v1和 p-v1,
-					pa.set(0, j, P.get(0, j) * v1);
-					pb.set(0, j, P.get(0, j) * (1 - v1));
-
-					// 置0
-				} else {
-					pa.set(0, j, P.get(0, j));
-					pb.set(0, j, P.get(0, j));
-				}
-			}
-
-			/*
-			MatrixUitls.print(pa);
-			MatrixUitls.print(pb);
-			System.out.println();
-			*/
-
-			// 获取消息摘要.
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-			byte[] keyBytes = mySecretKey.secretKey.getEncoded();
-
-			byte[] fileBytes = fileBytesMap.get(files[i].getName());
-			byte[] bytes = new byte[keyBytes.length + fileBytes.length];
-			System.arraycopy(keyBytes, 0, bytes, 0, keyBytes.length);
-			System.arraycopy(fileBytes, 0, bytes, keyBytes.length, fileBytes.length);
-			messageDigest.update(bytes);
-
-			Matrix paEncrypted = pa.times(AuxiliaryMatrix.M1Transpose);
-			Matrix pbEncrypted = pb.times(AuxiliaryMatrix.M2Transpose);
-
-			// 存疑, 中心向量向上构造的过程中.最开始的中心向量的选择，因为原来的
-			// 剪枝向量已经用两个转置矩阵加密了。
-			HACTreeNode currentNode = new HACTreeNode(paEncrypted, pbEncrypted, P, 1,
-					null, null, files[i].getName(), messageDigest);
-
-			/*HACTreeNode currentNode = new HACTreeNode(P, P, 1,
-					null, null, files[i].getName(), files[i].getName());*/
+			HACTreeNode currentNode = new HACTreeNode(P, P, 1,
+					null, null, files[i].getName(), files[i].getName());
 			/*System.out.println(currentNode);*/
 
 			currentProcessingHACTreeNodeSet.add(currentNode);
@@ -230,7 +120,7 @@ public class HACTreeIndexBuilding {
 			/*System.out.println();*/
 			while (currentProcessingHACTreeNodeSet.size() > 1) {
 				HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
-				List<Matrix> parentNodePruningVectors = getParentNodePruningVector(mostCorrespondNodePair);
+				Matrix parentNodePruningVector = getParentNodePruningVector(mostCorrespondNodePair);
 
 				/*MatrixUitls.print(parentNodePruningVectors.get(0));
 				MatrixUitls.print(parentNodePruningVectors.get(1));*/
@@ -238,8 +128,8 @@ public class HACTreeIndexBuilding {
 				Matrix parentNodeCenterVector = getParentNodeCenterVector(mostCorrespondNodePair);
 				int parentNumberOfNodeInCurrentCluster = mostCorrespondNodePair.node1.numberOfNodeInCurrentCluster
 						+ mostCorrespondNodePair.node2.numberOfNodeInCurrentCluster;
-				// 存疑，这样构造出来的剪枝向量有效吗？
-				HACTreeNode parentNode = new HACTreeNode(parentNodePruningVectors.get(0), parentNodePruningVectors.get(1),
+
+				HACTreeNode parentNode = new HACTreeNode(parentNodePruningVector,
 						parentNodeCenterVector, parentNumberOfNodeInCurrentCluster,
 						mostCorrespondNodePair.node1, mostCorrespondNodePair.node2, null, null);
 				currentProcessingHACTreeNodeSet.remove(mostCorrespondNodePair.node1);
@@ -318,14 +208,12 @@ public class HACTreeIndexBuilding {
 	 * @param pair
 	 * @return
 	 */
-	public List<Matrix> getParentNodePruningVector(HACTreeNodePair pair) {
-		Matrix parent1 = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
-		Matrix parent2 = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
+	public Matrix getParentNodePruningVector(HACTreeNodePair pair) {
+		Matrix parent = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
-			parent1.set(0, i, Double.max(pair.node1.pruningVectorPart1.get(0, i), pair.node2.pruningVectorPart1.get(0, i)));
-			parent2.set(0, i, Double.max(pair.node1.pruningVectorPart2.get(0, i), pair.node2.pruningVectorPart2.get(0, i)));
+			parent.set(0, i, Double.max(pair.node1.pruningVector.get(0, i), pair.node2.pruningVector.get(0, i)));
 		}
-		return Arrays.asList(parent1, parent2);
+		return parent;
 	}
 
 	/**
@@ -379,10 +267,6 @@ public class HACTreeIndexBuilding {
 	public static void main(String[] args) throws IOException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException, NoSuchAlgorithmException {
 		MySecretKey mySecretKey = Initialization.getMySecretKey();
 		HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
-
-		// 在加密文件之前，需要先加密文档、生成辅助索引。
-		hacTreeIndexBuilding.encryptFiles();
-		hacTreeIndexBuilding.generateAuxiliaryMatrix();
 
 		// test2
 		long start = System.currentTimeMillis();

@@ -1,7 +1,7 @@
 package com.darcy.Scheme2016FineGrained.test;
 
-import com.darcy.Scheme2016FineGrained.utils.EncryptionUtils;
 import com.darcy.Scheme2016FineGrained.base.Initialization;
+import com.darcy.Scheme2016FineGrained.utils.EncryptionUtils;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

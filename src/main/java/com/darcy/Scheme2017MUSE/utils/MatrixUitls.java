@@ -1,6 +1,9 @@
 package com.darcy.Scheme2017MUSE.utils;
 
 import Jama.Matrix;
+import org.ujmp.core.doublematrix.calculation.entrywise.creators.Rand;
+
+import java.util.Random;
 
 /*
  * author: darcy
@@ -17,6 +20,17 @@ public class MatrixUitls {
 			}
 			System.out.println();
 		}
+	}
+
+	public static Matrix generateMatrix(int n, int m) {
+		Random random = new Random(System.currentTimeMillis());
+		double[][] doubles = new double[n][m];
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				doubles[i][j] = random.nextDouble();
+			}
+		}
+		return new Matrix(doubles);
 	}
 
 	public static String dimension(Matrix matrix) {

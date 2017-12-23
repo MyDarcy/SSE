@@ -1,6 +1,7 @@
 package com.darcy.Scheme2017MUSE.plain;
 
 import Jama.Matrix;
+import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 
@@ -93,7 +94,7 @@ public class HACTreeIndexBuilding {
 				}
 			}
 
-			/*MatrixUitls.print(P);*/
+			MatrixUitls.print(P);
 
 			/*double[] sample = distribution.sample(Initialization.DUMMY_KEYWORD_NUMBER);*/
 			double[] sample = new double[Initialization.DUMMY_KEYWORD_NUMBER];
@@ -108,10 +109,6 @@ public class HACTreeIndexBuilding {
 
 			currentProcessingHACTreeNodeSet.add(currentNode);
 		}
-
-		/**
-		 * 到这里已经加密了一轮文档,
-		 */
 
 		System.out.println("start construct hac-tree.");
 		int round = 1;

@@ -2,7 +2,6 @@ package com.darcy.Scheme2016FineGrained.test;
 
 import Jama.Matrix;
 
-import java.util.Arrays;
 import java.util.Random;
 
 /*

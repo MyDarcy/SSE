@@ -16,6 +16,8 @@ import java.util.PriorityQueue;
 public class SearchAlgorithm {
 
 	double thresholdScore = Double.NEGATIVE_INFINITY;
+	private Comparator<HACTreeNode> maxComparator;
+	private Comparator<HACTreeNode> minComparator;
 
 	/**
 	 * 实现方式1: 采用堆的性性质.
@@ -28,8 +30,22 @@ public class SearchAlgorithm {
 	public PriorityQueue<HACTreeNode> search(HACTreeNode root, Matrix queryVector, int requestNumber) {
 		System.out.println("SearchAlgorithm search start.");
 		long start = System.currentTimeMillis();
-		PriorityQueue<HACTreeNode> minHeap = new PriorityQueue<>(new Comparator<HACTreeNode>() {
+		minComparator = new Comparator<HACTreeNode>() {
+
 			@Override
+			public int compare(HACTreeNode o1, HACTreeNode o2) {
+				double s1 = scoreForPruning(o1, queryVector);
+				double s2 = scoreForPruning(o2, queryVector);
+				if (s1 > s2) {
+					return 1;
+				} else if (s1 < s2) {
+					return -1;
+				} else {
+					return 0;
+				}
+			}
+
+			/*@Override
 			public int compare(HACTreeNode o1, HACTreeNode o2) {
 				double score1 = scoreForPruning(o1, queryVector);
 				double score2 = scoreForPruning(o2, queryVector);
@@ -40,15 +56,27 @@ public class SearchAlgorithm {
 				} else {
 					return -1;
 				}
-			}
-		});
-
-		dfs(root, queryVector, requestNumber, minHeap);
+			}*/
+		};
 
 		// 既然这个就是跟查询之间相关性评分最高的文档. 那么只需要利用此优先级队列或者相反的
 		// 优先级队列就可以求出最不相关的文档.
-		PriorityQueue maxHeap = new PriorityQueue(new Comparator<HACTreeNode>() {
+		maxComparator = new Comparator<HACTreeNode>() {
+
 			@Override
+			public int compare(HACTreeNode o1, HACTreeNode o2) {
+				double s1 = scoreForPruning(o1, queryVector);
+				double s2 = scoreForPruning(o2, queryVector);
+				if (s1 > s2) {
+					return -1;
+				} else if (s1 < s2) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+
+			/*@Override
 			public int compare(HACTreeNode node1, HACTreeNode node2) {
 				double score1 = scoreForPruning(node1, queryVector);
 				double score2 = scoreForPruning(node2, queryVector);
@@ -59,14 +87,26 @@ public class SearchAlgorithm {
 				} else {
 					return 1;
 				}
-			}
-		});
+			}*/
+		};
+
+		PriorityQueue<HACTreeNode> minHeap = new PriorityQueue<>(minComparator);
+		dfs(root, queryVector, requestNumber, minHeap);
+		PriorityQueue<HACTreeNode> maxHeap = new PriorityQueue(maxComparator);
 		maxHeap.addAll(minHeap);
 		// 服务器端排序，然后返回top-K个最相关的文档.
 
 		System.out.println("total time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("SearchAlgorithm search end.");
-		return maxHeap;
+
+		PriorityQueue<HACTreeNode> result = new PriorityQueue<>(maxComparator);
+		while (!maxHeap.isEmpty()) {
+			HACTreeNode node = maxHeap.poll();
+			result.add(node);
+			System.out.printf("%-60s%.8f\n", node.fileDescriptor,scoreForPruning(node, queryVector));
+		}
+
+		return result;
 	}
 
 	private void dfs(HACTreeNode root, Matrix queryVecotr, int requestNumber, PriorityQueue<HACTreeNode> minHeap) {

@@ -21,6 +21,25 @@ import static java.util.stream.Collectors.toList;
 */
 public class Query2 {
 
+	public static void test1() {
+		try {
+			MySecretKey mySecretKey = Initialization.getMySecretKey();
+			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
+			hacTreeIndexBuilding.buildHACTreeIndex();
+
+			String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
+
+			System.out.println("Query2 start generating trapdoor.");
+			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
+			trapdoorGenerating.generateTrapdoor(query);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void test2() {
 		try {
 			MySecretKey mySecretKey = Initialization.getMySecretKey();
@@ -46,9 +65,10 @@ public class Query2 {
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, queryVector, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
-			for (HACTreeNode node : priorityQueue) {
+			/*for (HACTreeNode node : priorityQueue) {
 				System.out.println(node.fileDescriptor);
-			}
+			}*/
+			System.out.println();
 
 			List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
 
@@ -75,7 +95,10 @@ public class Query2 {
 			while (matcher.find()) {
 				String keyword = matcher.group().toLowerCase();
 				/*System.out.println(filenameArray[i] + "\t" + keyword + "\t" + Initialization.keywordFrequencyInDocument.get(filenameArray[i]).get(keyword) + "\t" + "documentNumber\t" + Initialization.numberOfDocumentContainsKeyword.get(keyword));*/
-				System.out.printf("%-60s\t%-15s\t%-10s%-15s\t%10s\n", filenameList.get(i), keyword,
+				/*System.out.printf("%-60s\t%-15s\t%-10s%-15s\t%10s\n", filenameList.get(i), keyword,
+						Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
+						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));*/
+				System.out.printf("%-15s\t%-10s%-15s\t%10s\n", keyword,
 						Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
 						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));
 				count++;
@@ -97,6 +120,9 @@ public class Query2 {
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
 		System.out.println("plain search.");
+
+		/*test1();*/
+
 		test2();
 	}
 }

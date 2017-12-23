@@ -1,8 +1,7 @@
 package com.darcy.Scheme2017MUSE.noextend;
 
 import Jama.Matrix;
-import org.apache.commons.math3.distribution.RealDistribution;
-import org.apache.commons.math3.distribution.UniformRealDistribution;
+import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -31,7 +30,8 @@ public class HACTreeIndexBuilding {
 		this.mySecretKey = mySecretKey;
 	}
 
-	public Random random = new Random(31);
+	public Random random = new Random(System.currentTimeMillis());
+
 
 	/**
 	 * 求MySecretKey中两个矩阵的转置矩阵和逆矩阵, 因为在构造索引阶段要用。
@@ -152,7 +152,7 @@ public class HACTreeIndexBuilding {
 				}
 			}
 
-			/*MatrixUitls.print(P);*/
+			MatrixUitls.print(P);
 
 			// 这里设置Dummy-keyword-number置为0;
 			// 所以不能使用realDistribution来生成数据，
@@ -172,10 +172,16 @@ public class HACTreeIndexBuilding {
 			for (int j = 0; j < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; j++) {
 				// 置1
 				if (mySecretKey.S.get(j)) {
-					double v1 = random.nextDouble();
-					// 不是简单的v1和 p-v1,
-					pa.set(0, j, P.get(0, j) * v1);
-					pb.set(0, j, P.get(0, j) * (1 - v1));
+					/*double rand = random.nextDouble();
+					double va = P.get(0, j) * rand;
+					double vb = P.get(0, j) * (1 - rand);
+					pa.set(0, j, va);
+					pb.set(0, j, vb);*/
+
+					double rand = random.nextDouble();
+					double v = 1.0 / 2.0 * P.get(0, j);
+					pa.set(0, j, v - rand);
+					pb.set(0, j, v - rand);
 
 					// 置0
 				} else {

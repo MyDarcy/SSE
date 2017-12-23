@@ -1,6 +1,7 @@
 package com.darcy.Scheme2017MUSE.plain;
 
 import Jama.Matrix;
+import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 
 import java.io.IOException;
 import java.util.*;
@@ -51,11 +52,14 @@ public class TrapdoorGenerating {
 			String keyword = keywordList.get(i);
 			int index = Initialization.dict.indexOf(keyword);
 			if (index != -1) {
-				System.out.printf("%-10s\t%-10s\t%.8f\n", keyword, "idf-value", idfs.get(keyword));
+				System.out.printf("%-30s\t%-10s\t%.8f\n", keyword, "idf-value", idfs.get(keyword));
 				Q.set(index, 0, idfs.get(keyword));
 				/*System.out.printf("%-10s\t%-10s\t%.8f\n", keyword, "Q.get(index, 0)", Q.get(index, 0));*/
 			}
 		}
+
+		System.out.println("Q transpose.");
+		MatrixUitls.print(Q.transpose());
 
 		System.out.println("generate trapdoor total time:" + (System.currentTimeMillis() - start));
 		System.out.println("TrapdoorGenerating trapdoorGenerating finished.");

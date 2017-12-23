@@ -35,10 +35,13 @@ public class Initialization {
 	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	// 密钥目录
 	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	// 明文文件目录
+
+	// 明文文件目录 	密文文件目录. 40个文件
 	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
-	// 密文文件目录.
 	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
+	/*// 明文文件目录 	密文文件目录. 16个文件
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain16";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted16";*/
 
 	// 匹配关键词
 	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
@@ -195,6 +198,27 @@ public class Initialization {
 		System.out.println("fileLength:" + fileLength);
 		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
 		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
+
+		Map<String, Integer> duplicateNumberOfDocumentContainsKeyword = new HashMap<>();
+		for (Map.Entry<String, Integer> entry : numberOfDocumentContainsKeyword.entrySet()) {
+			duplicateNumberOfDocumentContainsKeyword.put(new String(entry.getKey()), new Integer(entry.getValue()));
+		}
+		List<Map.Entry<String, Integer>> duplicate = new ArrayList<>(duplicateNumberOfDocumentContainsKeyword.entrySet());
+		Collections.sort(duplicate, new Comparator<Map.Entry<String, Integer>>() {
+			@Override
+			public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+				if (Integer.compare(o1.getValue(), o2.getValue()) > 0) {
+					return -1;
+				} else if (Integer.compare(o1.getValue(), o2.getValue()) == 0) {
+					return 0;
+				} else {
+					return 1;
+				}
+			}
+		});
+
+		System.out.println("keyword - documentNumber");
+		System.out.println(duplicate);
 
 		// 测试关键词频率map中的结果是否和fileLength中数值相等.
 		boolean result = testInfo(fileLength, keywordFrequencyInDocument);

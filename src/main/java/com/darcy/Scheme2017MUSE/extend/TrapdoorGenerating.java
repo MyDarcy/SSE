@@ -55,10 +55,12 @@ public class TrapdoorGenerating {
 			if (index != -1) {
 				System.out.printf("%-10s\t%-10s\t%.8f\n", keyword, "idf-value", idfs.get(keyword));
 				Q.set(index, 0, idfs.get(keyword));
+				/*System.out.printf("%-10s\t%-10s\t%.8f\n", keyword, "Q.get(index, 0)", Q.get(index, 0));*/
 			}
 		}
 
-		MatrixUitls.print(Q.transpose());
+		/*System.out.println("Q Qa Qb transponse.");
+		MatrixUitls.print(Q.transpose());*/
 
 
 		Random random = new Random(31);
@@ -81,8 +83,8 @@ public class TrapdoorGenerating {
 			}
 		}
 
-		MatrixUitls.print(qa.transpose());
-		MatrixUitls.print(qb.transpose());
+		/*MatrixUitls.print(qa.transpose());
+		MatrixUitls.print(qb.transpose());*/
 
 		/*System.out.println(mySecretKey.M1.getRowDimension() + "\t" + mySecretKey.M2.getColumnDimension());
 		System.out.println(inverseM1.getRowDimension() + "\t" +inverseM2.getColumnDimension());
@@ -90,7 +92,7 @@ public class TrapdoorGenerating {
 
 		Matrix part1 = AuxiliaryMatrix.M1Inverse.times(qa);
 		Matrix part2 = AuxiliaryMatrix.M2Inverse.times(qb);
-		System.out.println("total time:" + (System.currentTimeMillis() - start));
+		System.out.println("generate trapdoor total time:" + (System.currentTimeMillis() - start));
 		System.out.println("TrapdoorGenerating trapdoorGenerating finished.");
 		return new Trapdoor(part1, part2);
 	}

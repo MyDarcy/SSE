@@ -76,19 +76,29 @@ public class SearchAlgorithm {
 		if (root.left == null && root.right == null) {
 			// 并且候选结果集合中没有top-K个元素.
 			if (minHeap.size() < requestNumber - 1) {
+				System.out.println("< (N-1) add:" + root.fileDescriptor);
+				System.out.println();
+
 				minHeap.add(root);
 
 				// 已经找到了 N-1个文档，然后将当前文档加入, 但是要更新现在的阈值评分.
 			} else if (minHeap.size() == (requestNumber - 1)) {
 				minHeap.add(root);
+				System.out.println("= (N-1) add:" + root.fileDescriptor);
 				thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
 				System.out.println("thresholdSocre:" + thresholdScore);
+				System.out.println();
+
 				// 仍然时叶子节点，但是候选结果集合中已经有了N个文档.
 			} else {
 				// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
 				// 候选结果集合的。
 				if (scoreForPruning(root, trapdoor) > thresholdScore) {
 					HACTreeNode minScoreNode = minHeap.poll();
+					double score = scoreForPruning(minScoreNode, trapdoor);
+					System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
+					System.out.println();
+
 					minHeap.add(root);
 					thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
 				}
@@ -102,12 +112,18 @@ public class SearchAlgorithm {
 			System.out.printf("%-10s\t%.8f\t%-20s\t%.8f\n", "score", score, "thresholdScore", thresholdScore);
 			if (score > thresholdScore) {
 				if (root.left != null) {
+					System.out.println("left");
 					dfs(root.left, trapdoor, requestNumber, minHeap);
 				}
 				if (root.right != null) {
+					System.out.println("right");
 					dfs(root.right, trapdoor, requestNumber, minHeap);
 				}
+			} else {
+				System.out.println("score:" + score + " no bigger than thresholdScore:" + thresholdScore);
+				System.out.println();
 			}
+
 		}
 	}
 

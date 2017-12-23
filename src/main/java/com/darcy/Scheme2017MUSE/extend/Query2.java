@@ -26,14 +26,21 @@ public class Query2 {
 			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
 			System.out.println(root);
 
-			String query = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
+			// for-16
+			// String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
+
+			// for-40
+      // String query = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
+			String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
 
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
 			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
-			int requestNumber = 10;
+			// for-40
+       int requestNumber = 10;
+			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
 			for (HACTreeNode node : priorityQueue) {

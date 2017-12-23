@@ -1,11 +1,17 @@
 package com.darcy.auxiliary;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /*
  * author: darcy
  * date: 2017/12/20 15:52
  * description: 
 */
 public class ForNoPurposeTest {
+	public static Pattern pattern = Pattern.compile("\\w+");
+
+
 	public static void main(String[] args) {
 		/**
 		 * 大概153个数字相关的单词, 从长度为 5457 的字典中去掉153个单词作用也非常有限。
@@ -21,12 +27,28 @@ public class ForNoPurposeTest {
 		System.out.println(-100 > Double.NEGATIVE_INFINITY);
 
 		// str = "Pope Francis honorary citizenship Democratic Revolution church president conferences";
-		str = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
+		// str = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
+		// str = "church China hospital performance British interview Democratic citizenship";
+		str = "church China hospital performance British interview Democratic citizenship broadcasting voice";
 		String replaceStr = str.replace(' ', '|');
 		StringBuilder targetStr = new StringBuilder("").append("(").append(replaceStr).append(")");
+		String targetStr2 = getQueryPattern(str);
 		System.out.println(replaceStr);
 		System.out.println(targetStr);
+		System.out.println(targetStr2);
 		// (clinton|broadcasting|voice|Francis|honorary|citizenship|Democratic|Revolution|church|president|conferences)
+		// (church|China|hospital|performance|British|interview|Democratic|citizenship)
+		// (church|China|hospital|performance|British|interview|Democratic|citizenship|broadcasting|voice)
 
+
+	}
+
+	public static String getQueryPattern(String str) {
+		Matcher matcher = pattern.matcher(str);
+		String result = "";
+		while (matcher.find()) {
+			result += matcher.group().toLowerCase() + "|";
+		}
+		return "(" + result.substring(0, result.lastIndexOf('|')) + ")";
 	}
 }

@@ -33,7 +33,11 @@ public class HACTreeIndexBuilding {
 		this.mySecretKey = mySecretKey;
 	}
 
-	public RealDistribution distribution = new UniformRealDistribution(-0.01, 0.01);
+	// 添加的冗余关键词的权重取值范围
+	// 论文中取值 -0.01~0.01 -0.03~0.03 -0.05~0.05
+	// 最佳取值 -0.01~0.01
+	// 这里我取值 0.005~0.005. 发现搜出来的结果没法看。
+	public RealDistribution distribution = new UniformRealDistribution(-0.02, 0.02);
 	public Random random = new Random(31);
 
 	/**
@@ -116,7 +120,8 @@ public class HACTreeIndexBuilding {
 	 * @return
 	 */
 	public HACTreeNode buildHACTreeIndex() throws NoSuchAlgorithmException {
-		System.out.println("HACTreeIndexBuilding buildHACTreeIndex:");
+		System.out.println("HACTreeIndexBuilding buildHACTreeIndex start.");
+		long start = System.currentTimeMillis();
 		Set<HACTreeNode> currentProcessingHACTreeNodeSet = new HashSet<>();
 	  Set<HACTreeNode> newGeneratedHACTreeNodeSet = new HashSet<>();
 
@@ -183,9 +188,12 @@ public class HACTreeIndexBuilding {
 					pb.set(0, j, P.get(0, j));
 				}
 			}
-			/*MatrixUitls.print(pa);
+
+			/*
+			MatrixUitls.print(pa);
 			MatrixUitls.print(pb);
-			System.out.println();*/
+			System.out.println();
+			*/
 
 			// 获取消息摘要.
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
@@ -219,23 +227,24 @@ public class HACTreeIndexBuilding {
 		System.out.println("start construct hac-tree.");
 		int round = 1;
 		while (currentProcessingHACTreeNodeSet.size() > 1) {
-			System.out.println("the " + (round++) + "'s reduce to build tree.");
+			System.out.println("the " + (round++) + "'s round to build tree.");
 			/*System.out.println();*/
 			while (currentProcessingHACTreeNodeSet.size() > 1) {
-				HACTreeNodePair nodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
-				List<Matrix> parentNodePruningVectors = getParentNodePruningVector(nodePair);
+				HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
+				List<Matrix> parentNodePruningVectors = getParentNodePruningVector(mostCorrespondNodePair);
 
 				/*MatrixUitls.print(parentNodePruningVectors.get(0));
 				MatrixUitls.print(parentNodePruningVectors.get(1));*/
 
-				Matrix parentNodeCenterVector = getParentNodeCenterVector(nodePair);
-				int parentNumberOfNodeInCurrentCluster = nodePair.node1.numberOfNodeInCurrentCluster + nodePair.node2.numberOfNodeInCurrentCluster;
+				Matrix parentNodeCenterVector = getParentNodeCenterVector(mostCorrespondNodePair);
+				int parentNumberOfNodeInCurrentCluster = mostCorrespondNodePair.node1.numberOfNodeInCurrentCluster
+						+ mostCorrespondNodePair.node2.numberOfNodeInCurrentCluster;
 				// 存疑，这样构造出来的剪枝向量有效吗？
 				HACTreeNode parentNode = new HACTreeNode(parentNodePruningVectors.get(0), parentNodePruningVectors.get(1),
 						parentNodeCenterVector, parentNumberOfNodeInCurrentCluster,
-						nodePair.node1, nodePair.node2, null, null);
-				currentProcessingHACTreeNodeSet.remove(nodePair.node1);
-				currentProcessingHACTreeNodeSet.remove(nodePair.node2);
+						mostCorrespondNodePair.node1, mostCorrespondNodePair.node2, null, null);
+				currentProcessingHACTreeNodeSet.remove(mostCorrespondNodePair.node1);
+				currentProcessingHACTreeNodeSet.remove(mostCorrespondNodePair.node2);
 				newGeneratedHACTreeNodeSet.add(parentNode);
 			}
 			if (newGeneratedHACTreeNodeSet.size() > 0) {
@@ -247,6 +256,8 @@ public class HACTreeIndexBuilding {
 		System.out.println("currentProcessingHACTreeNodeSet.size():" + currentProcessingHACTreeNodeSet.size());
 		// currentProcessingHACTreeNodeSet中一定是有一个节点的.
 		HACTreeNode root = currentProcessingHACTreeNodeSet.iterator().next();
+		System.out.println("build hac tree index total time:" + (System.currentTimeMillis() - start) + "ms");
+		System.out.println("HACTreeIndexBuilding buildHACTreeIndex finished.");
 		return root;
 	}
 
@@ -331,6 +342,7 @@ public class HACTreeIndexBuilding {
 		return matrix1.get(0, 0) + matrix2.get(0, 0);*/
 
 		// 应该是使用相关性评分来求节点与节点之间的关系。
+		// 节点之间的关系通过聚类中心向量之间的score来体现。
 		Matrix matrix = node1.clusterCenterVector.times(node2.clusterCenterVector.transpose());
 		return matrix.get(0, 0);
 		/*System.out.println(matrix.getRowDimension() + "\t" + matrix.getColumnDimension());*/
@@ -353,7 +365,7 @@ public class HACTreeIndexBuilding {
 	}
 
 	/**
-	 *
+	 * 求tf-idf的分值。
 	 * @param lengthOfFile 文件i的长度.
 	 * @param frequency 当前关键词在文档i中出现的频率.
 	 * @param numberOfDocumentContainsKeyword 有多少个文档包含关键词.
@@ -369,7 +381,7 @@ public class HACTreeIndexBuilding {
 		MySecretKey mySecretKey = Initialization.getMySecretKey();
 		HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
 
-		// 在加密文件之前，需要先加密文档和
+		// 在加密文件之前，需要先加密文档、生成辅助索引。
 		hacTreeIndexBuilding.encryptFiles();
 		hacTreeIndexBuilding.generateAuxiliaryMatrix();
 

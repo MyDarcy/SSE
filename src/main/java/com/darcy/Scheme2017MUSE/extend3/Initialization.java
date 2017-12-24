@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.extend2;
+package com.darcy.Scheme2017MUSE.extend3;
 
 
 import Jama.Matrix;
@@ -40,11 +40,13 @@ public class Initialization {
 	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
 	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";*/
 	// 明文文件目录 	密文文件目录. 16个文件
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain16";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted16";
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
 
 	// 匹配关键词
 	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
+
+	public static final Random RANDOM = new Random(System.currentTimeMillis());
 
 	// 加密原语等.
 	public static Cipher cipher;
@@ -134,6 +136,8 @@ public class Initialization {
 			}
 		}
 	}
+
+	public static List<String> extendDummyDict;
 
 
 	public static MySecretKey getMySecretKey() throws IOException {
@@ -231,19 +235,26 @@ public class Initialization {
 
 		// 初始化字典的长度和字典本身.
 		Initialization.lengthOfDict = dict.size();
+
+		Initialization.DICTIONARY_SIZE = lengthOfDict;
+		// 拓展字典
+		extendDummyDict = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
+		dict.addAll(extendDummyDict);
+
+		// 现在拓展的关键词不在末尾而是按序排在合适的位置.
+		dict = dict.stream().sorted().collect(toList());
 		Initialization.dict = dict;
 
-		Initialization.DICTIONARY_SIZE = dict.size();
-		// 拓展字典
-		List<String> extendDictPart = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
-		dict.addAll(extendDictPart);
+		// 问题是p'*q' + p"*q" = p * q, 虽然p拓展到了n+e维度, 但是问题在于
+		// q向量中冗余关键词并没有设置相应的位(虽然也是n+e维度， )，那么
+		System.out.println("add dummy keywords dict.size():" + Initialization.dict.size());
 
 		/*Arrays.stream(parentFile.listFiles()).map(File::toPath).flatMap(Files::readAllLines).collect()*/
 
 		MySecretKey sk = new MySecretKey();
 
 		BitSet bitSet = new BitSet(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-		Random random = new Random(31);
+		Random random = new Random(System.currentTimeMillis());
 		for (int i = 0; i < (DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER); i++) {
 			if (random.nextBoolean()) {
 				bitSet.set(i);

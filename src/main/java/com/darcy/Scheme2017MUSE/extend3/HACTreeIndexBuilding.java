@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.extend2;
+package com.darcy.Scheme2017MUSE.extend3;
 
 import Jama.Matrix;
 import org.apache.commons.math3.distribution.RealDistribution;
@@ -161,7 +161,16 @@ public class HACTreeIndexBuilding {
 			/*MatrixUitls.print(P);*/
 
 			double[] sample = distribution.sample(Initialization.DUMMY_KEYWORD_NUMBER);
-			for (int j = 0; j < (Initialization.DUMMY_KEYWORD_NUMBER); j++) {
+			for (int j = 0; j < Initialization.DUMMY_KEYWORD_NUMBER; j++) {
+				String str = Initialization.extendDummyDict.get(j);
+				int index = Initialization.dict.indexOf(str);
+				System.out.printf("%-20s%-8d%-20s%.8f\n", "index", index, str, sample[j]);
+				if (index != -1) {
+					P.set(index, 0, sample[j]);
+				}
+			}
+
+			/*for (int j = 0; j < (Initialization.DUMMY_KEYWORD_NUMBER); j++) {
 				P.set(Initialization.DICTIONARY_SIZE + j, 0, sample[j]);
 			}
 
@@ -172,7 +181,7 @@ public class HACTreeIndexBuilding {
 				System.out.print(P.get(Initialization.DICTIONARY_SIZE + j, 0) + "\t");
 			}
 			System.out.println("\ndistrubtion elements sum:" + sum);
-			System.out.println("\n");
+			System.out.println("\n");*/
 
 			// 获取可逆矩阵加密后的Matrix.
 			Matrix pa = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);

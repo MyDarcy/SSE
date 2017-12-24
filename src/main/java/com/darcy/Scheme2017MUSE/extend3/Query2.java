@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.extend2;
+package com.darcy.Scheme2017MUSE.extend3;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -44,7 +44,7 @@ public class Query2 {
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-       int requestNumber = 6;
+       int requestNumber = 10;
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
@@ -107,7 +107,7 @@ public class Query2 {
 	}
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-		System.out.println("extend2 search.");
+		System.out.println("extend3 search.");
 		test2();
 
 	}

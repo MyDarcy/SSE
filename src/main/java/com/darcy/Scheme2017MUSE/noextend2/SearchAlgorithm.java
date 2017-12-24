@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.noextend;
+package com.darcy.Scheme2017MUSE.noextend2;
 
 import java.util.*;
 
@@ -14,7 +14,7 @@ public class SearchAlgorithm {
 	double thresholdScore = Double.NEGATIVE_INFINITY;
 	private Comparator<HACTreeNode> minComparator;
 	private Comparator<HACTreeNode> maxComparator;
-	private Map<HACTreeNode, Double> allDocumentScoreMap;
+	private PriorityQueue<HACTreeNode> allDocumentScoreQueue;
 	private int leafNodeCount = 0;
 
 	/**
@@ -88,7 +88,7 @@ public class SearchAlgorithm {
 			}*/
 		};
 
-		allDocumentScoreMap = new TreeMap<>(maxComparator);
+		allDocumentScoreQueue = new PriorityQueue<>(maxComparator);
 		PriorityQueue<HACTreeNode> minHeap = new PriorityQueue<>(minComparator);
 		dfs(root, trapdoor, requestNumber, minHeap);
 		PriorityQueue<HACTreeNode> maxHeap = new PriorityQueue(maxComparator);
@@ -101,11 +101,12 @@ public class SearchAlgorithm {
 		System.out.println("leafNodeCount:" + leafNodeCount);
 
 		System.out.println("all document-score.");
-		for (HACTreeNode node : allDocumentScoreMap.keySet()) {
-			System.out.printf("%-60s%.8f\n", node.fileDescriptor, allDocumentScoreMap.get(node));
+		while (!allDocumentScoreQueue.isEmpty()) {
+			HACTreeNode node = allDocumentScoreQueue.poll();
+			System.out.printf("%-60s%.8f\n", node.fileDescriptor, scoreForPruning(node, trapdoor));
 		}
 
-		System.out.println("\n result document-score.");
+		System.out.println("\nresult document-score.");
 
 		PriorityQueue<HACTreeNode> result = new PriorityQueue<>(maxComparator);
 		while (!maxHeap.isEmpty()) {
@@ -122,7 +123,7 @@ public class SearchAlgorithm {
 			// 并且候选结果集合中没有top-K个元素.
 			int size = minHeap.size();
 			if (size < requestNumber - 1) {
-				allDocumentScoreMap.put(root, scoreForPruning(root, trapdoor));
+				allDocumentScoreQueue.add(root);
 				System.out.println("< (N-1) add:" + root.fileDescriptor);
 				System.out.println();
 
@@ -130,7 +131,7 @@ public class SearchAlgorithm {
 
 				// 已经找到了 N-1个文档，然后将当前文档加入, 但是要更新现在的阈值评分.
 			} else if (size == (requestNumber - 1)) {
-				allDocumentScoreMap.put(root, scoreForPruning(root, trapdoor));
+				allDocumentScoreQueue.add(root);
 				minHeap.add(root);
 				System.out.println("= (N-1) add:" + root.fileDescriptor);
 				thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
@@ -142,7 +143,7 @@ public class SearchAlgorithm {
 				// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
 				// 候选结果集合的。
 				double nodeScore = scoreForPruning(root, trapdoor);
-				allDocumentScoreMap.put(root, nodeScore);
+				allDocumentScoreQueue.add(root);
 				if (nodeScore > thresholdScore) {
 					HACTreeNode minScoreNode = minHeap.poll();
 					double score = scoreForPruning(minScoreNode, trapdoor);
@@ -206,8 +207,8 @@ public class SearchAlgorithm {
 	 */
 	private double scoreForPruning(HACTreeNode root, Trapdoor trapdoor) {
 		/*return root.pruningVector.times(queryVector).get(0, 0);*/
-		return root.pruningVectorPart1.times(trapdoor.trapdoorPart1).get(0, 0)
-				+ root.pruningVectorPart2.times(trapdoor.trapdoorPart2).get(0, 0);
+		return root.pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
+				+ root.pruningVectorPart2.transpose().times(trapdoor.trapdoorPart2).get(0, 0);
 	}
 
 
@@ -223,8 +224,8 @@ public class SearchAlgorithm {
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < resultList.size(); i++) {
 			/*double score = resultList.get(i).pruningVector.times(queryVector).get(0, 0);*/
-			double score = resultList.get(i).pruningVectorPart1.times(trapdoor.trapdoorPart1).get(0, 0)
-					+ resultList.get(i).pruningVectorPart2.times(trapdoor.trapdoorPart2).get(0, 0);
+			double score = resultList.get(i).pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
+					+ resultList.get(i).pruningVectorPart2.transpose().times(trapdoor.trapdoorPart2).get(0, 0);
 			// 更新最小相关性评分.
 			if (score < min) {
 				min = score;

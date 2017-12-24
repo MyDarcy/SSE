@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.noextend;
+package com.darcy.Scheme2017MUSE.noextend2;
 
 import Jama.Matrix;
 import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
@@ -69,7 +69,7 @@ public class TrapdoorGenerating {
 
 
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
-			// S[i] == 1;
+			// S[i] == 1 相加
 			if (mySecretKey.S.get(i)) {
 				double rand = random.nextDouble();
 				/*double va = Q.get(i, 0) * rand;
@@ -81,7 +81,7 @@ public class TrapdoorGenerating {
 				qa.set(i, 0, v + rand);
 				qb.set(i, 0, v - rand);
 
-				//S[i] == 0;
+				//S[i] == 0 相等
 			} else {
 				qa.set(i, 0, Q.get(i, 0));
 				qb.set(i, 0, Q.get(i, 0));

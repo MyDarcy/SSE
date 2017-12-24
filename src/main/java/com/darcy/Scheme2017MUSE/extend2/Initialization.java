@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.plain;
+package com.darcy.Scheme2017MUSE.extend2;
 
 
 import Jama.Matrix;
@@ -29,26 +29,19 @@ public class Initialization {
 	// 从文档中提取的关键词的数目
 	public static int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
-	public static final int DUMMY_KEYWORD_NUMBER = 0;
+	public static final int DUMMY_KEYWORD_NUMBER = 10;
 
 	// 项目目录.
 	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	// 密钥目录
-	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\plain\\key\\aesKey.dat";
+	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
 
 	// 明文文件目录 	密文文件目录. 40个文件
-	// public static final String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";
-	// public static final String PLAIN_DIR = "D:\\MrDarcy\\ForGraduationWorks\\Data\\cnn_stories\\cnn_splitting16_10";
-	// public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\plain\\encrypted40";
-
-
-	// 明文文件目录 	密文文件目录. 16个文件
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\plain\\encrypted40";
-
-	/*// 明文文件目录，密文文件目录 100个文件。
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain100";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\plain\\encrypted100";*/
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
+	/*// 明文文件目录 	密文文件目录. 16个文件
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain16";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted16";*/
 
 	// 匹配关键词
 	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
@@ -181,7 +174,7 @@ public class Initialization {
 						}
 					}
 				}
-				// 利用当前文档的关键词集合来更新总的字典集合。
+        // 利用当前文档的关键词集合来更新总的字典集合。
 				globalDictSet.addAll(currentDocumentSet);
 				// 当前文档处理完毕,那么缓存当前文档的长度.
 				fileLength.put(files[i].getName(), wordCount);
@@ -203,8 +196,6 @@ public class Initialization {
 		// System.out.println("manage documents time consume:" + (System.currentTimeMillis() - start1));
 
 		System.out.println("fileLength:" + fileLength);
-		System.out.println("filenumbers:" + fileLength.size());
-
 		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
 		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
 
@@ -260,7 +251,7 @@ public class Initialization {
 		}
 		// 设置了该位， 此BitSet的长度才是 (DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1)的长度.
 		bitSet.set(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-		System.out.println("bitSet.length:" + bitSet.length());
+		System.out.println("bitSet.length:"+ bitSet.length());
 
 		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
@@ -292,7 +283,6 @@ public class Initialization {
 
 	/**
 	 * 测试fileLength和 keywordFrequencyInDocument中的信息是否匹配。
-	 *
 	 * @param fileLength
 	 * @param keywordFrequencyInDocument
 	 * @return
@@ -383,12 +373,12 @@ public class Initialization {
 		MySecretKey mySecretKey = Initialization.getMySecretKey();
 		System.out.println(mySecretKey);
 
-		/*long start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
 		mySecretKey.M1.transpose();
 		System.out.println("Matrix transpose time consume:" + (System.currentTimeMillis() - start) + "ms");
 		start = System.currentTimeMillis();
 		mySecretKey.M1.inverse();
-		System.out.println("Matrix reverse time consume:" + (System.currentTimeMillis() - start) + "ms");*/
+		System.out.println("Matrix reverse time consume:" + (System.currentTimeMillis() - start) + "ms");
 
 
 		System.out.println();

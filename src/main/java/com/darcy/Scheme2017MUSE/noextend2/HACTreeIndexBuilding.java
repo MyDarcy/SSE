@@ -1,7 +1,6 @@
-package com.darcy.Scheme2017MUSE.noextend;
+package com.darcy.Scheme2017MUSE.noextend2;
 
 import Jama.Matrix;
-import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -124,7 +123,7 @@ public class HACTreeIndexBuilding {
 		for (int i = 0; i < files.length; i++) {
 			System.out.println(files[i].getName());
 
-			Matrix P = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
+			Matrix P = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 
 			// 当前文档的长度.
 			int lengthOfFile = Initialization.fileLength.get(files[i].getName());
@@ -148,7 +147,7 @@ public class HACTreeIndexBuilding {
 					/*System.out.printf("%-20s %10s  %-10s %-15s %-10s\n", "key", "freq", "molecule", "denominator", "tfValue");
 					System.out.printf("%-20s %10d  %-10f %-15f %-10f\n", key, keywordFrequencyInCurrentDocument.get(key)
 							,molecule, denominator, tfValue);*/
-					P.set(0, index, tfValue);
+					P.set(index, 0, tfValue);
 				}
 			}
 
@@ -158,35 +157,29 @@ public class HACTreeIndexBuilding {
 			// 所以不能使用realDistribution来生成数据，
 			double[] sample = new double[Initialization.DUMMY_KEYWORD_NUMBER];
 			for (int j = 0; j < (Initialization.DUMMY_KEYWORD_NUMBER); j++) {
-				P.set(0, Initialization.DICTIONARY_SIZE + j, sample[j]);
+				P.set(Initialization.DICTIONARY_SIZE + j, 0, sample[j]);
 			}
 
 			// 获取可逆矩阵加密后的Matrix.
-			Matrix pa = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
-			Matrix pb = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
+			Matrix pa = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
+			Matrix pb = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 
 			/**
-			 * S[i] = 1, pa[i] + pb[i] = P[i]
-			 * S[i] = 0, pa[i] = pb[i] = P[i]
+			 * S[i] = 0, pa[i] + pb[i] = P[i]
+			 * S[i] = 1, pa[i] = pb[i] = P[i]
 			 */
 			for (int j = 0; j < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; j++) {
-				// 置0
+				// 置0相加
 				if (!mySecretKey.S.get(j)) {
-					/*double rand = random.nextDouble();
-					double va = P.get(0, j) * rand;
-					double vb = P.get(0, j) * (1 - rand);
-					pa.set(0, j, va);
-					pb.set(0, j, vb);*/
-
 					double rand = random.nextDouble();
-					double v = 1.0 / 2.0 * P.get(0, j);
-					pa.set(0, j, v + rand);
-					pb.set(0, j, v - rand);
+					double v = 1.0 / 2.0 * P.get(j, 0);
+					pa.set(j, 0, v + rand);
+					pb.set(j, 0, v - rand);
 
-					// 置1
+					// 置1相等
 				} else {
-					pa.set(0, j, P.get(0, j));
-					pb.set(0, j, P.get(0, j));
+					pa.set(j, 0, P.get(j, 0));
+					pb.set(j, 0, P.get(j, 0));
 				}
 			}
 
@@ -206,8 +199,8 @@ public class HACTreeIndexBuilding {
 			System.arraycopy(fileBytes, 0, bytes, keyBytes.length, fileBytes.length);
 			messageDigest.update(bytes);
 
-			Matrix paEncrypted = pa.times(AuxiliaryMatrix.M1Transpose);
-			Matrix pbEncrypted = pb.times(AuxiliaryMatrix.M2Transpose);
+			Matrix paEncrypted = AuxiliaryMatrix.M1Transpose.times(pa);
+			Matrix pbEncrypted = AuxiliaryMatrix.M2Transpose.times(pb);
 
 			// 存疑, 中心向量向上构造的过程中.最开始的中心向量的选择，因为原来的
 			// 剪枝向量已经用两个转置矩阵加密了。
@@ -271,11 +264,11 @@ public class HACTreeIndexBuilding {
 	 */
 	private Matrix getParentNodeCenterVector(HACTreeNodePair nodePair) {
 		int newNumberOfNode = nodePair.node1.numberOfNodeInCurrentCluster + nodePair.node2.numberOfNodeInCurrentCluster;
-		Matrix parentCenterVector = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
+		Matrix parentCenterVector = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
-			double sum = nodePair.node1.clusterCenterVector.get(0, i) * nodePair.node1.numberOfNodeInCurrentCluster
-					+ nodePair.node2.clusterCenterVector.get(0, i) + nodePair.node2.numberOfNodeInCurrentCluster;
-			parentCenterVector.set(0, i, sum / newNumberOfNode);
+			double sum = nodePair.node1.clusterCenterVector.get(i, 0) * nodePair.node1.numberOfNodeInCurrentCluster
+					+ nodePair.node2.clusterCenterVector.get(i, 0) + nodePair.node2.numberOfNodeInCurrentCluster;
+			parentCenterVector.set(i, 0, sum / newNumberOfNode);
 		}
 		return parentCenterVector;
 	}
@@ -323,11 +316,11 @@ public class HACTreeIndexBuilding {
 	 * @return
 	 */
 	public List<Matrix> getParentNodePruningVector(HACTreeNodePair pair) {
-		Matrix parent1 = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
-		Matrix parent2 = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
+		Matrix parent1 = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
+		Matrix parent2 = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
-			parent1.set(0, i, Double.max(pair.node1.pruningVectorPart1.get(0, i), pair.node2.pruningVectorPart1.get(0, i)));
-			parent2.set(0, i, Double.max(pair.node1.pruningVectorPart2.get(0, i), pair.node2.pruningVectorPart2.get(0, i)));
+			parent1.set(i, 0, Double.max(pair.node1.pruningVectorPart1.get(i, 0), pair.node2.pruningVectorPart1.get(i, 0)));
+			parent2.set(i, 0, Double.max(pair.node1.pruningVectorPart2.get(i, 0), pair.node2.pruningVectorPart2.get(i, 0)));
 		}
 		return Arrays.asList(parent1, parent2);
 	}
@@ -346,7 +339,7 @@ public class HACTreeIndexBuilding {
 
 		// 应该是使用相关性评分来求节点与节点之间的关系。
 		// 节点之间的关系通过聚类中心向量之间的score来体现。
-		Matrix matrix = node1.clusterCenterVector.times(node2.clusterCenterVector.transpose());
+		Matrix matrix = node1.clusterCenterVector.transpose().times(node2.clusterCenterVector);
 		return matrix.get(0, 0);
 		/*System.out.println(matrix.getRowDimension() + "\t" + matrix.getColumnDimension());*/
 	}

@@ -94,7 +94,8 @@ public class HACTreeIndexBuilding {
 				}
 			}
 
-			MatrixUitls.print(P);
+
+			/*MatrixUitls.print(P);*/
 
 			/*double[] sample = distribution.sample(Initialization.DUMMY_KEYWORD_NUMBER);*/
 			double[] sample = new double[Initialization.DUMMY_KEYWORD_NUMBER];
@@ -110,10 +111,14 @@ public class HACTreeIndexBuilding {
 			currentProcessingHACTreeNodeSet.add(currentNode);
 		}
 
+		System.out.println("leaf node numbers:" + currentProcessingHACTreeNodeSet.size());
+
 		System.out.println("start construct hac-tree.");
 		int round = 1;
 		while (currentProcessingHACTreeNodeSet.size() > 1) {
-			System.out.println("the " + (round++) + "'s round to build tree.");
+			System.out.println("\nthe " + (round++) + "'s round to build tree.");
+			System.out.println("currentProcessingHACTreeNodeSet.size():" + currentProcessingHACTreeNodeSet.size());
+
 			/*System.out.println();*/
 			while (currentProcessingHACTreeNodeSet.size() > 1) {
 				HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);

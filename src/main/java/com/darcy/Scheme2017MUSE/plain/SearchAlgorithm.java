@@ -2,9 +2,7 @@ package com.darcy.Scheme2017MUSE.plain;
 
 import Jama.Matrix;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /*
  * author: darcy
@@ -18,6 +16,9 @@ public class SearchAlgorithm {
 	double thresholdScore = Double.NEGATIVE_INFINITY;
 	private Comparator<HACTreeNode> maxComparator;
 	private Comparator<HACTreeNode> minComparator;
+	private PriorityQueue<HACTreeNode> allDocumentSocreQueue;
+	private int leafNodeCount = 0;
+	private int containsCount = 0;
 
 	/**
 	 * 实现方式1: 采用堆的性性质.
@@ -90,6 +91,8 @@ public class SearchAlgorithm {
 			}*/
 		};
 
+		allDocumentSocreQueue = new PriorityQueue<>(maxComparator);
+
 		PriorityQueue<HACTreeNode> minHeap = new PriorityQueue<>(minComparator);
 		dfs(root, queryVector, requestNumber, minHeap);
 		PriorityQueue<HACTreeNode> maxHeap = new PriorityQueue(maxComparator);
@@ -99,6 +102,17 @@ public class SearchAlgorithm {
 		System.out.println("total time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("SearchAlgorithm search end.");
 
+		System.out.println("leafNodeCount:" + leafNodeCount);
+		System.out.println("containsCount:" + containsCount);
+
+		System.out.println("all document-size:" + allDocumentSocreQueue.size());
+		System.out.println("all document-score.");
+		while (!allDocumentSocreQueue.isEmpty()) {
+			HACTreeNode node = allDocumentSocreQueue.poll();
+			System.out.printf("%-60s%.8f\n", node.fileDescriptor, scoreForPruning(node, queryVector));
+		}
+
+		System.out.println("\nresult document-score.");
 		PriorityQueue<HACTreeNode> result = new PriorityQueue<>(maxComparator);
 		while (!maxHeap.isEmpty()) {
 			HACTreeNode node = maxHeap.poll();
@@ -112,15 +126,25 @@ public class SearchAlgorithm {
 	private void dfs(HACTreeNode root, Matrix queryVecotr, int requestNumber, PriorityQueue<HACTreeNode> minHeap) {
 		// 是叶子结点.
 		if (root.left == null && root.right == null) {
+			leafNodeCount++;
+			if (allDocumentSocreQueue.contains(root)) {
+				containsCount++;
+			}
+			allDocumentSocreQueue.add(root);
+
 			// 并且候选结果集合中没有top-K个元素.
-			if (minHeap.size() < requestNumber - 1) {
+			int size = minHeap.size();
+			if (size < (requestNumber - 1)) {
 				System.out.println("< (N-1) add:" + root.fileDescriptor);
 				System.out.println();
 
+				// allDocumentSocreMap.put(root, scoreForPruning(root, queryVecotr));
 				minHeap.add(root);
 
 				// 已经找到了 N-1个文档，然后将当前文档加入, 但是要更新现在的阈值评分.
-			} else if (minHeap.size() == (requestNumber - 1)) {
+			} else if (size == (requestNumber - 1)) {
+				// allDocumentSocreMap.put(root, scoreForPruning(root, queryVecotr));
+
 				minHeap.add(root);
 				System.out.println("= (N-1) add:" + root.fileDescriptor);
 				thresholdScore = scoreForPruning(minHeap.peek(), queryVecotr);
@@ -131,7 +155,9 @@ public class SearchAlgorithm {
 			} else {
 				// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
 				// 候选结果集合的。
-				if (scoreForPruning(root, queryVecotr) > thresholdScore) {
+				double nodeScore = scoreForPruning(root, queryVecotr);
+				// allDocumentSocreMap.put(root, nodeScore);
+				if (nodeScore > thresholdScore) {
 					HACTreeNode minScoreNode = minHeap.poll();
 					double score = scoreForPruning(minScoreNode, queryVecotr);
 					System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
@@ -148,19 +174,19 @@ public class SearchAlgorithm {
 			MatrixUitls.print(trapdoor.trapdoorPart1.transpose());
 			MatrixUitls.print(trapdoor.trapdoorPart2.transpose());*/
 			System.out.printf("%-10s\t%.8f\t%-20s\t%.8f\n", "score", score, "thresholdScore", thresholdScore);
-			if (score > thresholdScore) {
-				if (root.left != null) {
-					System.out.println("left");
-					dfs(root.left, queryVecotr, requestNumber, minHeap);
-				}
-				if (root.right != null) {
-					System.out.println("right");
-					dfs(root.right, queryVecotr, requestNumber, minHeap);
-				}
-			} else {
+			/*if (score > thresholdScore) {*/
+			if (root.left != null) {
+				System.out.println("left");
+				dfs(root.left, queryVecotr, requestNumber, minHeap);
+			}
+			if (root.right != null) {
+				System.out.println("right");
+				dfs(root.right, queryVecotr, requestNumber, minHeap);
+			}
+			/*} else {
 				System.out.println("score:" + score + " no bigger than thresholdScore:" + thresholdScore);
 				System.out.println();
-			}
+			}*/
 
 		}
 	}

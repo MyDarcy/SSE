@@ -1,7 +1,6 @@
-package com.darcy.Scheme2017MUSE.noextend;
+package com.darcy.Scheme2017MUSE.extend2;
 
 import Jama.Matrix;
-import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 
 import java.io.IOException;
 import java.util.*;
@@ -52,15 +51,15 @@ public class TrapdoorGenerating {
 			String keyword = keywordList.get(i);
 			int index = Initialization.dict.indexOf(keyword);
 			if (index != -1) {
-				System.out.printf("%-30s\t%-10s\t%.8f\n", keyword, "idf-value", idfs.get(keyword));
+				System.out.printf("%-10s\t%-10s\t%.8f\n", keyword, "idf-value", idfs.get(keyword));
 				Q.set(index, 0, idfs.get(keyword));
 				/*System.out.printf("%-10s\t%-10s\t%.8f\n", keyword, "Q.get(index, 0)", Q.get(index, 0));*/
 			}
 		}
 
-		/*System.out.println("Q Qa Qb transponse.");*/
-		System.out.println("Q transpose.");
-		MatrixUitls.print(Q.transpose());
+		/*System.out.println("Q Qa Qb transponse.");
+		MatrixUitls.print(Q.transpose());*/
+
 
 		Random random = new Random(31);
 
@@ -71,15 +70,9 @@ public class TrapdoorGenerating {
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
 			// S[i] == 1;
 			if (mySecretKey.S.get(i)) {
-				double rand = random.nextDouble();
-				/*double va = Q.get(i, 0) * rand;
-				double vb = Q.get(i, 0) * (1 - rand);
-				qa.set(i, 0, va);
-				qb.set(i, 0, vb);*/
-
-				double v = 1.0 / 2.0 * Q.get(i, 0);
-				qa.set(i, 0, v + rand);
-				qb.set(i, 0, v - rand);
+				double v1 = random.nextDouble();
+				qa.set(i, 0, Q.get(i, 0) * v1);
+				qb.set(i, 0, Q.get(i, 0) * (1 - v1));
 
 				//S[i] == 0;
 			} else {

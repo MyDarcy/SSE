@@ -1,0 +1,91 @@
+total time:89ms
+SearchAlgorithm search end.
+leafNodeCount:0
+all document-score.
+000c835555db62e319854d9f8912061cdca1893e02.story            0.78374049
+000c835555db62e319854d9f8912061cdca1893e01.story            0.67271697
+00189f37b1c8bdc2b132b40270bb28ffcc622af102.story            0.53689466
+001097a19e2c96de11276b3cce11566ccfed003007.story            0.27441610
+00128f1ba30d5e9e0f17df83285a1bc2072e2f0105.story            0.26308478
+0006021f772fad0aa78a977ce4a31b3faa6e6fe503.story            0.26197385
+001097a19e2c96de11276b3cce11566ccfed003008.story            0.25069580
+0002095e55fcbd3a2f366d9bf92a95433dc305ef03.story            0.24229474
+0005d61497d21ff37a17751829bd7e3b6e4a7c5c08.story            -0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a02.story            -0.00000000
+00189f37b1c8bdc2b132b40270bb28ffcc622af109.story            -0.00000000
+000cd1ee0098c4d510a03ddc97d11764448ebac202.story            -0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a05.story            -0.00000000
+0002095e55fcbd3a2f366d9bf92a95433dc305ef01.story            -0.00000000
+00211175819295755ed12e89791b4d543442981a02.story            -0.00000000
+000e009f6b1d954d827c9a550f3f24a5474ee82b08.story            -0.00000000
+0002095e55fcbd3a2f366d9bf92a95433dc305ef04.story            -0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a06.story            -0.00000000
+001fb4ca3bd3a0c1cd91fdc813f0ebeeac678e7603.story            -0.00000000
+001b4673dbb3437282cd2ea58d9eca471e25780f02.story            -0.00000000
+001b4673dbb3437282cd2ea58d9eca471e25780f01.story            -0.00000000
+0006021f772fad0aa78a977ce4a31b3faa6e6fe502.story            -0.00000000
+001f2856c2bca7de7918eb155b2e1bc8aa0d869504.story            -0.00000000
+0002095e55fcbd3a2f366d9bf92a95433dc305ef02.story            -0.00000000
+001f2856c2bca7de7918eb155b2e1bc8aa0d869502.story            -0.00000000
+0003ad6ef0c37534f80b55b4235108024b407f0b01.story            -0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a04.story            -0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a03.story            -0.00000000
+000c835555db62e319854d9f8912061cdca1893e03.story            -0.00000000
+00211175819295755ed12e89791b4d543442981a01.story            -0.00000000
+
+result document-score.
+000c835555db62e319854d9f8912061cdca1893e02.story            0.78374049
+000c835555db62e319854d9f8912061cdca1893e01.story            0.67271697
+00189f37b1c8bdc2b132b40270bb28ffcc622af102.story            0.53689466
+001097a19e2c96de11276b3cce11566ccfed003007.story            0.27441610
+00128f1ba30d5e9e0f17df83285a1bc2072e2f0105.story            0.26308478
+0006021f772fad0aa78a977ce4a31b3faa6e6fe503.story            0.26197385
+001097a19e2c96de11276b3cce11566ccfed003008.story            0.25069580
+0002095e55fcbd3a2f366d9bf92a95433dc305ef03.story            0.24229474
+0005d61497d21ff37a17751829bd7e3b6e4a7c5c08.story            -0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a02.story            -0.00000000
+Query2 priorityQueue.size():10
+
+000c835555db62e319854d9f8912061cdca1893e02.story
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+count:3
+
+000c835555db62e319854d9f8912061cdca1893e01.story
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+count:4
+
+00189f37b1c8bdc2b132b40270bb28ffcc622af102.story
+voice          	2         docsNumber     	         5
+voice          	2         docsNumber     	         5
+count:2
+
+001097a19e2c96de11276b3cce11566ccfed003007.story
+interview      	1         docsNumber     	        11
+count:1
+
+00128f1ba30d5e9e0f17df83285a1bc2072e2f0105.story
+voice          	1         docsNumber     	         5
+count:1
+
+0006021f772fad0aa78a977ce4a31b3faa6e6fe503.story
+democratic     	1         docsNumber     	         7
+count:1
+
+001097a19e2c96de11276b3cce11566ccfed003008.story
+interview      	1         docsNumber     	        11
+count:1
+
+0002095e55fcbd3a2f366d9bf92a95433dc305ef03.story
+british        	1         docsNumber     	        10
+count:1
+
+0005d61497d21ff37a17751829bd7e3b6e4a7c5c08.story
+count:0
+
+0002c17436637c4fe1837c935c04de47adb18e9a02.story
+count:0

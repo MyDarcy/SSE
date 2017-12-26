@@ -1,0 +1,139 @@
+total time:69ms
+SearchAlgorithm search end.
+leafNodeCount:62
+containsCount:0
+all document-size:62
+all document-score.
+000c835555db62e319854d9f8912061cdca1893e02.story            0.78374049
+0009ebb1967511741629926ef9f5faea2bb6be2403.story            0.73884641
+000940f2bb357ac04a236a232156d8b9b18d166704.story            0.70247888
+000c835555db62e319854d9f8912061cdca1893e01.story            0.67271697
+0006021f772fad0aa78a977ce4a31b3faa6e6fe505.story            0.64097432
+000940f2bb357ac04a236a232156d8b9b18d166701.story            0.63058650
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd802.story            0.61871488
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd803.story            0.60584121
+0009ebb1967511741629926ef9f5faea2bb6be2401.story            0.55546761
+00189f37b1c8bdc2b132b40270bb28ffcc622af102.story            0.53689466
+00083697263e215e5e7eda753070f08aa374dd4502.story            0.50546723
+0009ebb1967511741629926ef9f5faea2bb6be2402.story            0.48623440
+0020ede07ee7ad1f6cf654c7dc678e7341d0c0e502.story            0.46164735
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd804.story            0.44549097
+0010c870d3fc53ea7f2a4a50f6496dc2df17e02f07.story            0.44396952
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd805.story            0.43527292
+0001d1afc246a7964130f43ae940af6bc6c57f0111.story            0.41761706
+001c839e1d76c400129f6c2799957c74e989581506.story            0.33022528
+0003ad6ef0c37534f80b55b4235108024b407f0b02.story            0.32816616
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd806.story            0.31623863
+000940f2bb357ac04a236a232156d8b9b18d166703.story            0.30584641
+001cdbaf0607878f332e0202fadf5b82d2997c0201.story            0.30350935
+00189f37b1c8bdc2b132b40270bb28ffcc622af101.story            0.29157211
+001789cf9b865dcac3d9fc032a6b1533e3318eda03.story            0.28026834
+001097a19e2c96de11276b3cce11566ccfed003007.story            0.27441610
+00083697263e215e5e7eda753070f08aa374dd4501.story            0.27078367
+00128f1ba30d5e9e0f17df83285a1bc2072e2f0105.story            0.26308478
+0006021f772fad0aa78a977ce4a31b3faa6e6fe503.story            0.26197385
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd801.story            0.25722331
+0005d61497d21ff37a17751829bd7e3b6e4a7c5c05.story            0.25687625
+001097a19e2c96de11276b3cce11566ccfed003008.story            0.25069581
+0001d1afc246a7964130f43ae940af6bc6c57f0105.story            0.24588548
+0002095e55fcbd3a2f366d9bf92a95433dc305ef03.story            0.24229474
+0001d1afc246a7964130f43ae940af6bc6c57f0113.story            0.24185448
+0001d1afc246a7964130f43ae940af6bc6c57f0110.story            0.23556505
+0006021f772fad0aa78a977ce4a31b3faa6e6fe501.story            0.21311940
+000e009f6b1d954d827c9a550f3f24a5474ee82b04.story            0.19990187
+0004306354494f090ee2d7bc5ddbf80b63e80de603.story            0.18584566
+0002095e55fcbd3a2f366d9bf92a95433dc305ef04.story            0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a06.story            0.00000000
+0006021f772fad0aa78a977ce4a31b3faa6e6fe502.story            0.00000000
+0003ad6ef0c37534f80b55b4235108024b407f0b01.story            0.00000000
+00189f37b1c8bdc2b132b40270bb28ffcc622af103.story            0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a05.story            0.00000000
+001b4673dbb3437282cd2ea58d9eca471e25780f02.story            0.00000000
+0001d1afc246a7964130f43ae940af6bc6c57f0112.story            0.00000000
+000c835555db62e319854d9f8912061cdca1893e03.story            0.00000000
+0003ad6ef0c37534f80b55b4235108024b407f0b03.story            0.00000000
+001c839e1d76c400129f6c2799957c74e989581505.story            0.00000000
+001cdbaf0607878f332e0202fadf5b82d2997c0202.story            0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a03.story            0.00000000
+001fb4ca3bd3a0c1cd91fdc813f0ebeeac678e7603.story            0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a02.story            0.00000000
+000940f2bb357ac04a236a232156d8b9b18d166702.story            0.00000000
+0002c17436637c4fe1837c935c04de47adb18e9a04.story            0.00000000
+000e009f6b1d954d827c9a550f3f24a5474ee82b07.story            0.00000000
+001cdbaf0607878f332e0202fadf5b82d2997c0205.story            0.00000000
+0005d61497d21ff37a17751829bd7e3b6e4a7c5c04.story            0.00000000
+001ee59c375363263821474d40e4386ab91d514501.story            0.00000000
+0020ede07ee7ad1f6cf654c7dc678e7341d0c0e504.story            0.00000000
+001789cf9b865dcac3d9fc032a6b1533e3318eda02.story            0.00000000
+001b4673dbb3437282cd2ea58d9eca471e25780f01.story            0.00000000
+
+result document-score.
+000c835555db62e319854d9f8912061cdca1893e02.story            0.78374049
+0009ebb1967511741629926ef9f5faea2bb6be2403.story            0.73884641
+000940f2bb357ac04a236a232156d8b9b18d166704.story            0.70247888
+000c835555db62e319854d9f8912061cdca1893e01.story            0.67271697
+0006021f772fad0aa78a977ce4a31b3faa6e6fe505.story            0.64097432
+000940f2bb357ac04a236a232156d8b9b18d166701.story            0.63058650
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd802.story            0.61871488
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd803.story            0.60584121
+0009ebb1967511741629926ef9f5faea2bb6be2401.story            0.55546761
+00189f37b1c8bdc2b132b40270bb28ffcc622af102.story            0.53689466
+Query2 priorityQueue.size():10
+
+passage 000c835555db62e319854d9f8912061cdca1893e02.story
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+count:3
+
+passage 0009ebb1967511741629926ef9f5faea2bb6be2403.story
+performance    	2         docsNumber     	         5
+performance    	2         docsNumber     	         5
+count:2
+
+passage 000940f2bb357ac04a236a232156d8b9b18d166704.story
+hospital       	2         docsNumber     	         5
+hospital       	2         docsNumber     	         5
+count:2
+
+passage 000c835555db62e319854d9f8912061cdca1893e01.story
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+church         	3         docsNumber     	         2
+count:4
+
+passage 0006021f772fad0aa78a977ce4a31b3faa6e6fe505.story
+democratic     	2         docsNumber     	         7
+performance    	1         docsNumber     	         5
+democratic     	2         docsNumber     	         7
+count:3
+
+passage 000940f2bb357ac04a236a232156d8b9b18d166701.story
+hospital       	3         docsNumber     	         5
+hospital       	3         docsNumber     	         5
+hospital       	3         docsNumber     	         5
+count:3
+
+passage 000ca3fc9d877f8d4bb2ebd1d6858c69be571fd802.story
+british        	1         docsNumber     	        10
+china          	2         docsNumber     	         6
+china          	2         docsNumber     	         6
+count:3
+
+passage 000ca3fc9d877f8d4bb2ebd1d6858c69be571fd803.story
+china          	3         docsNumber     	         6
+china          	3         docsNumber     	         6
+china          	3         docsNumber     	         6
+count:3
+
+passage 0009ebb1967511741629926ef9f5faea2bb6be2401.story
+performance    	3         docsNumber     	         5
+performance    	3         docsNumber     	         5
+performance    	3         docsNumber     	         5
+count:3
+
+passage 00189f37b1c8bdc2b132b40270bb28ffcc622af102.story
+voice          	2         docsNumber     	         5
+voice          	2         docsNumber     	         5
+count:2

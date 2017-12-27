@@ -122,6 +122,25 @@
       <version>3.6.1</version>
     </dependency>
 
+    <!-- stanford npl -->
+    <!-- https://mvnrepository.com/artifact/edu.stanford.nlp/stanford-corenlp -->
+    <!-- https://nlp.stanford.edu/software/ -->
+    <dependency>
+      <groupId>edu.stanford.nlp</groupId>
+      <artifactId>stanford-corenlp</artifactId>
+      <version>3.8.0</version>
+    </dependency>
+
+
+    <!-- https://mvnrepository.com/artifact/com.hankcs/hanlp -->
+    <dependency>
+      <groupId>com.hankcs</groupId>
+      <artifactId>hanlp</artifactId>
+      <version>portable-1.5.2</version>
+    </dependency>
+
+
+
   </dependencies>
 
   <build>

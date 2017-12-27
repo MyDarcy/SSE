@@ -1,7 +1,9 @@
-package com.darcy.Scheme2017MUSE.noextend4;
+package com.darcy.Scheme2018PLVMSE.accelerate.noextend4;
 
 
 import Jama.Matrix;
+import com.darcy.Scheme2018PLVMSE.accelerate.DiagonalMatrixUtils;
+import com.sun.org.apache.bcel.internal.generic.DMUL;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -259,8 +261,12 @@ public class Initialization {
 		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
 
-		Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		/*Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);*/
+
+		double[] m1 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		double[] m2 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+
 		sk.S = bitSet;
 		sk.M1 = m1;
 		sk.M2 = m2;
@@ -378,12 +384,11 @@ public class Initialization {
 		System.out.println(mySecretKey);
 
 		long start = System.currentTimeMillis();
-		mySecretKey.M1.transpose();
+		DiagonalMatrixUtils.transpose(mySecretKey.M1);
 		System.out.println("Matrix transpose time consume:" + (System.currentTimeMillis() - start) + "ms");
 		start = System.currentTimeMillis();
-		mySecretKey.M1.inverse();
+		DiagonalMatrixUtils.inverse(mySecretKey.M1);
 		System.out.println("Matrix reverse time consume:" + (System.currentTimeMillis() - start) + "ms");
-
 
 		System.out.println();
 		System.out.println(Initialization.secretKey);

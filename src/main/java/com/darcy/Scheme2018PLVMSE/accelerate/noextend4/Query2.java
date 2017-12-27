@@ -1,10 +1,11 @@
-package com.darcy.Scheme2017MUSE.plain4;
+package com.darcy.Scheme2018PLVMSE.accelerate.noextend4;
 
-import Jama.Matrix;
-
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -31,7 +32,7 @@ public class Query2 {
 
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
-			trapdoorGenerating.generateTrapdoor(query);
+			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -44,7 +45,8 @@ public class Query2 {
 		try {
 			MySecretKey mySecretKey = Initialization.getMySecretKey();
 			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
-
+			hacTreeIndexBuilding.encryptFiles();
+			hacTreeIndexBuilding.generateAuxiliaryMatrix();
 			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
 			System.out.println(root);
 
@@ -57,13 +59,13 @@ public class Query2 {
 
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
-			Matrix queryVector = trapdoorGenerating.generateTrapdoor(query);
+			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
 			int requestNumber = 10;
 			// int requestNumber = 6;
-			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, queryVector, requestNumber);
+			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
 			/*for (HACTreeNode node : priorityQueue) {
 				System.out.println(node.fileDescriptor);
@@ -76,9 +78,16 @@ public class Query2 {
 
 			// 验证搜索结果是否包含特定的文档。
 			searchResultVerify(filenameList, keywordPatternStr);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
 			e.printStackTrace();
 		}
 	}
@@ -86,7 +95,7 @@ public class Query2 {
 	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr) throws IOException {
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
-			System.out.println("passage " + filenameList.get(i));
+			System.out.println(filenameList.get(i));
 			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR + "\\" + filenameList.get(i)).toPath());
 			String passage = allLines.stream().map(String::toLowerCase).collect(joining("\n"));
 
@@ -98,9 +107,11 @@ public class Query2 {
 				/*System.out.printf("%-60s\t%-15s\t%-10s%-15s\t%10s\n", filenameList.get(i), keyword,
 						Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
 						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));*/
+
 				System.out.printf("%-15s\t%-10s%-15s\t%10s\n", keyword,
 						Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
 						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));
+
 				count++;
 			}
 			System.out.println("count:" + count);
@@ -117,12 +128,12 @@ public class Query2 {
 		return "(" + result.substring(0, result.lastIndexOf('|')) + ")";
 	}
 
-
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-		System.out.println("plain search.");
+		System.out.println("noextend4 search.");
 
 		/*test1();*/
 
 		test2();
+
 	}
 }

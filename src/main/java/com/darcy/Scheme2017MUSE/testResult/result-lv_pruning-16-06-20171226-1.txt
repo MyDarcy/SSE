@@ -1,0 +1,80 @@
+total time:47ms
+SearchAlgorithm search end.
+leafNodeCount:16
+containsCount:0
+all document-size:16
+all document-score.
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story              879605.46980188
+00027e965c8264c35cc1bc55556db388da82b07f.story              867022.09714104
+000940f2bb357ac04a236a232156d8b9b18d1667.story              489309.22721772
+0003ad6ef0c37534f80b55b4235108024b407f0b.story              480890.88083396
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story              480219.23532119
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story              377493.80586991
+000e009f6b1d954d827c9a550f3f24a5474ee82b.story              370117.92875758
+001097a19e2c96de11276b3cce11566ccfed0030.story              361671.60287489
+000c835555db62e319854d9f8912061cdca1893e.story              11054.17377210
+0004306354494f090ee2d7bc5ddbf80b63e80de6.story              10317.57433986
+0009ebb1967511741629926ef9f5faea2bb6be24.story              4348.02450103
+0005d61497d21ff37a17751829bd7e3b6e4a7c5c.story              -707936.42923874
+0002c17436637c4fe1837c935c04de47adb18e9a.story              -1064055.69551410
+00083697263e215e5e7eda753070f08aa374dd45.story              -1584208.01139500
+000cd1ee0098c4d510a03ddc97d11764448ebac2.story              -1585322.30036194
+0001d1afc246a7964130f43ae940af6bc6c57f01.story              -2147071.02378665
+
+result document-score.
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story              879605.46980188
+00027e965c8264c35cc1bc55556db388da82b07f.story              867022.09714104
+000940f2bb357ac04a236a232156d8b9b18d1667.story              489309.22721772
+0003ad6ef0c37534f80b55b4235108024b407f0b.story              480890.88083396
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story              480219.23532119
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story              377493.80586991
+Query2 priorityQueue.size():6
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story
+00027e965c8264c35cc1bc55556db388da82b07f.story
+000940f2bb357ac04a236a232156d8b9b18d1667.story
+0003ad6ef0c37534f80b55b4235108024b407f0b.story
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story
+
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story
+took           	1         docsNumber     	         6
+make           	1         docsNumber     	         6
+count:2
+
+00027e965c8264c35cc1bc55556db388da82b07f.story
+make           	3         docsNumber     	         6
+make           	3         docsNumber     	         6
+make           	3         docsNumber     	         6
+took           	1         docsNumber     	         6
+count:4
+
+000940f2bb357ac04a236a232156d8b9b18d1667.story
+took           	2         docsNumber     	         6
+took           	2         docsNumber     	         6
+count:2
+
+0003ad6ef0c37534f80b55b4235108024b407f0b.story
+took           	2         docsNumber     	         6
+took           	2         docsNumber     	         6
+count:2
+
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story
+human          	null      docsNumber     	         3
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+human          	null      docsNumber     	         3
+took           	1         docsNumber     	         6
+human          	null      docsNumber     	         3
+china          	10        docsNumber     	         2
+count:14
+
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story
+make           	1         docsNumber     	         6
+count:1

@@ -1,0 +1,72 @@
+total time:38ms
+SearchAlgorithm search end.
+leafNodeCount:8
+containsCount:0
+all document-size:8
+all document-score.
+000940f2bb357ac04a236a232156d8b9b18d1667.story              0.32787139
+0009ebb1967511741629926ef9f5faea2bb6be24.story              0.26330407
+00083697263e215e5e7eda753070f08aa374dd45.story              0.26020328
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story              0.23531085
+0002c17436637c4fe1837c935c04de47adb18e9a.story              0.12256645
+0003ad6ef0c37534f80b55b4235108024b407f0b.story              0.11506675
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story              0.02188618
+000cd1ee0098c4d510a03ddc97d11764448ebac2.story              0.00646758
+
+result document-score.
+000940f2bb357ac04a236a232156d8b9b18d1667.story              0.32787139
+0009ebb1967511741629926ef9f5faea2bb6be24.story              0.26330407
+00083697263e215e5e7eda753070f08aa374dd45.story              0.26020328
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story              0.23531085
+0002c17436637c4fe1837c935c04de47adb18e9a.story              0.12256645
+0003ad6ef0c37534f80b55b4235108024b407f0b.story              0.11506675
+Query2 priorityQueue.size():6
+000940f2bb357ac04a236a232156d8b9b18d1667.story
+0009ebb1967511741629926ef9f5faea2bb6be24.story
+00083697263e215e5e7eda753070f08aa374dd45.story
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story
+0002c17436637c4fe1837c935c04de47adb18e9a.story
+0003ad6ef0c37534f80b55b4235108024b407f0b.story
+
+000940f2bb357ac04a236a232156d8b9b18d1667.story
+hospital       	5         docsNumber     	         3
+hospital       	5         docsNumber     	         3
+hospital       	5         docsNumber     	         3
+voice          	1         docsNumber     	         2
+hospital       	5         docsNumber     	         3
+hospital       	5         docsNumber     	         3
+count:6
+
+0009ebb1967511741629926ef9f5faea2bb6be24.story
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+count:7
+
+00083697263e215e5e7eda753070f08aa374dd45.story
+hospital       	1         docsNumber     	         3
+interview      	1         docsNumber     	         7
+citizenship    	1         docsNumber     	         1
+count:3
+
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story
+democratic     	5         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+performance    	1         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+count:6
+
+0002c17436637c4fe1837c935c04de47adb18e9a.story
+british        	1         docsNumber     	         4
+interview      	1         docsNumber     	         7
+count:2
+
+0003ad6ef0c37534f80b55b4235108024b407f0b.story
+hospital       	1         docsNumber     	         3
+count:1

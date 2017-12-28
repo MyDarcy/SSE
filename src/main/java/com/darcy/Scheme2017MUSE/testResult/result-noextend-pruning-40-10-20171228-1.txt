@@ -1,0 +1,107 @@
+total time:63ms
+SearchAlgorithm search end.
+leafNodeCount:0
+all document-score.
+000c835555db62e319854d9f8912061cdca1893e.story              0.45829726
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story              0.43062493
+00128f1ba30d5e9e0f17df83285a1bc2072e2f01.story              0.18078949
+0001d1afc246a7964130f43ae940af6bc6c57f01.story              0.17926969
+001cdbaf0607878f332e0202fadf5b82d2997c02.story              0.15678484
+00189f37b1c8bdc2b132b40270bb28ffcc622af1.story              0.15556151
+00027e965c8264c35cc1bc55556db388da82b07f.story              0.13701597
+0020ede07ee7ad1f6cf654c7dc678e7341d0c0e5.story              0.09679776
+001097a19e2c96de11276b3cce11566ccfed0030.story              0.09406433
+001c839e1d76c400129f6c2799957c74e9895815.story              0.07032833
+001e8bda2f7ab73bf81314c1639a97dae2751703.story              0.05935122
+000e009f6b1d954d827c9a550f3f24a5474ee82b.story              0.04187973
+001a6162391594e2a8607fba135bdfa154e57904.story              0.00000000
+001b4673dbb3437282cd2ea58d9eca471e25780f.story              0.00000000
+001adf6209be103cb198b8599f236b4d5760a5fe.story              0.00000000
+001732b374f362d3961a510da315601e4b5e7e84.story              0.00000000
+00200e794fa41d3f7ce92cbf43e9fd4cd652bb09.story              0.00000000
+00156d9892fb27f1d2e100cbdd8a3997f8273781.story              -0.00000000
+
+result document-score.
+000c835555db62e319854d9f8912061cdca1893e.story              0.45829726
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story              0.43062493
+00128f1ba30d5e9e0f17df83285a1bc2072e2f01.story              0.18078949
+0001d1afc246a7964130f43ae940af6bc6c57f01.story              0.17926969
+001cdbaf0607878f332e0202fadf5b82d2997c02.story              0.15678484
+00189f37b1c8bdc2b132b40270bb28ffcc622af1.story              0.15556151
+00027e965c8264c35cc1bc55556db388da82b07f.story              0.13701597
+0020ede07ee7ad1f6cf654c7dc678e7341d0c0e5.story              0.09679776
+001097a19e2c96de11276b3cce11566ccfed0030.story              0.09406433
+001c839e1d76c400129f6c2799957c74e9895815.story              0.07032833
+Query2 priorityQueue.size():10
+
+000c835555db62e319854d9f8912061cdca1893e.story
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+count:8
+
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story
+interview      	1         docsNumber     	         9
+british        	1         docsNumber     	         7
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+count:12
+
+00128f1ba30d5e9e0f17df83285a1bc2072e2f01.story
+interview      	1         docsNumber     	         9
+democratic     	1         docsNumber     	         4
+democratic     	1         docsNumber     	         4
+voice          	1         docsNumber     	         5
+count:4
+
+0001d1afc246a7964130f43ae940af6bc6c57f01.story
+british        	4         docsNumber     	         7
+british        	4         docsNumber     	         7
+british        	4         docsNumber     	         7
+china          	1         docsNumber     	         2
+british        	4         docsNumber     	         7
+count:5
+
+001cdbaf0607878f332e0202fadf5b82d2997c02.story
+performance    	1         docsNumber     	         3
+british        	1         docsNumber     	         7
+count:2
+
+00189f37b1c8bdc2b132b40270bb28ffcc622af1.story
+british        	1         docsNumber     	         7
+voice          	2         docsNumber     	         5
+voice          	2         docsNumber     	         5
+count:3
+
+00027e965c8264c35cc1bc55556db388da82b07f.story
+broadcasting   	1         docsNumber     	         2
+interview      	1         docsNumber     	         9
+count:2
+
+0020ede07ee7ad1f6cf654c7dc678e7341d0c0e5.story
+interview      	1         docsNumber     	         9
+british        	1         docsNumber     	         7
+count:2
+
+001097a19e2c96de11276b3cce11566ccfed0030.story
+interview      	3         docsNumber     	         9
+interview      	3         docsNumber     	         9
+interview      	3         docsNumber     	         9
+count:3
+
+001c839e1d76c400129f6c2799957c74e9895815.story
+hospital       	1         docsNumber     	         4
+count:1

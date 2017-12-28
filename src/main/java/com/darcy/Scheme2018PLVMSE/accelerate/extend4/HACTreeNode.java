@@ -33,11 +33,11 @@ public class HACTreeNode {
 
 	// 剪枝向量
 	// 因为需要对剪枝向量通过可逆矩阵来加密。
-	public Matrix pruningVectorPart1;
-	public Matrix pruningVectorPart2;
+	public double[] pruningVectorPart1;
+	public double[] pruningVectorPart2;
 
 	// 聚类中心向量
-	public Matrix clusterCenterVector;
+	public double[] clusterCenterVector;
 	public int numberOfNodeInCurrentCluster;
 
 	// 左子树， 右子树的指针.
@@ -58,7 +58,7 @@ public class HACTreeNode {
 	public HACTreeNode() {
 	}
 
-	public HACTreeNode(Matrix pruningVectorPart1, Matrix pruningVectorPart2, HACTreeNode left, HACTreeNode right, String fileDescriptor, MessageDigest signature) {
+	public HACTreeNode(double[] pruningVectorPart1, double[] pruningVectorPart2, HACTreeNode left, HACTreeNode right, String fileDescriptor, MessageDigest signature) {
 		this.pruningVectorPart1 = pruningVectorPart1;
 		this.pruningVectorPart2 = pruningVectorPart2;
 		this.left = left;
@@ -67,7 +67,7 @@ public class HACTreeNode {
 		this.digest = signature;
 	}
 
-	public HACTreeNode(Matrix pruningVectorPart1, Matrix pruningVectorPart2, Matrix clusterCenterVector, int numberOfNodeInCurrentCluster, HACTreeNode left, HACTreeNode right, String fileDescriptor, MessageDigest signature) {
+	public HACTreeNode(double[] pruningVectorPart1, double[] pruningVectorPart2, double[] clusterCenterVector, int numberOfNodeInCurrentCluster, HACTreeNode left, HACTreeNode right, String fileDescriptor, MessageDigest signature) {
 		this.pruningVectorPart1 = pruningVectorPart1;
 		this.pruningVectorPart2 = pruningVectorPart2;
 		this.clusterCenterVector = clusterCenterVector;

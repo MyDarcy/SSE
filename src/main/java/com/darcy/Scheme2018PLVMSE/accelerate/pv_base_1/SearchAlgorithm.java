@@ -1,5 +1,7 @@
 package com.darcy.Scheme2018PLVMSE.accelerate.pv_base_1;
 
+import com.darcy.Scheme2018PLVMSE.accelerate.DiagonalMatrixUtils;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -184,8 +186,8 @@ public class SearchAlgorithm {
 	 */
 	private double scoreForPruning(HACTreeNode root, Trapdoor trapdoor) {
 		/*return root.pruningVector.times(queryVector).get(0, 0);*/
-		return root.pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
-				+ root.pruningVectorPart2.transpose().times(trapdoor.trapdoorPart2).get(0, 0);
+		return DiagonalMatrixUtils.score(root.pruningVectorPart1, trapdoor.trapdoorPart1) +
+				DiagonalMatrixUtils.score(root.pruningVectorPart2, trapdoor.trapdoorPart2);
 	}
 
 
@@ -201,8 +203,8 @@ public class SearchAlgorithm {
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < resultList.size(); i++) {
 			/*double score = resultList.get(i).pruningVector.times(queryVector).get(0, 0);*/
-			double score = resultList.get(i).pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
-					+ resultList.get(i).pruningVectorPart2.transpose().times(trapdoor.trapdoorPart2).get(0, 0);
+			double score = DiagonalMatrixUtils.score(resultList.get(i).pruningVectorPart1, trapdoor.trapdoorPart1)
+					+ DiagonalMatrixUtils.score(resultList.get(i).pruningVectorPart2, trapdoor.trapdoorPart2);
 			// 更新最小相关性评分.
 			if (score < min) {
 				min = score;

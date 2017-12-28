@@ -37,8 +37,8 @@ public class Initialization {
 	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\noextend2\\key\\aesKey.dat";
 
 	// 明文文件目录 	密文文件目录. 40个文件
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\noextend2\\plain40";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\noextend2\\encrypted40";
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\noextend2\\plain16";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\noextend2\\encrypted16";
 	// 明文文件目录 	密文文件目录. 16个文件
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\muse\\noextend2\\plain40";
 	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\noextend2\\encrypted40";*/

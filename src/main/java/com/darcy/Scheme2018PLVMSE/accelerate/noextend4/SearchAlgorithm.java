@@ -124,6 +124,12 @@ public class SearchAlgorithm {
 	private void dfs(HACTreeNode root, Trapdoor trapdoor, int requestNumber, PriorityQueue<HACTreeNode> minHeap) {
 		// 是叶子结点.
 		if (root.left == null && root.right == null) {
+
+			leafNodeCount++;
+			/*if (allDocumentSocreQueue.contains(root)) {
+				containsCount++;
+			}*/
+
 			// 并且候选结果集合中没有top-K个元素.
 			int size = minHeap.size();
 			if (size < requestNumber - 1) {

@@ -111,4 +111,11 @@ public class DiagonalMatrixUtils {
 	}
 
 
+	public static double[] times(double[] q, int r) {
+		double[] result = new double[q.length];
+		for (int i = 0; i < q.length; i++) {
+			result[i] = q[i] * r;
+		}
+		return result;
+	}
 }

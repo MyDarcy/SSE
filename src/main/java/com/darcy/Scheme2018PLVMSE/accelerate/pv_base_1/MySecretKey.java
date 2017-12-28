@@ -13,8 +13,8 @@ import java.util.BitSet;
 public class MySecretKey {
 
 	public BitSet S;
-	public Matrix M1;
-	public Matrix M2;
+	public double[] M1;
+	public double[] M2;
 	public SecretKey secretKey;
 
 	@Override

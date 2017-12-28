@@ -1,0 +1,91 @@
+total time:13ms
+SearchAlgorithm search end.
+leafNodeCount:16
+containsCount:0
+all document-size:16
+all document-score.
+000c835555db62e319854d9f8912061cdca1893e.story              0.34965093
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story              0.31889086
+0009ebb1967511741629926ef9f5faea2bb6be24.story              0.30391555
+000940f2bb357ac04a236a232156d8b9b18d1667.story              0.28081217
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story              0.25341250
+00083697263e215e5e7eda753070f08aa374dd45.story              0.22460263
+0001d1afc246a7964130f43ae940af6bc6c57f01.story              0.14786473
+0005d61497d21ff37a17751829bd7e3b6e4a7c5c.story              0.11786643
+00027e965c8264c35cc1bc55556db388da82b07f.story              0.11575580
+0003ad6ef0c37534f80b55b4235108024b407f0b.story              0.08977504
+0002c17436637c4fe1837c935c04de47adb18e9a.story              0.08186701
+001097a19e2c96de11276b3cce11566ccfed0030.story              0.06420890
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story              0.06352140
+0004306354494f090ee2d7bc5ddbf80b63e80de6.story              0.04184331
+000e009f6b1d954d827c9a550f3f24a5474ee82b.story              0.02858736
+000cd1ee0098c4d510a03ddc97d11764448ebac2.story              0.00000000
+
+result document-score.
+000c835555db62e319854d9f8912061cdca1893e.story              0.34965093
+000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story              0.31889086
+0009ebb1967511741629926ef9f5faea2bb6be24.story              0.30391555
+000940f2bb357ac04a236a232156d8b9b18d1667.story              0.28081217
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story              0.25341250
+00083697263e215e5e7eda753070f08aa374dd45.story              0.22460263
+Query2 priorityQueue.size():6
+
+passage 000c835555db62e319854d9f8912061cdca1893e.story
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+count:8
+
+passage 000ca3fc9d877f8d4bb2ebd1d6858c69be571fd8.story
+interview      	1         docsNumber     	         7
+british        	1         docsNumber     	         4
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+china          	10        docsNumber     	         2
+count:12
+
+passage 0009ebb1967511741629926ef9f5faea2bb6be24.story
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+count:7
+
+passage 000940f2bb357ac04a236a232156d8b9b18d1667.story
+hospital       	5         docsNumber     	         3
+hospital       	5         docsNumber     	         3
+hospital       	5         docsNumber     	         3
+voice          	1         docsNumber     	         2
+hospital       	5         docsNumber     	         3
+hospital       	5         docsNumber     	         3
+count:6
+
+passage 0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story
+democratic     	5         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+performance    	1         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+count:6
+
+passage 00083697263e215e5e7eda753070f08aa374dd45.story
+hospital       	1         docsNumber     	         3
+interview      	1         docsNumber     	         7
+citizenship    	1         docsNumber     	         1
+count:3

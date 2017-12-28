@@ -36,16 +36,16 @@ public class Initialization {
 	// 密钥目录
 	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
 
-	/*// 明文文件目录 	密文文件目录. 40个文件
+	// 明文文件目录 	密文文件目录. 40个文件
 	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";*/
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
 	// 明文文件目录 	密文文件目录. 16个文件
 	// doc/splitting/cnn_splitting40_10
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
 	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";*/
 
-	public static final String PLAIN_DIR = BASE + "\\doc\\splitting\\cnn_splitting40_10";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
+	/*public static final String PLAIN_DIR = BASE + "\\doc\\splitting\\cnn_splitting40_10";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";*/
 
 
 	// 匹配关键词

@@ -2,6 +2,7 @@ package com.darcy.Scheme2018PLVMSE.accelerate.pv_base_1;
 
 
 import Jama.Matrix;
+import com.darcy.Scheme2018PLVMSE.accelerate.DiagonalMatrixUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -37,12 +38,12 @@ public class Initialization {
 	// 密钥目录
 	public static final String SECRET_KEY_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\key\\aesKey.dat";
 
-	/*// 明文文件目录 	密文文件目录. 40个文件
+	// 明文文件目录 	密文文件目录. 40个文件
 	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";*/
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
 	// 明文文件目录 	密文文件目录. 16个文件
-	public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";
+	/*public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";*/
 
 	// 匹配关键词
 	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
@@ -268,8 +269,8 @@ public class Initialization {
 		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
 
-		Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		double[] m1 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		double[] m2 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
 		sk.S = bitSet;
 		sk.M1 = m1;
 		sk.M2 = m2;
@@ -386,10 +387,10 @@ public class Initialization {
 		System.out.println(mySecretKey);
 
 		long start = System.currentTimeMillis();
-		mySecretKey.M1.transpose();
+		DiagonalMatrixUtils.transpose(mySecretKey.M1);
 		System.out.println("Matrix transpose time consume:" + (System.currentTimeMillis() - start) + "ms");
 		start = System.currentTimeMillis();
-		mySecretKey.M1.inverse();
+		DiagonalMatrixUtils.inverse(mySecretKey.M1);
 		System.out.println("Matrix reverse time consume:" + (System.currentTimeMillis() - start) + "ms");
 
 

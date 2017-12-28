@@ -1,6 +1,7 @@
 package com.darcy.Scheme2018PLVMSE.accelerate.lv_base_1;
 
 import Jama.Matrix;
+import com.darcy.Scheme2018PLVMSE.accelerate.DiagonalMatrixUtils;
 import com.darcy.Scheme2018PLVMSE.utils.MathUtils;
 
 import java.io.IOException;
@@ -122,7 +123,7 @@ public class TrapdoorGenerating {
 		// r作为任意的随机数即可.
 		int r = 1 + Initialization.RANDOM.nextInt(upper);
 
-		Matrix Q = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
+		double[] Q = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
 
 		/**
 		 * the corresponding values in Q are set as
@@ -134,7 +135,7 @@ public class TrapdoorGenerating {
 			for (String keyword : orKeywords) {
 				int index = Initialization.dict.indexOf(keyword);
 				if (index != -1) {
-					Q.set(index, 0, orHyperIncreasingSequence[count++]);
+					Q[index] = orHyperIncreasingSequence[count++];
 				}
 			}
 		}
@@ -144,7 +145,7 @@ public class TrapdoorGenerating {
 			for (String keyword : andKeywords) {
 				int index = Initialization.dict.indexOf(keyword);
 				if (index != -1) {
-					Q.set(index, 0, andHyperIncreasingSequence[count++]);
+					Q[index] = andHyperIncreasingSequence[count++];
 				}
 			}
 		}
@@ -154,14 +155,14 @@ public class TrapdoorGenerating {
 			for (String keyword : notKeywords) {
 				int index = Initialization.dict.indexOf(keyword);
 				if (index != -1) {
-					Q.set(index, 0, notHyperIncreasingSequence[count++]);
+					Q[index] = notHyperIncreasingSequence[count++];
 				}
 			}
 		}
 
-		Q.set(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER - 1, 0, -s);
+		Q[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER - 1] = -s;
 		// Q 更新为 rQ
-		Q = Q.times(r);
+		Q = DiagonalMatrixUtils.times(Q, r);
 
 		/*
 		// 之前一直都忘记了这一部分。
@@ -179,20 +180,20 @@ public class TrapdoorGenerating {
 		/*System.out.println("Q Qa Qb transponse.");
 		MatrixUitls.print(Q.transpose());*/
 
-		Matrix qa = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
-		Matrix qb = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
+		double[] qa = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
+		double[] qb = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
 
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
 			// S[i] == 1;
 			if (mySecretKey.S.get(i)) {
 				double v1 = Initialization.RANDOM.nextDouble();
-				qa.set(i, 0, Q.get(i, 0) * v1);
-				qb.set(i, 0, Q.get(i, 0) * (1 - v1));
+				qa[i] = Q[i] * v1;
+				qb[i] = Q[i] * (1 - v1);
 
 				//S[i] == 0;
 			} else {
-				qa.set(i, 0, Q.get(i, 0));
-				qb.set(i, 0, Q.get(i, 0));
+				qa[i] = Q[i];
+				qb[i] = Q[i];
 			}
 		}
 
@@ -203,8 +204,8 @@ public class TrapdoorGenerating {
 		System.out.println(inverseM1.getRowDimension() + "\t" +inverseM2.getColumnDimension());
 		System.out.println(qa.getRowDimension() + "\t" +qb.getColumnDimension());*/
 
-		Matrix part1 = AuxiliaryMatrix.M1Inverse.times(qa);
-		Matrix part2 = AuxiliaryMatrix.M2Inverse.times(qb);
+		double[] part1 = DiagonalMatrixUtils.times(AuxiliaryMatrix.M1Inverse, qa);
+		double[] part2 = DiagonalMatrixUtils.times(AuxiliaryMatrix.M2Inverse, qb);
 		System.out.println("generate trapdoor total time:" + (System.currentTimeMillis() - start));
 		System.out.println("TrapdoorGenerating trapdoorGenerating finished.");
 		return new Trapdoor(part1, part2);

@@ -11,10 +11,11 @@ import Jama.Matrix;
 */
 public class AuxiliaryMatrix {
 	// transpose
-	public static Matrix M1Transpose;
-	public static Matrix M2Transpose;
+	public static double[] M1Transpose;
+	public static double[] M2Transpose;
 
 	// inverse
-	public static Matrix M1Inverse;
-	public static Matrix M2Inverse;
+	public static double[] M1Inverse;
+	public static double[] M2Inverse;
+
 }

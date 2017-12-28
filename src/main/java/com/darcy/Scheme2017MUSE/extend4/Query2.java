@@ -107,6 +107,7 @@ public class Query2 {
 	}
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
+		System.out.println(Query2.class.getName() + " search.");
 		System.out.println("extend4 search.");
 		test2();
 

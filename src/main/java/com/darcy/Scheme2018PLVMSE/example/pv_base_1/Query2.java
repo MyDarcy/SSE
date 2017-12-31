@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.noextend4;
+package com.darcy.Scheme2018PLVMSE.example.pv_base_1;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -22,25 +22,6 @@ import static java.util.stream.Collectors.toList;
 */
 public class Query2 {
 
-	public static void test1() {
-		try {
-			MySecretKey mySecretKey = Initialization.getMySecretKey();
-			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
-			hacTreeIndexBuilding.buildHACTreeIndex();
-
-			String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
-
-			System.out.println("Query2 start generating trapdoor.");
-			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
-			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public static void test2() {
 		try {
 			MySecretKey mySecretKey = Initialization.getMySecretKey();
@@ -54,23 +35,21 @@ public class Query2 {
 			// String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
 
 			// for-40
-			// String query = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
-			String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
+      // String query = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
+			String query = "java python go";
 
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
 			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
-			// for-40
-			int requestNumber = 10;
+       int requestNumber = 2;
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
-			/*for (HACTreeNode node : priorityQueue) {
+			for (HACTreeNode node : priorityQueue) {
 				System.out.println(node.fileDescriptor);
-			}*/
-			System.out.println();
+			}
 
 			List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
 
@@ -78,6 +57,7 @@ public class Query2 {
 
 			// 验证搜索结果是否包含特定的文档。
 			searchResultVerify(filenameList, keywordPatternStr);
+
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -93,6 +73,8 @@ public class Query2 {
 	}
 
 	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr) throws IOException {
+		System.out.println();
+
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
 			System.out.println(filenameList.get(i));
@@ -104,14 +86,9 @@ public class Query2 {
 			while (matcher.find()) {
 				String keyword = matcher.group().toLowerCase();
 				/*System.out.println(filenameArray[i] + "\t" + keyword + "\t" + Initialization.keywordFrequencyInDocument.get(filenameArray[i]).get(keyword) + "\t" + "documentNumber\t" + Initialization.numberOfDocumentContainsKeyword.get(keyword));*/
-				/*System.out.printf("%-60s\t%-15s\t%-10s%-15s\t%10s\n", filenameList.get(i), keyword,
-						Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
-						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));*/
-
 				System.out.printf("%-15s\t%-10s%-15s\t%10s\n", keyword,
 						Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
 						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));
-
 				count++;
 			}
 			System.out.println("count:" + count);
@@ -129,11 +106,7 @@ public class Query2 {
 	}
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-		System.out.println(Query2.class.getName() + " search.");
-		System.out.println("noextend4 search.");
-
-		/*test1();*/
-
+		System.out.println("tf_idf_base_1 search.");
 		test2();
 
 	}

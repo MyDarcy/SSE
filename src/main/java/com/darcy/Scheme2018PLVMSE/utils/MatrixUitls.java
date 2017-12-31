@@ -12,9 +12,15 @@ public class MatrixUitls {
 	public static void print(Matrix matrix) {
 		double[][] array = matrix.getArray();
 		for (int i = 0; i < array.length; i++) {
+			System.out.print("[");
 			for (int j = 0; j < array[i].length; j++) {
-				System.out.printf("%-6f\t", array[i][j]);
+				if (j < array[i].length - 1) {
+					System.out.printf("%4f,", array[i][j]);
+				} else {
+					System.out.printf("%4f", array[i][j]);
+				}
 			}
+			System.out.println("]");
 			System.out.println();
 		}
 	}

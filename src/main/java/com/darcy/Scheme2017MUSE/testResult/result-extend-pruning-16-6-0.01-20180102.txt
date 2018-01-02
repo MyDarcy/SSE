@@ -1,0 +1,109 @@
+total time:37ms
+SearchAlgorithm search end.
+leafNodeCount:12
+containsCount:0
+all document-size:12
+all document-score.
+000c835555db62e319854d9f8912061cdca1893e.story              0.32710044
+0009ebb1967511741629926ef9f5faea2bb6be24.story              0.29832311
+000940f2bb357ac04a236a232156d8b9b18d1667.story              0.26619523
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story              0.25843650
+00083697263e215e5e7eda753070f08aa374dd45.story              0.22308786
+0003ad6ef0c37534f80b55b4235108024b407f0b.story              0.07780284
+0002c17436637c4fe1837c935c04de47adb18e9a.story              0.06682940
+0004306354494f090ee2d7bc5ddbf80b63e80de6.story              0.05869773
+001097a19e2c96de11276b3cce11566ccfed0030.story              0.05709012
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story              0.04932338
+000e009f6b1d954d827c9a550f3f24a5474ee82b.story              0.04195778
+000cd1ee0098c4d510a03ddc97d11764448ebac2.story              0.00783942
+
+result document-score.
+000c835555db62e319854d9f8912061cdca1893e.story              0.32710044
+0009ebb1967511741629926ef9f5faea2bb6be24.story              0.29832311
+000940f2bb357ac04a236a232156d8b9b18d1667.story              0.26619523
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story              0.25843650
+00083697263e215e5e7eda753070f08aa374dd45.story              0.22308786
+0003ad6ef0c37534f80b55b4235108024b407f0b.story              0.07780284
+0002c17436637c4fe1837c935c04de47adb18e9a.story              0.06682940
+0004306354494f090ee2d7bc5ddbf80b63e80de6.story              0.05869773
+001097a19e2c96de11276b3cce11566ccfed0030.story              0.05709012
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story              0.04932338
+Query2 priorityQueue.size():10
+000c835555db62e319854d9f8912061cdca1893e.story
+0009ebb1967511741629926ef9f5faea2bb6be24.story
+000940f2bb357ac04a236a232156d8b9b18d1667.story
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story
+00083697263e215e5e7eda753070f08aa374dd45.story
+0003ad6ef0c37534f80b55b4235108024b407f0b.story
+0002c17436637c4fe1837c935c04de47adb18e9a.story
+0004306354494f090ee2d7bc5ddbf80b63e80de6.story
+001097a19e2c96de11276b3cce11566ccfed0030.story
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story
+
+000c835555db62e319854d9f8912061cdca1893e.story
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+church         	6         docsNumber     	         1
+count:8
+
+0009ebb1967511741629926ef9f5faea2bb6be24.story
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+performance    	7         docsNumber     	         2
+count:7
+
+000940f2bb357ac04a236a232156d8b9b18d1667.story
+hospital       	5         docsNumber     	         3
+hospital       	5         docsNumber     	         3
+hospital       	5         docsNumber     	         3
+voice          	1         docsNumber     	         2
+hospital       	5         docsNumber     	         3
+hospital       	5         docsNumber     	         3
+count:6
+
+0006021f772fad0aa78a977ce4a31b3faa6e6fe5.story
+democratic     	5         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+performance    	1         docsNumber     	         2
+democratic     	5         docsNumber     	         2
+count:6
+
+00083697263e215e5e7eda753070f08aa374dd45.story
+hospital       	1         docsNumber     	         3
+interview      	1         docsNumber     	         7
+citizenship    	1         docsNumber     	         1
+count:3
+
+0003ad6ef0c37534f80b55b4235108024b407f0b.story
+hospital       	1         docsNumber     	         3
+count:1
+
+0002c17436637c4fe1837c935c04de47adb18e9a.story
+british        	1         docsNumber     	         4
+interview      	1         docsNumber     	         7
+count:2
+
+0004306354494f090ee2d7bc5ddbf80b63e80de6.story
+interview      	1         docsNumber     	         7
+count:1
+
+001097a19e2c96de11276b3cce11566ccfed0030.story
+interview      	3         docsNumber     	         7
+interview      	3         docsNumber     	         7
+interview      	3         docsNumber     	         7
+count:3
+
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story
+british        	1         docsNumber     	         4
+count:1

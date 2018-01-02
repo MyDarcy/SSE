@@ -58,8 +58,6 @@ public class Query2 {
 
 			// 验证搜索结果是否包含特定的文档。
 			searchResultVerify(filenameList, keywordPatternStr);
-
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {

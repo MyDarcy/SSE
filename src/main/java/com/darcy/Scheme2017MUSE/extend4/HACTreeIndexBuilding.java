@@ -35,9 +35,8 @@ public class HACTreeIndexBuilding {
 	// 添加的冗余关键词的权重取值范围
 	// 论文中取值 -0.01~0.01 -0.03~0.03 -0.05~0.05
 	// 最佳取值 -0.01~0.01
-	// 这里我取值 0.005~0.005. 发现搜出来的结果没法看。
-	// 0.02的效果比0.01的效果好。
-	public RealDistribution distribution = new UniformRealDistribution(-0.01, 0.01);
+	// 发现0.001目前效果最好。
+	public RealDistribution distribution = new UniformRealDistribution(-0.001, 0.001);
 	public Random random = new Random(System.currentTimeMillis());
 
 	/**
@@ -254,7 +253,7 @@ public class HACTreeIndexBuilding {
 				Matrix parentNodeCenterVector = getParentNodeCenterVector(mostCorrespondNodePair);
 				int parentNumberOfNodeInCurrentCluster = mostCorrespondNodePair.node1.numberOfNodeInCurrentCluster
 						+ mostCorrespondNodePair.node2.numberOfNodeInCurrentCluster;
-				// 存疑，这样构造出来的剪枝向量有效吗？
+				// 存疑，这样构造出来的剪枝向量有效吗 ?
 				HACTreeNode parentNode = new HACTreeNode(parentNodePruningVectors.get(0), parentNodePruningVectors.get(1),
 						parentNodeCenterVector, parentNumberOfNodeInCurrentCluster,
 						mostCorrespondNodePair.node1, mostCorrespondNodePair.node2, null, null);

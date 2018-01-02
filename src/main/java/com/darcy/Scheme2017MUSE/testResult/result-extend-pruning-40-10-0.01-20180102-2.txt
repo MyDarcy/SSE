@@ -1,0 +1,86 @@
+total time:43ms
+SearchAlgorithm search end.
+leafNodeCount:14
+containsCount:0
+all document-size:14
+all document-score.
+0009ebb1967511741629926ef9f5faea2bb6be24.story              0.37751336
+000940f2bb357ac04a236a232156d8b9b18d1667.story              0.35033721
+00083697263e215e5e7eda753070f08aa374dd45.story              0.29375314
+0001d1afc246a7964130f43ae940af6bc6c57f01.story              0.18993772
+00189f37b1c8bdc2b132b40270bb28ffcc622af1.story              0.14493832
+0010c870d3fc53ea7f2a4a50f6496dc2df17e02f.story              0.10524594
+001c839e1d76c400129f6c2799957c74e9895815.story              0.09214889
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story              0.07015463
+0004306354494f090ee2d7bc5ddbf80b63e80de6.story              0.06007600
+000e009f6b1d954d827c9a550f3f24a5474ee82b.story              0.04998691
+000cd1ee0098c4d510a03ddc97d11764448ebac2.story              0.01817125
+00120f91cfcab17bac165f7a4719019a628a9db3.story              0.00124541
+001d9259673bd2ffb613217d19b98ca3563874ac.story              -0.00082792
+001f2856c2bca7de7918eb155b2e1bc8aa0d8695.story              -0.00253827
+
+result document-score.
+0009ebb1967511741629926ef9f5faea2bb6be24.story              0.37751336
+000940f2bb357ac04a236a232156d8b9b18d1667.story              0.35033721
+00083697263e215e5e7eda753070f08aa374dd45.story              0.29375314
+0001d1afc246a7964130f43ae940af6bc6c57f01.story              0.18993772
+00189f37b1c8bdc2b132b40270bb28ffcc622af1.story              0.14493832
+0010c870d3fc53ea7f2a4a50f6496dc2df17e02f.story              0.10524594
+001c839e1d76c400129f6c2799957c74e9895815.story              0.09214889
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story              0.07015463
+0004306354494f090ee2d7bc5ddbf80b63e80de6.story              0.06007600
+000e009f6b1d954d827c9a550f3f24a5474ee82b.story              0.04998691
+Query2 priorityQueue.size():10
+0009ebb1967511741629926ef9f5faea2bb6be24.story
+000940f2bb357ac04a236a232156d8b9b18d1667.story
+00083697263e215e5e7eda753070f08aa374dd45.story
+0001d1afc246a7964130f43ae940af6bc6c57f01.story
+00189f37b1c8bdc2b132b40270bb28ffcc622af1.story
+0010c870d3fc53ea7f2a4a50f6496dc2df17e02f.story
+001c839e1d76c400129f6c2799957c74e9895815.story
+0002095e55fcbd3a2f366d9bf92a95433dc305ef.story
+0004306354494f090ee2d7bc5ddbf80b63e80de6.story
+000e009f6b1d954d827c9a550f3f24a5474ee82b.story
+
+0009ebb1967511741629926ef9f5faea2bb6be24.story
+performance    	7         docsNumber     	         3
+performance    	7         docsNumber     	         3
+performance    	7         docsNumber     	         3
+performance    	7         docsNumber     	         3
+performance    	7         docsNumber     	         3
+performance    	7         docsNumber     	         3
+performance    	7         docsNumber     	         3
+count:7
+
+000940f2bb357ac04a236a232156d8b9b18d1667.story
+hospital       	5         docsNumber     	         4
+hospital       	5         docsNumber     	         4
+hospital       	5         docsNumber     	         4
+voice          	1         docsNumber     	         5
+hospital       	5         docsNumber     	         4
+hospital       	5         docsNumber     	         4
+count:6
+
+00083697263e215e5e7eda753070f08aa374dd45.story
+hospital       	1         docsNumber     	         4
+interview      	1         docsNumber     	         9
+citizenship    	1         docsNumber     	         1
+count:3
+
+0001d1afc246a7964130f43ae940af6bc6c57f01.story
+british        	4         docsNumber     	         7
+british        	4         docsNumber     	         7
+british        	4         docsNumber     	         7
+china          	1         docsNumber     	         2
+british        	4         docsNumber     	         7
+count:5
+
+00189f37b1c8bdc2b132b40270bb28ffcc622af1.story
+british        	1         docsNumber     	         7
+voice          	2         docsNumber     	         5
+voice          	2         docsNumber     	         5
+count:3
+
+0010c870d3fc53ea7f2a4a50f6496dc2df17e02f.story
+broadcasting   	1         docsNumber     	         2
+count:1

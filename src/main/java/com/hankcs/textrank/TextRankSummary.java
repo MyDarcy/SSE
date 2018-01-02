@@ -89,7 +89,7 @@ public class TextRankSummary {
 				}
 			}
 			vertex = m;
-			if (max_diff <= min_diff) break;
+			if (max_diff <= min_diff){ break;}
 		}
 		// 我们来排个序吧
 		for (int i = 0; i < D; ++i) {
@@ -129,24 +129,36 @@ public class TextRankSummary {
 	}
 
 	public static void main(String[] args) {
-		/*String document = "算法可大致分为基本算法、数据结构的算法、数论算法、计算几何的算法、图的算法、动态规划以及数值分析、加密算法、排序算法、检索算法、随机化算法、并行算法、厄米变形模型、随机森林算法。\n" +
-				"算法可以宽泛的分为三类，\n" +
-				"一，有限的确定性算法，这类算法在有限的一段时间内终止。他们可能要花很长时间来执行指定的任务，但仍将在一定的时间内终止。这类算法得出的结果常取决于输入值。\n" +
-				"二，有限的非确定算法，这类算法在有限的时间内终止。然而，对于一个（或一些）给定的数值，算法的结果并不是唯一的或确定的。\n" +
-				"三，无限的算法，是那些由于没有定义终止定义条件，或定义的条件无法由输入的数据满足而不终止运行的算法。通常，无限算法的产生是由于未能确定的定义终止条件。";
-		*/
+		String document = "算法可大致分为基本算法、数据结构的算法、数论算法、计算几何的算法、图的算法、" +
+				"动态规划以及数值分析、加密算法、排序算法、检索算法、随机化算法、并行算法、厄米变形模型、" +
+				"随机森林算法。\n算法可以宽泛的分为三类，\n" +
+				"一，有限的确定性算法，这类算法在有限的一段时间内终止。他们可能要花很长时间来执行指定的任务，" +
+				"但仍将在一定的时间内终止。这类算法得出的结果常取决于输入值。\n" +
+				"二，有限的非确定算法，这类算法在有限的时间内终止。然而，对于一个（或一些）给定的数值，算法" +
+				"的结果并不是唯一的或确定的。\n" +
+				"三，无限的算法，是那些由于没有定义终止定义条件，或定义的条件无法由输入的数据满足而不终止运行" +
+				"的算法。通常，无限算法的产生是由于未能确定的定义终止条件。";
 
-		String document = "However, China alleges the men are part of the East Turkestan Islamic Movement -- a group the U.S. State Department considers a terrorist organization -- that operates in the Xinjiang region. East Turkestan is another name for Xinjiang.\n" +
-				"\n" +
-				"China on Thursday urged the United States to hand over all 17 of the Uyghurs instead of sending them elsewhere. The Chinese statement followed an offer by Palau, a Pacific island nation, to accept the Uyghur detainees.\n" +
-				"\n" +
-				"The Xinjiang region of 20 million people is largely populated by ethnic Uyghurs and other Muslim minorities who have traditionally opposed Beijing's rule and clamored for greater autonomy.\n" +
-				"\n" +
-				"A senior U.S. administration official told CNN the State Department is working on a final agreement with Palau to settle the matter of the 13 remaining Uyghur detainees.\n" +
-				"\n" +
-				"Issues to be worked out include how to transfer the Uyghurs to Palau and how much money the United States would give the men for resettlement, the official said.\n";
+		String document2 =
+				"However, China alleges the men are part of the East Turkestan Islamic Movement " +
+						"-- a group the U.S. State Department considers a terrorist organization -- " +
+						"that operates in the Xinjiang region. East Turkestan is another name for Xinjiang.\n" +
+						"China on Thursday urged the United States to hand over all 17 of the Uyghurs instead " +
+						"of sending them elsewhere. The Chinese statement followed an offer by Palau, a Pacific " +
+						"island nation, to accept the Uyghur detainees.\n" +
+						"The Xinjiang region of 20 million people is largely populated by ethnic Uyghurs and" +
+						" other Muslim minorities who have traditionally opposed Beijing's rule and clamored " +
+						"for greater autonomy.\n" +
+						"A senior U.S. administration official told CNN the State Department is working on a" +
+						" final agreement with Palau to settle the matter of the 13 remaining Uyghur detainees.\n" +
+						"Issues to be worked out include how to transfer the Uyghurs to Palau and how much money" +
+						" the United States would give the men for resettlement, the official said.\n";
 
-		System.out.println(TextRankSummary.getTopSentenceList(document, 3));
+		List<String> topSentenceList = TextRankSummary.getTopSentenceList(document, 3);
+		System.out.println(topSentenceList.size());
+		for (int i = 0; i < topSentenceList.size(); i++) {
+			System.out.println(topSentenceList.get(i));
+		}
 	}
 
 	/**
@@ -157,13 +169,20 @@ public class TextRankSummary {
 	 */
 	static List<String> spiltSentence(String document) {
 		List<String> sentences = new ArrayList<String>();
-		if (document == null) return sentences;
+		if (document == null) {
+			return sentences;
+		}
+
 		for (String line : document.split("[\r\n]")) {
 			line = line.trim();
-			if (line.length() == 0) continue;
+			if (line.length() == 0) {
+				continue;
+			}
 			for (String sent : line.split("[，,。:：“”？?！!；;]")) {
 				sent = sent.trim();
-				if (sent.length() == 0) continue;
+				if (sent.length() == 0) {
+					continue;
+				}
 				sentences.add(sent);
 			}
 		}

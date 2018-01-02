@@ -94,7 +94,10 @@ public class BM25 {
 	public double sim(List<String> sentence, int index) {
 		double score = 0;
 		for (String word : sentence) {
-			if (!f[index].containsKey(word)) continue;
+			if (!f[index].containsKey(word)) {
+				continue;
+			}
+
 			int d = docs.get(index).size();
 			Integer wf = f[index].get(word);
 			score += (idf.get(word) * wf * (k1 + 1)

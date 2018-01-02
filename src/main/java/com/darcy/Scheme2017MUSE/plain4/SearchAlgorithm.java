@@ -191,7 +191,6 @@ public class SearchAlgorithm {
 				System.out.println("score:" + score + " no bigger than thresholdScore:" + thresholdScore);
 				System.out.println();
 			}
-
 		}
 	}
 

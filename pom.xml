@@ -107,14 +107,6 @@
       <version>1.2</version>
     </dependency>
 
-
-
-    <dependency>
-      <groupId>com.hankcs</groupId>
-      <artifactId>hanlp</artifactId>
-      <version>portable-1.5.0</version>
-    </dependency>
-
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -133,12 +125,19 @@
 
 
     <!-- https://mvnrepository.com/artifact/com.hankcs/hanlp -->
+    <!-- for textrank. -->
     <dependency>
       <groupId>com.hankcs</groupId>
       <artifactId>hanlp</artifactId>
-      <version>portable-1.5.2</version>
+      <version>portable-1.5.3</version>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/dom4j/dom4j -->
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+    </dependency>
 
 
   </dependencies>

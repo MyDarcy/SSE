@@ -15,7 +15,7 @@ import java.util.*;
 public class TextRankKeyword {
 	public static final int nKeyword = 10;
 	/**
-	 * 阻尼系数（ＤａｍｐｉｎｇＦａｃｔｏｒ），一般取值为0.85
+	 * 阻尼系数（DampingFactor），一般取值为0.85
 	 */
 	static final float d = 0.85f;
 	/**
@@ -72,13 +72,15 @@ public class TextRankKeyword {
 				m.put(key, 1 - d);
 				for (String other : value) {
 					int size = words.get(other).size();
-					if (key.equals(other) || size == 0) continue;
+					if (key.equals(other) || size == 0) {continue;}
 					m.put(key, m.get(key) + d / size * (score.get(other) == null ? 0 : score.get(other)));
 				}
 				max_diff = Math.max(max_diff, Math.abs(m.get(key) - (score.get(key) == null ? 0 : score.get(key))));
 			}
 			score = m;
-			if (max_diff <= min_diff) break;
+			if (max_diff <= min_diff) {
+				break;
+			}
 		}
 		List<Map.Entry<String, Float>> entryList = new ArrayList<Map.Entry<String, Float>>(score.entrySet());
 		Collections.sort(entryList, new Comparator<Map.Entry<String, Float>>() {
@@ -89,14 +91,29 @@ public class TextRankKeyword {
 		});
 //        System.out.println(entryList);
 		String result = "";
-		for (int i = 0; i < nKeyword; ++i) {
-			result += entryList.get(i).getKey() + '#';
+		for (int i = 0; i < entryList.size(); ++i) {
+			result += entryList.get(i).getKey() + ':' + entryList.get(i).getValue() + "\t";
 		}
 		return result;
 	}
 
 	public static void main(String[] args) {
-		String content = "程序员(英文Programmer)是从事程序开发、维护的专业人员。一般将程序员分为程序设计人员和程序编码人员，但两者的界限并不非常清楚，特别是在中国。软件从业人员分为初级程序员、高级程序员、系统分析员和项目经理四大类。";
+		// String content = "程序员(英文Programmer)是从事程序开发、维护的专业人员。一般将程序员分为程序设计人员和程序编码人员，但两者的界限并不非常清楚，特别是在中国。软件从业人员分为初级程序员、高级程序员、系统分析员和项目经理四大类。";
+		// String content = "China alleges the men are part of the East Turkestan Islamic Movement";
+		String content =
+				"However, China alleges the men are part of the East Turkestan Islamic Movement " +
+						"-- a group the U.S. State Department considers a terrorist organization -- " +
+						"that operates in the Xinjiang region. East Turkestan is another name for Xinjiang.\n" +
+						"China on Thursday urged the United States to hand over all 17 of the Uyghurs instead " +
+						"of sending them elsewhere. The Chinese statement followed an offer by Palau, a Pacific " +
+						"island nation, to accept the Uyghur detainees.\n" +
+						"The Xinjiang region of 20 million people is largely populated by ethnic Uyghurs and" +
+						" other Muslim minorities who have traditionally opposed Beijing's rule and clamored " +
+						"for greater autonomy.\n" +
+						"A senior U.S. administration official told CNN the State Department is working on a" +
+						" final agreement with Palau to settle the matter of the 13 remaining Uyghur detainees.\n" +
+						"Issues to be worked out include how to transfer the Uyghurs to Palau and how much money" +
+						" the United States would give the men for resettlement, the official said.\n";
 		System.out.println(new TextRankKeyword().getKeyword("", content));
 	}
 

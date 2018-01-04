@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.plain4;
+package com.darcy.Scheme2017MUSE.linux.plain4;
 
 
 import Jama.Matrix;
@@ -32,15 +32,15 @@ public class Initialization {
 	public static final int DUMMY_KEYWORD_NUMBER = 0;
 
 	// 项目目录.
-	// public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	// public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\plain\\key\\aesKey.dat";
-	// public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";
-	// public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\plain\\encrypted40";
+	public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\plain\\key\\aesKey.dat";
+	public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";
+	public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\plain\\encrypted40";
 
-	public static /*final*/ String BASE = "/home/zqhe/data";
-	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/plain/key/aesKey.dat";
-	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/plain/plain40";
-	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/plain/encrypted40";
+	// public static /*final*/ String BASE = "/home/zqhe/data";
+	// public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/plain/key/aesKey.dat";
+	// public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/plain/plain40";
+	// public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/plain/encrypted40";
 
 	// 明文文件目录 	密文文件目录. 40个文件
 	// public static final String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";

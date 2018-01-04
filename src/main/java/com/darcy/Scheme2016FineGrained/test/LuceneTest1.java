@@ -34,17 +34,15 @@ public class LuceneTest1 {
 			for (int i = 0; i < self_stop_words.length; i++) {
 				cas.add(self_stop_words[i]);
 			}
-
 			// 加入系统默认停用词
 			Iterator<Object> itor = StandardAnalyzer.STOP_WORDS_SET.iterator();
 			while (itor.hasNext()) {
 				cas.add(itor.next());
 			}
-
 			// 标准分词器(Lucene内置的标准分析器,会将语汇单元转成小写形式，并去除停用词及标点符号)
 			StandardAnalyzer sa = new StandardAnalyzer();
-
 			TokenStream ts = sa.tokenStream("field", text);
+
 			CharTermAttribute ch = ts.addAttribute(CharTermAttribute.class);
 
 			ts.reset();

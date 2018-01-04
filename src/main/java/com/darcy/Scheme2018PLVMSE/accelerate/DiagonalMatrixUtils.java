@@ -1,6 +1,5 @@
 package com.darcy.Scheme2018PLVMSE.accelerate;
 
-import java.util.Arrays;
 import java.util.Random;
 
 /*

@@ -1,7 +1,6 @@
 package com.darcy.Scheme2018PLVMSE.accelerate.extend4;
 
 
-import Jama.Matrix;
 import com.darcy.Scheme2018PLVMSE.accelerate.DiagonalMatrixUtils;
 
 import javax.crypto.Cipher;

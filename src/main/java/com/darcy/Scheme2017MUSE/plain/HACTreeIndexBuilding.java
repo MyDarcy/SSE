@@ -1,7 +1,6 @@
 package com.darcy.Scheme2017MUSE.plain;
 
 import Jama.Matrix;
-import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 

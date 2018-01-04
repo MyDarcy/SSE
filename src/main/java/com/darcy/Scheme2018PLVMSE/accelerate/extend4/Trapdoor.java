@@ -1,7 +1,5 @@
 package com.darcy.Scheme2018PLVMSE.accelerate.extend4;
 
-import Jama.Matrix;
-
 /*
  * author: darcy
  * date: 2017/11/18 20:15

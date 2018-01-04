@@ -11,11 +11,11 @@
  */
 package com.lc.nlp.keyword.algorithm;
 
-import java.util.*;
-
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.dictionary.stopword.CoreStopWordDictionary;
 import com.hankcs.hanlp.seg.common.Term;
+
+import java.util.*;
 
 
 public class TextRank {

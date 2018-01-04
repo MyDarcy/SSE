@@ -12,14 +12,14 @@
 
 package com.lc.nlp.keyword.algorithm;
 
-import java.io.*;
-import java.util.*;
-
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.dictionary.stopword.CoreStopWordDictionary;
 import com.hankcs.hanlp.seg.common.Term;
+import com.lc.nlp.parsedoc.ReadDir;
+import com.lc.nlp.parsedoc.ReadFile;
 
-import com.lc.nlp.parsedoc.*;
+import java.io.IOException;
+import java.util.*;
 
 
 public class TFIDF {

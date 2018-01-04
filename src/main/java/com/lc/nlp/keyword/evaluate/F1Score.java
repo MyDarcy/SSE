@@ -12,8 +12,9 @@
 
 package com.lc.nlp.keyword.evaluate;
 
-import java.util.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class F1Score {
 	private static DecimalFormat df = new DecimalFormat("0.00");//format the output to reserve two decimal places 

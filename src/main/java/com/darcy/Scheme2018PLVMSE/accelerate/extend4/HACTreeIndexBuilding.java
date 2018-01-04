@@ -1,8 +1,6 @@
 package com.darcy.Scheme2018PLVMSE.accelerate.extend4;
 
-import Jama.Matrix;
 import com.darcy.Scheme2018PLVMSE.accelerate.DiagonalMatrixUtils;
-import com.sun.org.apache.xml.internal.security.Init;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 

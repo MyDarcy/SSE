@@ -1,9 +1,6 @@
 package com.darcy.Scheme2018PLVMSE.accelerate.noextend4;
 
-import Jama.Matrix;
-
 import javax.crypto.SecretKey;
-import java.util.Arrays;
 import java.util.BitSet;
 
 /*

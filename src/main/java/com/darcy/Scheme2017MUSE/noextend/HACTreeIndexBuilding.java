@@ -1,7 +1,6 @@
 package com.darcy.Scheme2017MUSE.noextend;
 
 import Jama.Matrix;
-import com.darcy.Scheme2017MUSE.utils.MatrixUitls;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

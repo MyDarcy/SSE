@@ -12,10 +12,10 @@
 
 package com.lc.nlp.keyword.algorithm;
 
-import java.util.*;
-
 import com.lc.nlp.parsedoc.ReadDir;
 import com.lc.nlp.parsedoc.ReadFile;
+
+import java.util.*;
 
 
 public class TextRankWithTFIDF {

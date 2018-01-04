@@ -1,7 +1,5 @@
 package com.darcy.Scheme2018PLVMSE.accelerate.noextend4;
 
-import Jama.Matrix;
-
 import java.security.MessageDigest;
 
 /*

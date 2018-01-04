@@ -12,6 +12,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.toList;
 
 /*
  * author: darcy
@@ -62,6 +65,21 @@ public class LucuneDemo {
 
 		System.out.println("dict.size():" + dict.size());
 		dict.stream().sorted().forEach(System.out::println);
+		List<String> list = dict.stream().sorted().collect(toList());
+		List<String> listAfterFilterLength = list.stream()/*.filter((str) -> str.length() > 3)*/.collect(toList());
+		List<String> listNumber = listAfterFilterLength.stream().filter(s -> s.matches("[0-9]+.*")).collect(toList());
+		List<String> listNotNumber = listAfterFilterLength.stream().filter(s -> !s.matches("[0-9]+.*")).collect(toList());
+
+		// 不做任何处理
+		// 1000个文件 - 34243个单词
+		System.out.println("dict.size():" + list.size());
+		// System.out.println("after filter, dict.size():" + listAfterFilterLength.size());
+		System.out.println("after filter number, dict.size():" + listNotNumber.size());
+		System.out.println("number.size():" + listNumber.size());
+		System.out.println(listNumber);
+
+		List<String> result = listNotNumber.stream().filter(s -> s.length() > 4).collect(toList());
+		System.out.println("result.size():" + result.size());
 	}
 
 	public static void main(String[] args) {

@@ -32,15 +32,15 @@ public class Initialization {
 	public static final int DUMMY_KEYWORD_NUMBER = 0;
 
 	// 项目目录.
-	public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\plain\\key\\aesKey.dat";
-	public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";
-	public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\plain\\encrypted40";
+	// public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	// public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\plain\\key\\aesKey.dat";
+	// public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";
+	// public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\plain\\encrypted40";
 
-	// public static /*final*/ String BASE = "/home/zqhe/data";
-	// public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/plain/key/aesKey.dat";
-	// public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/plain/plain40";
-	// public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/plain/encrypted40";
+	public static /*final*/ String BASE = "/home/zqhe/data";
+	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/plain/key/aesKey.dat";
+	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/plain/plain1000";
+	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/plain/encrypted1000";
 
 	// 明文文件目录 	密文文件目录. 40个文件
 	// public static final String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";
@@ -165,6 +165,19 @@ public class Initialization {
 		HashSet<String> globalDictSet = new HashSet<>();
 		Matcher matcher = WORD_PATTERN.matcher("");
 
+		Comparator<Map.Entry<String, Integer>> maxComparator = new Comparator<Map.Entry<String, Integer>>() {
+			@Override
+			public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+				if (Integer.compare(o1.getValue(), o2.getValue()) > 0) {
+					return -1;
+				} else if (Integer.compare(o1.getValue(), o2.getValue()) == 0) {
+					return 0;
+				} else {
+					return 1;
+				}
+			}
+		};
+
 		// long start1 = System.currentTimeMillis();
 		if (parentFile.exists()) {
 			File[] files = parentFile.listFiles();
@@ -217,32 +230,25 @@ public class Initialization {
 		// 统计1000个文档只用了3276ms
 		// System.out.println("manage documents time consume:" + (System.currentTimeMillis() - start1));
 
-		System.out.println("fileLength:" + fileLength);
-		System.out.println("filenumbers:" + fileLength.size());
+		// System.out.println("fileLength:" + fileLength);
+		// System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
+		// System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
 
-		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
-		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
+		System.out.println("filenumbers:" + fileLength.size());
+		System.out.println("keywordFrequencyInDocument.size():" + keywordFrequencyInDocument.size());
+		System.out.println("numberOfDocumentContainsKeyword.size():" + numberOfDocumentContainsKeyword.size());
+
 
 		Map<String, Integer> duplicateNumberOfDocumentContainsKeyword = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : numberOfDocumentContainsKeyword.entrySet()) {
 			duplicateNumberOfDocumentContainsKeyword.put(new String(entry.getKey()), new Integer(entry.getValue()));
 		}
 		List<Map.Entry<String, Integer>> duplicate = new ArrayList<>(duplicateNumberOfDocumentContainsKeyword.entrySet());
-		Collections.sort(duplicate, new Comparator<Map.Entry<String, Integer>>() {
-			@Override
-			public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-				if (Integer.compare(o1.getValue(), o2.getValue()) > 0) {
-					return -1;
-				} else if (Integer.compare(o1.getValue(), o2.getValue()) == 0) {
-					return 0;
-				} else {
-					return 1;
-				}
-			}
-		});
 
-		System.out.println("keyword - documentNumber");
-		System.out.println(duplicate);
+		Collections.sort(duplicate, maxComparator);
+
+		/*System.out.println("keyword - documentNumber");
+		System.out.println(duplicate);*/
 
 		// 测试关键词频率map中的结果是否和fileLength中数值相等.
 		boolean result = testInfo(fileLength, keywordFrequencyInDocument);
@@ -251,7 +257,7 @@ public class Initialization {
 		List<String> dict = globalDictSet.stream().sorted().collect(toList());
 
 		System.out.println("initialization dict.size():" + dict.size());
-		System.out.println(dict);
+		// System.out.println(dict);
 
 		// 初始化字典的长度和字典本身.
 		Initialization.lengthOfDict = dict.size();

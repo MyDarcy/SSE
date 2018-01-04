@@ -58,8 +58,8 @@ public class TrapdoorGenerating {
 			}
 		}
 
-		System.out.println("Q transpose.");
-		MatrixUitls.print(Q.transpose());
+		/*System.out.println("Q transpose.");
+		MatrixUitls.print(Q.transpose());*/
 
 		System.out.println("generate trapdoor total time:" + (System.currentTimeMillis() - start));
 		System.out.println("TrapdoorGenerating trapdoorGenerating finished.");

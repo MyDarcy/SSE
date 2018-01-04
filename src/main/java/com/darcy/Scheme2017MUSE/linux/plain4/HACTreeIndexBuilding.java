@@ -65,8 +65,7 @@ public class HACTreeIndexBuilding {
 		File[] files = parentFile.listFiles();
 
 		for (int i = 0; i < files.length; i++) {
-			System.out.println(files[i].getName());
-
+			// System.out.println(files[i].getName());
 			Matrix P = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
 
 			// 当前文档的长度.

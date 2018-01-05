@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.extend4;
+package com.darcy.linux.extend;
 
 
 import Jama.Matrix;
@@ -31,13 +31,17 @@ public class Initialization {
 	// 添加用于混淆的冗余关键词的数目
 	public static final int DUMMY_KEYWORD_NUMBER = 10;
 
-	// 项目目录. 密钥目录. 明文文件目录.密文文件目录. 40个文件
-	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain16";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted16";
+	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录. 40个文件
+//  	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+//  	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+//  	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain16";
+//  	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted16";
 
-
+	// linux下.
+	public static /*final*/ String BASE = "/home/zqhe/data";
+	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/extend/key/aesKey.dat";
+	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/extend/plain100";
+	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/extend/encrypted100";
 
 	// 明文文件目录 	密文文件目录. 16个文件
 	// doc/splitting/cnn_splitting40_10
@@ -66,6 +70,8 @@ public class Initialization {
 	// public static int[][] keywordFrequency;
 	// filename -> {keyword: count}
 	public static Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+
+	public static List<String> extendDummyDict;
 
 	/**
 	 * 主要是为了密钥的生成。
@@ -142,7 +148,6 @@ public class Initialization {
 		}
 	}
 
-	public static List<String> extendDummyDict;
 
 
 	public static MySecretKey getMySecretKey() throws IOException {
@@ -204,9 +209,13 @@ public class Initialization {
 		// 统计1000个文档只用了3276ms
 		// System.out.println("manage documents time consume:" + (System.currentTimeMillis() - start1));
 
-		System.out.println("fileLength:" + fileLength);
-		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
-		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
+//		System.out.println("fileLength:" + fileLength);
+//		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
+//		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
+
+		System.out.println("fileLength.size():" + fileLength.size());
+		System.out.println("keywordFrequencyInDocument.size():" + keywordFrequencyInDocument.size());
+		System.out.println("numberOfDocumentContainsKeyword.size():" + numberOfDocumentContainsKeyword.size());
 
 		Map<String, Integer> duplicateNumberOfDocumentContainsKeyword = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : numberOfDocumentContainsKeyword.entrySet()) {
@@ -236,7 +245,7 @@ public class Initialization {
 		List<String> dict = globalDictSet.stream().sorted().collect(toList());
 
 		System.out.println("initialization dict.size():" + dict.size());
-		System.out.println(dict);
+		// System.out.println(dict);
 
 		// 初始化字典的长度和字典本身.
 		Initialization.lengthOfDict = dict.size();

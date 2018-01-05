@@ -1,4 +1,4 @@
-package com.darcy.Scheme2017MUSE.linux.plain4;
+package com.darcy.linux.plain;
 
 import Jama.Matrix;
 
@@ -46,7 +46,7 @@ public class Query2 {
 			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
 
 			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
-			System.out.println(root);
+			// System.out.println(root);
 
 			// for-16
 			// String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";

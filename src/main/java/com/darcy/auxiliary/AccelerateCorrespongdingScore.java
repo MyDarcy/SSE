@@ -1,5 +1,6 @@
 package com.darcy.auxiliary;
 
+import Jama.Matrix;
 import com.darcy.Scheme2018PLVMSE.accelerate.DiagonalMatrixUtils;
 import org.ujmp.core.doublematrix.calculation.entrywise.creators.Rand;
 
@@ -44,8 +45,8 @@ public class AccelerateCorrespongdingScore {
 			}
 		};
 
-		int dotNumber = 1001;
-		int matrixSize = 5000;
+		int dotNumber = 100;
+		int matrixSize = 300;
 		List<double[]> list1 = new ArrayList<>(dotNumber);
 		List<double[]> list2 = new ArrayList<>(dotNumber);
 		Random random = new Random(System.currentTimeMillis());
@@ -181,6 +182,68 @@ public class AccelerateCorrespongdingScore {
 	public static void main(String[] args) {
 		AccelerateCorrespongdingScore demo = new AccelerateCorrespongdingScore();
 		demo.test();
+
+		demo.testMatrix();
+		System.out.println();
+		demo.testDoubleArray();
+	}
+
+	private void testDoubleArray() {
+		System.out.println("start test double array.");
+		long start = System.currentTimeMillis();
+		int matrixSize = 30000;
+		int loop = 1000;
+		double[][] array1 = new double[matrixSize][1];
+		double[][] array2 = new double[matrixSize][1];
+		Random random = new Random(System.currentTimeMillis());
+		for (int i = 0; i < array1.length; i++) {
+			for (int j = 0; j < array1[0].length; j++) {
+				double v1 = random.nextDouble();
+				double v2 = random.nextDouble();
+				array1[i][j] = v1;
+				array2[i][j] = v2;
+			}
+		}
+
+		double sum = 0;
+		for (int i = 0; i < loop; i++) {
+			for (int j = 0; j < matrixSize; j++) {
+				sum += array1[j][0] * array2[j][0];
+			}
+		}
+		System.out.println("sum:" + sum);
+		System.out.println("time:" + (System.currentTimeMillis() - start));
+		System.out.println("end test double array");
+	}
+
+	private void testMatrix() {
+		System.out.println("start test matrix.");
+		long start = System.currentTimeMillis();
+		int matrixSize = 30000;
+		int loop = 1000;
+		Matrix matrix1 = new Matrix(matrixSize, 1);
+		Matrix matrix2 = new Matrix(matrixSize, 1);
+		double[][] array1 = matrix1.getArray();
+		double[][] array2 = matrix2.getArray();
+		Random random = new Random(System.currentTimeMillis());
+		for (int i = 0; i < array1.length; i++) {
+			for (int j = 0; j < array1[0].length; j++) {
+				double v1 = random.nextDouble();
+				double v2 = random.nextDouble();
+				array1[i][j] = v1;
+				array2[i][j] = v2;
+			}
+		}
+
+		double sum = 0;
+		for (int i = 0; i < loop; i++) {
+			sum += matrix1.transpose().times(matrix2).get(0, 0);
+
+		}
+		System.out.println("sum:" + sum);
+		System.out.println("time:" + (System.currentTimeMillis() - start));
+		System.out.println("end test matrix");
+
 	}
 
 }

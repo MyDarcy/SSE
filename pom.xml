@@ -209,8 +209,11 @@
 							<!--<mainClass>com.darcy.Scheme2017MUSE.linux.plain5.Query2</mainClass>-->
 							<!--<mainClass>com.darcy.linux.extend.Query2</mainClass>-->
 							<!--<mainClass>com.darcy.linux.extend.Query2</mainClass>-->
-							<mainClass>com.darcy.linux.pv.Query2</mainClass>
+							<!--<mainClass>com.darcy.linux.pv.Query2</mainClass>-->
 							<!--<mainClass>com.darcy.linux.lv.Query2</mainClass>-->
+							<!--<mainClass>com.darcy.linux.accelerate.extend.Query2</mainClass>-->
+							<!--<mainClass>com.darcy.linux.accelerate.lv.Query2</mainClass>-->
+							<mainClass>com.darcy.linux.accelerate.pv.Query2</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

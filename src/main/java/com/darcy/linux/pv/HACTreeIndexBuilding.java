@@ -1,4 +1,4 @@
-package com.darcy.linux.extend;
+package com.darcy.linux.pv;
 
 import Jama.Matrix;
 import org.apache.commons.math3.distribution.RealDistribution;
@@ -23,7 +23,6 @@ import static java.util.stream.Collectors.toList;
  * description: 
 */
 
-
 class HacTreeNodePairScore {
 	HACTreeNode node1;
 	HACTreeNode node2;
@@ -35,7 +34,6 @@ class HacTreeNodePairScore {
 		this.score = score;
 	}
 }
-
 
 public class HACTreeIndexBuilding {
 
@@ -50,8 +48,7 @@ public class HACTreeIndexBuilding {
 
 	// 添加的冗余关键词的权重取值范围
 	// 论文中取值 -0.01~0.01 -0.03~0.03 -0.05~0.05
-	// 最佳取值 -0.01~0.01
-	// 发现0.001目前效果最好。
+	// 因为本方案中文档向量中的tf-idf值是0.00x级别的。
 	public RealDistribution distribution = new UniformRealDistribution(-0.001, 0.001);
 	public Random random = new Random(System.currentTimeMillis());
 
@@ -100,14 +97,9 @@ public class HACTreeIndexBuilding {
 				// 获取加密后的bytes.
 				byte[] encrypt = EncryptionUtils.encrypt(bytes);
 
-				String separator = "\\";
-				if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
-					separator = "/";
-				}
-
 				/*System.out.println(path.getFileName());*/
 				String encryptedFileName = Initialization.ENCRYPTED_DIR
-						+ separator + "encrypted_" + path.getFileName().toString();
+						+ Initialization.SEPERATOR + "encrypted_" + path.getFileName().toString();
 				// 二进制文件的后缀是.dat
 				encryptedFileName = encryptedFileName.substring(0, encryptedFileName.lastIndexOf('.')) + ".dat";
 
@@ -128,17 +120,16 @@ public class HACTreeIndexBuilding {
 	}
 
 	/**
-	 * *  HAC-tree中节点u是一个五元组〈VM,PL,PR,FD,sig〉, 其中，u.VM是是一个剪枝向量，u.PL和u.PR分别是指向节点u的左右孩子节点。
-	 * u.FD代表的是文档额唯一的ID。u.sig代表的是u.FD文档的消息摘要。此外，u.VC是聚类C_u的聚类中心向量，u.N表示聚类C_u中文档的数目，
-	 * 聚类C_u代表的是以u为根节点的子树中所有的叶子结点代表的文档，同时注意u.VC和u.N仅仅存在于HAC-Tree的构造阶段，
-	 * 不需要存储在HAC-Tree中。根据节点u的类型，我们详细的描述HAC-Tree节点如下
-	 * 如果u是叶子结点，那么u.PL= u.PR= ϕ , u.FD 存储的是文档的id，u.VM和u.VC都存储的是当前文档的向量，u.N=1, u.sig
-	 * 存储的是当前文档的消息摘要，消息摘要主要用于后续的搜搜结果的验证。
-	 * 如果u是一个内部的中间节点，那么u.FD= ϕ, u.sig= ϕ, u.PL和u.PR代表节点u的左右孩子节点。u.N= u.PL.N + u.PR.N,
-	 * 而u.VM则是从聚类C_u中提取的最大向量。u.VC则是聚类C_u的聚类中心向量。
-	 * u.VM= (max) ⃗{u.PL.VM,u.PR.VM}    (9)
-	 * u.VC=  (u.PL.N × u.PL.VC+u.PR.N+u.PR.VC)/(u.PL.N+u.PR.N)    (10)
-	 *
+	 *  *  HAC-tree中节点u是一个五元组〈VM,PL,PR,FD,sig〉, 其中，u.VM是是一个剪枝向量，u.PL和u.PR分别是指向节点u的左右孩子节点。
+	 *  u.FD代表的是文档额唯一的ID。u.sig代表的是u.FD文档的消息摘要。此外，u.VC是聚类C_u的聚类中心向量，u.N表示聚类C_u中文档的数目，
+	 *  聚类C_u代表的是以u为根节点的子树中所有的叶子结点代表的文档，同时注意u.VC和u.N仅仅存在于HAC-Tree的构造阶段，
+	 *  不需要存储在HAC-Tree中。根据节点u的类型，我们详细的描述HAC-Tree节点如下
+	 *      如果u是叶子结点，那么u.PL= u.PR= ϕ , u.FD 存储的是文档的id，u.VM和u.VC都存储的是当前文档的向量，u.N=1, u.sig
+	 *  存储的是当前文档的消息摘要，消息摘要主要用于后续的搜搜结果的验证。
+	 *      如果u是一个内部的中间节点，那么u.FD= ϕ, u.sig= ϕ, u.PL和u.PR代表节点u的左右孩子节点。u.N= u.PL.N + u.PR.N,
+	 *  而u.VM则是从聚类C_u中提取的最大向量。u.VC则是聚类C_u的聚类中心向量。
+	 *  u.VM= (max) ⃗{u.PL.VM,u.PR.VM}    (9)
+	 *  u.VC=  (u.PL.N × u.PL.VC+u.PR.N+u.PR.VC)/(u.PL.N+u.PR.N)    (10)
 	 * @return
 	 */
 	public HACTreeNode buildHACTreeIndex() throws NoSuchAlgorithmException {
@@ -159,13 +150,13 @@ public class HACTreeIndexBuilding {
 		};
 
 		Set<HACTreeNode> currentProcessingHACTreeNodeSet = new HashSet<>();
-		Set<HACTreeNode> newGeneratedHACTreeNodeSet = new HashSet<>();
+	  Set<HACTreeNode> newGeneratedHACTreeNodeSet = new HashSet<>();
 
 		File parentFile = new File(Initialization.PLAIN_DIR);
 		File[] files = parentFile.listFiles();
 
 		for (int i = 0; i < files.length; i++) {
-			 // System.out.println(files[i].getName());
+			System.out.println(files[i].getName());
 
 			Matrix P = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 
@@ -175,9 +166,12 @@ public class HACTreeIndexBuilding {
 			Map<String, Integer> keywordFrequencyInCurrentDocument =
 					Initialization.keywordFrequencyInDocument.get(files[i].getName());
 
-			double denominator = tfDenominator(keywordFrequencyInCurrentDocument, lengthOfFile);
+			// double denominator = tfDenominator(keywordFrequencyInCurrentDocument, lengthOfFile);
+			// 只用重复计算一次.
+			double denominator3 = tfDenominator3(keywordFrequencyInCurrentDocument, lengthOfFile);
 			double molecule = 0;
 
+			int fileNumbers = Initialization.fileLength.size();
 			for (String key : keywordFrequencyInCurrentDocument.keySet()) {
 				int index = Initialization.dict.indexOf(key);
 				if (index != -1) {
@@ -186,12 +180,40 @@ public class HACTreeIndexBuilding {
 					P.set(0, index, score);*/
 
 					// 本方案中， 文档向量中存储的是归一化的TF值.
-					molecule = (1 + Math.log(keywordFrequencyInCurrentDocument.get(key))) / lengthOfFile;
-					double tfValue = molecule / denominator;
+					/*molecule = (1 + Math.log(keywordFrequencyInCurrentDocument.get(key))) / lengthOfFile;
+					double tfValue = molecule / denominator;*/
+
 					/*System.out.printf("%-20s %10s  %-10s %-15s %-10s\n", "key", "freq", "molecule", "denominator", "tfValue");
 					System.out.printf("%-20s %10d  %-10f %-15f %-10f\n", key, keywordFrequencyInCurrentDocument.get(key)
 							,molecule, denominator, tfValue);*/
-					P.set(index, 0, tfValue);
+
+					/*P.set(index, 0, tfValue);*/
+
+
+					// 这个版本的TF-IDF比较简陋, 不做考虑
+					/*double tfIdfValue = tfIdfVersion1(key, keywordFrequencyInCurrentDocument, fileNumbers);*/
+
+					// 这个是常用的版本, 但是没有归一化, 这里冗余关键词的权重信息要调整，不然会影响准确度。
+					// 参考论文2016-a-tpds-enabling fine grained...
+					/*double tfIdfValue = tfIdfVersion2(lengthOfFile, keywordFrequencyInCurrentDocument.get(key),
+							fileNumbers, Initialization.numberOfDocumentContainsKeyword.get(key));*/
+
+					// 参考论文2015-a-tpds-enabling personalized...
+					// 这种本质上和文档向量使用TF, 查询向量使用IDF本质上是一样的.实际计算出的结果应该也是相同的。
+					/*double tfIdfValue3 = Math.log(1 + keywordFrequencyInCurrentDocument.get(key)) *
+							Math.log(1 + Initialization.fileLength.size() *
+									1.0 / Initialization.numberOfDocumentContainsKeyword.get(key)) / denominator3;*/
+
+					// 如果是计算兴趣模型的，那么参照2016-a-tpds-enabling fine grained...
+					double tfIdfValue3 = tfIdfVersion2(lengthOfFile, keywordFrequencyInCurrentDocument.get(key),
+							fileNumbers, Initialization.numberOfDocumentContainsKeyword.get(key));
+
+					/*System.out.printf("%-20s%-10d%-20s%-20d\n", "frequency", keywordFrequencyInCurrentDocument.get(key),
+							"docNumber", Initialization.numberOfDocumentContainsKeyword.get(key));
+					System.out.printf("%-20s%-20s%.8f\n", key, "TF-IDF", tfIdfValue3);
+					System.out.println();*/
+
+					P.set(index, 0, tfIdfValue3);
 				}
 			}
 
@@ -283,7 +305,7 @@ public class HACTreeIndexBuilding {
 			Set<HACTreeNode> managedNodeSet = new HashSet<>();
 
 			while (currentProcessingHACTreeNodeSet.size() > 1) {
-				// HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
+				//HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
 
 				HacTreeNodePairScore mostSimilarNodePair = maxHeap.poll();
 				// 最相关的两个节点有节点是已经处理过了。
@@ -294,6 +316,7 @@ public class HACTreeIndexBuilding {
 
 				HACTreeNodePair mostCorrespondNodePair = new HACTreeNodePair(mostSimilarNodePair.node1,
 						mostSimilarNodePair.node2);
+
 				List<Matrix> parentNodePruningVectors = getParentNodePruningVector(mostCorrespondNodePair);
 
 				/*MatrixUitls.print(parentNodePruningVectors.get(0));
@@ -302,7 +325,7 @@ public class HACTreeIndexBuilding {
 				Matrix parentNodeCenterVector = getParentNodeCenterVector(mostCorrespondNodePair);
 				int parentNumberOfNodeInCurrentCluster = mostCorrespondNodePair.node1.numberOfNodeInCurrentCluster
 						+ mostCorrespondNodePair.node2.numberOfNodeInCurrentCluster;
-				// 存疑，这样构造出来的剪枝向量有效吗 ?
+				// 存疑，这样构造出来的剪枝向量有效吗？
 				HACTreeNode parentNode = new HACTreeNode(parentNodePruningVectors.get(0), parentNodePruningVectors.get(1),
 						parentNodeCenterVector, parentNumberOfNodeInCurrentCluster,
 						mostCorrespondNodePair.node1, mostCorrespondNodePair.node2, null, null);
@@ -329,11 +352,6 @@ public class HACTreeIndexBuilding {
 		return root;
 	}
 
-	/**
-	 * 用于构造最大堆,用于查找最相关的两个文档.
-	 * @param hacTreeNodePairScoreSet
-	 * @return
-	 */
 	private PriorityQueue<HacTreeNodePairScore> getPriorityQueue(Set<HACTreeNode> hacTreeNodePairScoreSet) {
 		System.out.println("getPriorityQueue start.");
 		long start = System.currentTimeMillis();
@@ -350,9 +368,28 @@ public class HACTreeIndexBuilding {
 		return maxHeap;
 	}
 
+	private double tfDenominator3(Map<String, Integer> keywordFrequencyInCurrentDocument, int lengthOfFile) {
+		double sum = 0.0;
+		int fileNumber = Initialization.fileLength.size();
+		for (String key : keywordFrequencyInCurrentDocument.keySet()) {
+			int frequency = keywordFrequencyInCurrentDocument.get(key);
+			int containNumber = Initialization.numberOfDocumentContainsKeyword.get(key);
+			sum += Math.pow(Math.log(1 + frequency) * Math.log(1 + fileNumber * 1.0 / containNumber), 2);
+		}
+		return Math.sqrt(sum);
+	}
+
+	private double tfIdfVersion2(int lengthOfFile, Integer frequency, int fileNumbers, Integer containNumber) {
+		return (1 + Math.log(frequency)) / lengthOfFile * Math.log(1 + fileNumbers * 1.0 / containNumber);
+	}
+
+	private double tfIdfVersion1(String key, Map<String, Integer> keywordFrequencyInCurrentDocument, int fileNumbers) {
+		return  -keywordFrequencyInCurrentDocument.get(key) *
+				Math.log10(Initialization.numberOfDocumentContainsKeyword.get(key) / fileNumbers);
+	}
+
 	/**
 	 * 获取两个聚类的中心向量.
-	 *
 	 * @param nodePair
 	 * @return
 	 */
@@ -403,10 +440,9 @@ public class HACTreeIndexBuilding {
 
 	/**
 	 * 获取两个子节点剪枝向量对应位置max值组成的父节点的剪枝向量.
-	 * <p>
+	 *
 	 * 但是问题是，使用矩阵加密后，仍然是这样的构造父节点的剪枝向量吗
 	 * 这样有效吗?
-	 *
 	 * @param pair
 	 * @return
 	 */
@@ -422,7 +458,6 @@ public class HACTreeIndexBuilding {
 
 	/**
 	 * 节点和节点之间的相关性评分。
-	 *
 	 * @param node1
 	 * @param node2
 	 * @return
@@ -437,25 +472,20 @@ public class HACTreeIndexBuilding {
 		// 节点之间的关系通过聚类中心向量之间的score来体现。
 		/*Matrix matrix = node1.clusterCenterVector.transpose().times(node2.clusterCenterVector);
 		return matrix.get(0, 0);*/
-
 		double sum = 0;
 		double[][] node1Array = node1.clusterCenterVector.getArray();
 		double[][] node2Array = node2.clusterCenterVector.getArray();
 		// m*1的。
 		for (int i = 0; i < node1Array.length; i++) {
-
 			// 加速查找。
 			// 矩阵的转置，乘法都比double[][]的乘法要慢。
 			sum += node1Array[i][0] * node2Array[i][0];
-
-			/*for (int j = 0; j < node1Array[0].length; j++) {
-				sum += node1Array[i][j] * node2Array[i][j];
-			}*/
 		}
 		return sum;
 	}
 
 	/**
+	 *
 	 * @param keywordFrequencyInCurrentDocument
 	 * @param lengthOfFile
 	 * @return
@@ -472,14 +502,13 @@ public class HACTreeIndexBuilding {
 
 	/**
 	 * 求tf-idf的分值。
-	 *
-	 * @param lengthOfFile                    文件i的长度.
-	 * @param frequency                       当前关键词在文档i中出现的频率.
+	 * @param lengthOfFile 文件i的长度.
+	 * @param frequency 当前关键词在文档i中出现的频率.
 	 * @param numberOfDocumentContainsKeyword 有多少个文档包含关键词.
-	 * @param filesNumber                     总的文档的数目.
+	 * @param filesNumber 总的文档的数目.
 	 * @return
 	 */
-	private double score(int lengthOfFile, Integer frequency, Integer numberOfDocumentContainsKeyword, int filesNumber) {
+	private double score(int lengthOfFile, Integer frequency, Integer numberOfDocumentContainsKeyword,int filesNumber) {
 		return ((1 + Math.log(frequency)) / lengthOfFile)
 				* Math.log(1 + filesNumber / numberOfDocumentContainsKeyword);
 	}
@@ -501,3 +530,35 @@ public class HACTreeIndexBuilding {
 		System.out.println(0.156131 / 0.041386);
 	}
 }
+/*
+frequency           1         docNumber           2
+protesters          TF-IDF              0.00133977
+
+frequency           11        docNumber           1
+chemical            TF-IDF              0.00587010
+
+frequency           1         docNumber           8
+left                TF-IDF              0.00066989
+
+frequency           1         docNumber           2
+5                   TF-IDF              0.00133977
+
+frequency           1         docNumber           1
+turning             TF-IDF              0.00172757
+
+frequency           6         docNumber           1
+inspectors          TF-IDF              0.00482296
+
+frequency           1         docNumber           4
+9                   TF-IDF              0.00098136
+
+frequency           1         docNumber           1
+returns             TF-IDF              0.00172757
+
+frequency           1         docNumber           1
+wing                TF-IDF              0.00172757
+
+frequency           1         docNumber           2
+shortly             TF-IDF              0.00133977
+
+ */

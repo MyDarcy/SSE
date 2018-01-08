@@ -300,11 +300,16 @@ public class HACTreeIndexBuilding {
 		double[][] node1Array = node1.clusterCenterVector.getArray();
 		double[][] node2Array = node2.clusterCenterVector.getArray();
 		double sum = 0;
-		for (int i = 0; i < node1Array.length; i++) {
+		/*for (int i = 0; i < node1Array.length; i++) {
 			for (int j = 0; j < node1Array[0].length; j++) {
 				sum += node1Array[i][j] * node2Array[i][j];
 			}
+		}*/
+
+		for (int i = 0; i < node1Array[0].length; i++) {
+			sum += node1Array[0][i] * node2Array[0][i];
 		}
+
 		return sum;
 	}
 

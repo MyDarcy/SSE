@@ -1,4 +1,4 @@
-package com.darcy.linux.extend;
+package com.darcy.linux.pv;
 
 import java.util.Comparator;
 import java.util.List;
@@ -87,7 +87,7 @@ public class SearchAlgorithm {
 		while (!maxHeap.isEmpty()) {
 			HACTreeNode node = maxHeap.poll();
 			result.add(node);
-			System.out.printf("%-60s%.8f\n", node.fileDescriptor, scoreForPruning(node, trapdoor));
+			System.out.printf("%-60s%.8f\n", node.fileDescriptor,scoreForPruning(node, trapdoor));
 		}
 
 		return result;
@@ -122,8 +122,7 @@ public class SearchAlgorithm {
 			} else {
 				// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
 				// 候选结果集合的。
-				double score1 = scoreForPruning(root, trapdoor);
-				if (score1 > thresholdScore) {
+				if (scoreForPruning(root, trapdoor) > thresholdScore) {
 					HACTreeNode minScoreNode = minHeap.poll();
 					double score = scoreForPruning(minScoreNode, trapdoor);
 					System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
@@ -159,7 +158,6 @@ public class SearchAlgorithm {
 
 	/**
 	 * 计算跟查询向量之间最不相关的文档.
-	 *
 	 * @param resultList
 	 * @param trapdoor
 	 * @return
@@ -179,16 +177,14 @@ public class SearchAlgorithm {
 
 	/**
 	 * 根节点和Trapdoor之间的相关性评分.
-	 *
 	 * @param root
 	 * @param trapdoor
 	 * @return
 	 */
 	private double scoreForPruning(HACTreeNode root, Trapdoor trapdoor) {
 		/*return root.pruningVector.times(queryVector).get(0, 0);*/
-		/*double temp = root.pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
+		/*return root.pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
 				+ root.pruningVectorPart2.transpose().times(trapdoor.trapdoorPart2).get(0, 0);*/
-    // p1, p2, q1, q2都是m*1的矩阵。
 		double[][] p1 = root.pruningVectorPart1.getArray();
 		double[][] p2 = root.pruningVectorPart2.getArray();
 		double[][] q1 = trapdoor.trapdoorPart1.getArray();
@@ -197,9 +193,6 @@ public class SearchAlgorithm {
 		for (int i = 0; i < p1.length; i++) {
 			sum += p1[i][0] * q1[i][0] + p2[i][0] * q2[i][0];
 		}
-
-		//System.out.println("temp:" + temp + "  sum:" + sum + "\tequals:" + (Double.compare(temp, sum) == 0));
-
 		return sum;
 	}
 

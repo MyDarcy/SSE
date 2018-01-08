@@ -1,4 +1,4 @@
-package com.darcy.Scheme2018PLVMSE.pv_base_1;
+package com.darcy.linux.pv;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -44,7 +44,7 @@ public class Query2 {
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-       int requestNumber = 6;
+       int requestNumber = 15;
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
@@ -79,7 +79,8 @@ public class Query2 {
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
 			System.out.println(filenameList.get(i));
-			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR + "\\" + filenameList.get(i)).toPath());
+			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR
+					+ Initialization.SEPERATOR + filenameList.get(i)).toPath());
 			String passage = allLines.stream().map(String::toLowerCase).collect(joining("\n"));
 
 			Matcher matcher = keywordPattern.matcher(passage);
@@ -110,5 +111,6 @@ public class Query2 {
 		System.out.println(Query2.class.getName() + " search.");
 		System.out.println("tf_idf_base_1 search.");
 		test2();
+
 	}
 }

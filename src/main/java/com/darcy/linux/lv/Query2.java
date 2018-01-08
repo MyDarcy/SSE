@@ -1,4 +1,4 @@
-package com.darcy.Scheme2018PLVMSE.pv_base_1;
+package com.darcy.linux.lv;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -36,7 +36,8 @@ public class Query2 {
 
 			// for-40
       // String query = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
-			String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
+			// String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
+			String query = "|(church china) &(make took) !(status human)";
 
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
@@ -44,7 +45,7 @@ public class Query2 {
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-       int requestNumber = 6;
+       int requestNumber = 20;
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
@@ -79,7 +80,8 @@ public class Query2 {
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
 			System.out.println(filenameList.get(i));
-			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR + "\\" + filenameList.get(i)).toPath());
+			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR
+					+ Initialization.SEPERATOR + filenameList.get(i)).toPath());
 			String passage = allLines.stream().map(String::toLowerCase).collect(joining("\n"));
 
 			Matcher matcher = keywordPattern.matcher(passage);
@@ -108,7 +110,7 @@ public class Query2 {
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
 		System.out.println(Query2.class.getName() + " search.");
-		System.out.println("tf_idf_base_1 search.");
+		System.out.println("lv search.");
 		test2();
 	}
 }

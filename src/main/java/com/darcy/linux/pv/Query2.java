@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,22 +46,19 @@ public class Query2 {
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-       int requestNumber = 15;
+       int requestNumber = 6;
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
+			Map<String, Double> nodeScoreMap = new HashMap<>();
 			for (HACTreeNode node : priorityQueue) {
-				System.out.println(node.fileDescriptor);
+				nodeScoreMap.put(node.fileDescriptor, scoreForPruning(node, trapdoor));
 			}
-
+			System.out.println("\n" + query);
 			List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
-
 			String keywordPatternStr = getQueryPattern(query);
-
 			// 验证搜索结果是否包含特定的文档。
-			searchResultVerify(filenameList, keywordPatternStr);
-
-
+			searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
@@ -73,12 +72,12 @@ public class Query2 {
 		}
 	}
 
-	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr) throws IOException {
+	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr, Map<String, Double> nodeScoreMap) throws IOException {
 		System.out.println();
 
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
-			System.out.println(filenameList.get(i));
+			System.out.println(filenameList.get(i) + "\tscore:" + nodeScoreMap.get(filenameList.get(i)));
 			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR
 					+ Initialization.SEPERATOR + filenameList.get(i)).toPath());
 			String passage = allLines.stream().map(String::toLowerCase).collect(joining("\n"));
@@ -98,6 +97,22 @@ public class Query2 {
 		}
 	}
 
+	private static double scoreForPruning(HACTreeNode root, Trapdoor trapdoor) {
+		/*return root.pruningVector.times(queryVector).get(0, 0);*/
+		/*return root.pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
+				+ root.pruningVectorPart2.transpose().times(trapdoor.trapdoorPart2).get(0, 0);*/
+
+		double[][] p1 = root.pruningVectorPart1.getArray();
+		double[][] p2 = root.pruningVectorPart2.getArray();
+		double[][] q1 = trapdoor.trapdoorPart1.getArray();
+		double[][] q2 = trapdoor.trapdoorPart2.getArray();
+		double sum = 0;
+		for (int i = 0; i < p1.length; i++) {
+			sum += p1[i][0] * q1[i][0] + p2[i][0] * q2[i][0];
+		}
+		return sum;
+	}
+
 	public static String getQueryPattern(String str) {
 		Matcher matcher = Initialization.WORD_PATTERN.matcher(str);
 		String result = "";
@@ -109,8 +124,7 @@ public class Query2 {
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
 		System.out.println(Query2.class.getName() + " search.");
-		System.out.println("tf_idf_base_1 search.");
+		System.out.println("pv search.");
 		test2();
-
 	}
 }

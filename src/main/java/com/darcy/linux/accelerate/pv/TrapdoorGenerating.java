@@ -89,7 +89,7 @@ public class TrapdoorGenerating {
 			int index = keywordList.indexOf(item.getKey());
 			if (index != -1) {
 				double pFactor = hyperIncreasingSequence[count++];
-				System.out.printf("%-20s%-15d%.8f\n", item.getKey(), interestModel.get(item.getKey()), pFactor);
+				System.err.printf("%-20s%-15d%.8f\n", item.getKey(), interestModel.get(item.getKey()), pFactor);
 				preferenceFactors.put(item.getKey(), pFactor);
 				// 找不到, 那么构建查询陷门也用不到此关键词
 			}
@@ -114,7 +114,7 @@ public class TrapdoorGenerating {
 			int index = Initialization.dict.indexOf(keyword);
 			if (index != -1) {
 				Double preferenceFacotr = preferenceFactors.get(keyword);
-				System.out.printf("%-20s%-15s%.8f\n", keyword, "preference", preferenceFacotr);
+				System.err.printf("%-20s%-15s%.8f\n", keyword, "preference", preferenceFacotr);
 				/*Q.set(index, 0, idfs.get(keyword));*/
 
 				Q[index] = preferenceFacotr;
@@ -180,7 +180,7 @@ public class TrapdoorGenerating {
 
 		double[] part1 = DiagonalMatrixUtils.times(AuxiliaryMatrix.M1Inverse, qa);
 		double[] part2 = DiagonalMatrixUtils.times(AuxiliaryMatrix.M2Inverse, qb);
-		System.out.println("generate trapdoor total time:" + (System.currentTimeMillis() - start));
+		System.out.println("generate trapdoor total time: " + (System.currentTimeMillis() - start) + " ms");
 		System.out.println("TrapdoorGenerating trapdoorGenerating finished.");
 		return new Trapdoor(part1, part2);
 	}

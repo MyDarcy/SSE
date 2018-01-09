@@ -1,5 +1,7 @@
 package com.darcy.linux.accelerate.lv;
 
+import com.darcy.linux.accelerate.DiagonalMatrixUtils;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.File;
@@ -7,7 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,26 +43,36 @@ public class Query2 {
 			// String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
 			String query = "|(church china) &(make took) !(status human)";
 
-			System.out.println("Query2 start generating trapdoor.");
+			// unavailable=2 salary=4 guards=15  canceling=2  creative=22, coast=50
+//			before=403, world=389, while=386, against=331, still=331, three=330, during=302, between=300, called=300, another=299,american=238, days=236, public=235,
+//			discuss=30, managed=30, seconds=30, agent=30,zone=28, division=28, mention=28, physical=28, alive=28, legislation=28, nuclear=28, equipment=28, wonderful=28,
+//			supervisor=7, admire=7,authorization=6, predicting=6,  tuition=4,emotion=5, wasted=6,samsung=7,
+
+			query = "|(church china physical legislation) &(before while during american) !(tuition status human predicting authorization)";
+					System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
 			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-       int requestNumber = 25;
+       int requestNumber = 50;
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
-			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
+			System.out.println("\nQuery2 priorityQueue.size():" + priorityQueue.size());
+
+			Map<String, Double> nodeScoreMap = new HashMap<>();
 			for (HACTreeNode node : priorityQueue) {
-				System.out.println(node.fileDescriptor);
+				nodeScoreMap.put(node.fileDescriptor, scoreForPruning(node, trapdoor));
 			}
 
 			List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
 
 			String keywordPatternStr = getQueryPattern(query);
 
+			System.out.println("\n" + query);
+
 			// 验证搜索结果是否包含特定的文档。
-			searchResultVerify(filenameList, keywordPatternStr);
+			searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
 
 
 		} catch (IOException e) {
@@ -74,12 +88,12 @@ public class Query2 {
 		}
 	}
 
-	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr) throws IOException {
+	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr, Map<String, Double> nodeScoreMap) throws IOException {
 		System.out.println();
 
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
-			System.out.println(filenameList.get(i));
+			System.out.println(filenameList.get(i) + "\tscore:" + nodeScoreMap.get(filenameList.get(i)));
 			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR
 					+ Initialization.SEPERATOR + filenameList.get(i)).toPath());
 			String passage = allLines.stream().map(String::toLowerCase).collect(joining("\n"));
@@ -89,14 +103,22 @@ public class Query2 {
 			while (matcher.find()) {
 				String keyword = matcher.group().toLowerCase();
 				/*System.out.println(filenameArray[i] + "\t" + keyword + "\t" + Initialization.keywordFrequencyInDocument.get(filenameArray[i]).get(keyword) + "\t" + "documentNumber\t" + Initialization.numberOfDocumentContainsKeyword.get(keyword));*/
-				System.out.printf("%-15s\t%-10s%-15s\t%10s\n", keyword,
-						Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
-						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));
-				count++;
+				if (Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword) != null) {
+					System.out.printf("%-15s\t%-10s%-15s\t%10s\n", keyword,
+							Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
+							"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));
+				  count++;
+				}
 			}
 			System.out.println("count:" + count);
 			System.out.println();
 		}
+	}
+
+	private static double scoreForPruning(HACTreeNode root, Trapdoor trapdoor) {
+		/*return root.pruningVector.times(queryVector).get(0, 0);*/
+		return DiagonalMatrixUtils.score(root.pruningVectorPart1, trapdoor.trapdoorPart1) +
+				DiagonalMatrixUtils.score(root.pruningVectorPart2, trapdoor.trapdoorPart2);
 	}
 
 	public static String getQueryPattern(String str) {
@@ -109,8 +131,8 @@ public class Query2 {
 	}
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-		System.out.println("tf_idf_base_1 search.");
+		System.out.println(Query2.class.getName() + " search.");
+		System.out.println("accelerate lv search.");
 		test2();
-
 	}
 }

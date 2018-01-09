@@ -155,6 +155,9 @@ public class HACTreeIndexBuilding {
 		File parentFile = new File(Initialization.PLAIN_DIR);
 		File[] files = parentFile.listFiles();
 
+		PriorityQueue<Double> tfIdfMinHeap = new PriorityQueue<>(20, Double::compare);
+		PriorityQueue<Double> tfIdfMaxHeap = new PriorityQueue<>(20, Comparator.reverseOrder());
+
 		for (int i = 0; i < files.length; i++) {
 			System.out.println(files[i].getName());
 
@@ -214,6 +217,23 @@ public class HACTreeIndexBuilding {
 					System.out.println();*/
 
 					P.set(index, 0, tfIdfValue3);
+
+					// 取最小的几个数字.
+					if (tfIdfMaxHeap.size() < 20) {
+						tfIdfMaxHeap.add(tfIdfValue3);
+					} else if (tfIdfValue3 < tfIdfMaxHeap.peek()) {
+						tfIdfMaxHeap.add(tfIdfValue3);
+						tfIdfMaxHeap.poll();
+					}
+
+					// 取最大的几个数字.
+					if (tfIdfMinHeap.size() < 20) {
+						tfIdfMinHeap.add(tfIdfValue3);
+					} else if (tfIdfValue3 > tfIdfMinHeap.peek()) {
+						tfIdfMinHeap.add(tfIdfValue3);
+						tfIdfMinHeap.poll();
+					}
+
 				}
 			}
 
@@ -291,6 +311,18 @@ public class HACTreeIndexBuilding {
 
 			currentProcessingHACTreeNodeSet.add(currentNode);
 		}
+
+		System.out.println("min max tf-idf value");
+		while (!tfIdfMaxHeap.isEmpty()) {
+			System.out.print(tfIdfMaxHeap.poll() + " ");
+		}
+		System.out.println();
+		while (!tfIdfMinHeap.isEmpty()) {
+			System.out.print(tfIdfMinHeap.poll() + " ");
+		}
+		System.out.println();
+		// 6.229580777634032E-4 6.229580777634032E-4 6.229580777634032E-4 6.229580777634032E-4 6.214128672705595E-4 6.214128672705595E-4 6.138840646709543E-4 6.126050661459377E-4 6.126050661459377E-4 5.863653013060231E-4 5.863653013060231E-4 5.826289298947782E-4 5.826289298947782E-4 5.554223438278012E-4 5.552570744117213E-4 5.552570744117213E-4 5.552570744117213E-4 5.166450368214655E-4 5.02378549053935E-4 4.4264451425788786E-4
+		// 0.01548389671941366 0.01548389671941366 0.01548389671941366 0.01548389671941366 0.016034326052022804 0.016034326052022804 0.016077196143216274 0.016133143828381706 0.01685631818262641 0.01749922606551377 0.01749922606551377 0.01760646100721609 0.018182924587935308 0.018182924587935308 0.0205980473479485 0.021298589001322744 0.022594144385877705 0.023242693164144068 0.02436700040456216 0.02668108522363412
 
 		/**
 		 * 到这里已经加密了一轮文档,

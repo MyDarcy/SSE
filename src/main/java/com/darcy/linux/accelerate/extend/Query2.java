@@ -44,7 +44,7 @@ public class Query2 {
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-			int requestNumber = 25;
+			int requestNumber = 15;
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());

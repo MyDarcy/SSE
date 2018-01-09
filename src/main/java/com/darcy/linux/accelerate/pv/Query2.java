@@ -1,5 +1,7 @@
 package com.darcy.linux.accelerate.pv;
 
+import com.darcy.linux.accelerate.DiagonalMatrixUtils;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.File;
@@ -7,7 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,20 +48,23 @@ public class Query2 {
 			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-       int requestNumber = 25;
+       int requestNumber = 50;
 			// int requestNumber = 6;
 			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
+			Map<String, Double> nodeScoreMap = new HashMap<>();
 			for (HACTreeNode node : priorityQueue) {
-				System.out.println(node.fileDescriptor);
+				nodeScoreMap.put(node.fileDescriptor, scoreForPruning(node, trapdoor));
 			}
+
+			System.out.println("\n"+ query);
 
 			List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
 
 			String keywordPatternStr = getQueryPattern(query);
 
 			// 验证搜索结果是否包含特定的文档。
-			searchResultVerify(filenameList, keywordPatternStr);
+			searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
 
 
 		} catch (IOException e) {
@@ -73,12 +80,18 @@ public class Query2 {
 		}
 	}
 
-	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr) throws IOException {
+	private static double scoreForPruning(HACTreeNode root, Trapdoor trapdoor) {
+		/*return root.pruningVector.times(queryVector).get(0, 0);*/
+		return DiagonalMatrixUtils.score(root.pruningVectorPart1, trapdoor.trapdoorPart1) +
+				DiagonalMatrixUtils.score(root.pruningVectorPart2, trapdoor.trapdoorPart2);
+	}
+
+	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr, Map<String, Double> nodeScoreMap) throws IOException {
 		System.out.println();
 
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
-			System.out.println(filenameList.get(i));
+			System.out.println(filenameList.get(i) + "\tscore:" + nodeScoreMap.get(filenameList.get(i)));
 			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR
 					+ Initialization.SEPERATOR + filenameList.get(i)).toPath());
 			String passage = allLines.stream().map(String::toLowerCase).collect(joining("\n"));
@@ -108,8 +121,8 @@ public class Query2 {
 	}
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-		System.out.println("tf_idf_base_1 search.");
+		System.out.println(Query2.class.getName() + " search.");
+		System.out.println("accelerate pv search.");
 		test2();
-
 	}
 }

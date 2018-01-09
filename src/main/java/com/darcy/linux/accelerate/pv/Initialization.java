@@ -36,15 +36,21 @@ public class Initialization {
 //	public static final String SECRET_KEY_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\key\\aesKey.dat";
 //	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
 //	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
+
+	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain1000";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted1000";
+
 	// 明文文件目录 	密文文件目录. 16个文件
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
 	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";*/
 
 	// linux.
-	public static /*final*/ String BASE = "/home/zqhe/data";
-	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/pv/key/aesKey.dat";
-	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/pv/plain100";
-	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/pv/encrypted100";
+//	public static /*final*/ String BASE = "/home/zqhe/data";
+//	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/pv/key/aesKey.dat";
+//	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/pv/plain100";
+//	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/pv/encrypted100";
 
 	public static String SEPERATOR;
 

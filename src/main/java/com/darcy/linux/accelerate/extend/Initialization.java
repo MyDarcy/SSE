@@ -32,16 +32,16 @@ public class Initialization {
 	public static final int DUMMY_KEYWORD_NUMBER = 10;
 
 	// 项目目录.密钥目录.明文文件目录.密文文件目录. 40个文件
-//	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-//	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-//	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
-//	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
+	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain100";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted100";
 
 	// linux下.
-	public static /*final*/ String BASE = "/home/zqhe/data";
-	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/extend/key/aesKey.dat";
-	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/extend/plain1000";
-	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/extend/encrypted1000";
+//	public static /*final*/ String BASE = "/home/zqhe/data";
+//	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/extend/key/aesKey.dat";
+//	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/extend/plain1000";
+//	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/extend/encrypted1000";
 
 	public static String SEPERATOR;
 
@@ -215,7 +215,6 @@ public class Initialization {
 		System.out.println("fileLength.size():" + fileLength.size());
 		System.out.println("keywordFrequencyInDocument.size():" + keywordFrequencyInDocument.size());
 		System.out.println("numberOfDocumentContainsKeyword.size():" + numberOfDocumentContainsKeyword.size());
-
 
 		Map<String, Integer> duplicateNumberOfDocumentContainsKeyword = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : numberOfDocumentContainsKeyword.entrySet()) {

@@ -33,6 +33,11 @@ public class Initialization {
 
 	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录
 //	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+//	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+//	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
+//	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
+
+//	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 //	public static final String SECRET_KEY_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\key\\aesKey.dat";
 //	public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
 //	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";
@@ -208,9 +213,14 @@ public class Initialization {
 		// 统计1000个文档只用了3276ms
 		// System.out.println("manage documents time consume:" + (System.currentTimeMillis() - start1));
 
-		System.out.println("fileLength:" + fileLength);
-		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
-		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
+//		System.out.println("fileLength:" + fileLength);
+//		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
+//		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
+
+		System.out.println("fileLength.size():" + fileLength.size());
+		System.out.println("keywordFrequencyInDocument.size():" + keywordFrequencyInDocument.size());
+		System.out.println("numberOfDocumentContainsKeyword.size():" + numberOfDocumentContainsKeyword.size());
+
 
 		Map<String, Integer> duplicateNumberOfDocumentContainsKeyword = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : numberOfDocumentContainsKeyword.entrySet()) {
@@ -230,8 +240,8 @@ public class Initialization {
 			}
 		});
 
-		System.out.println("keyword - documentNumber");
-		System.out.println(duplicate);
+//		System.out.println("keyword - documentNumber");
+//		System.out.println(duplicate);
 
 		// 测试关键词频率map中的结果是否和fileLength中数值相等.
 		boolean result = testInfo(fileLength, keywordFrequencyInDocument);
@@ -240,7 +250,7 @@ public class Initialization {
 		List<String> dict = globalDictSet.stream().sorted().collect(toList());
 
 		System.out.println("initialization dict.size():" + dict.size());
-		System.out.println(dict);
+		// System.out.println(dict);
 
 		// 初始化字典的长度和字典本身.
 		Initialization.lengthOfDict = dict.size();

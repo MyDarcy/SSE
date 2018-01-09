@@ -38,10 +38,10 @@ public class Initialization {
 //	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";
 
 	// linux下.
-	public static /*final*/ String BASE = "/home/zqhe/data";
-	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/lv/key/aesKey.dat";
-	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/lv/plain1000";
-	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/lv/encrypted1000";
+	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain1000";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted1000";
 
 	public static String SEPERATOR;
 
@@ -235,7 +235,7 @@ public class Initialization {
 		});
 
 //		System.out.println("keyword - documentNumber");
-//		System.out.println(duplicate);
+		System.out.println(duplicate);
 
 		// 测试关键词频率map中的结果是否和fileLength中数值相等.
 		boolean result = testInfo(fileLength, keywordFrequencyInDocument);

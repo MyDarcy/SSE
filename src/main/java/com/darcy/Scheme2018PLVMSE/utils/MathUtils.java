@@ -18,13 +18,15 @@ public class MathUtils {
 	 */
 	public static double[] generateHyperIncreasingSequence(int size, int upper) {
 		double[] array = new double[size];
-		double sum = 1;
-		double value = 1;
+//		double sum = 1;
+//		double value = 1;
+		double sum = 3;
+		double value = 3;
 		Random random = new Random(31);
 		for (int i = 0; i < size; i++) {
 			if (i != 0) {
 				// 累加和上引入随机数.
-				value = sum * upper + upper * random.nextInt(10);
+				value = sum * upper/* + upper * random.nextInt(10)*/;
 			}
 			array[i] = value;
 			sum += value;

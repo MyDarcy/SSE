@@ -365,7 +365,7 @@ public class HACTreeIndexBuilding {
 						correspondingScore(list.get(i), list.get(j))));
 			}
 		}
-		System.out.println("time:" + (System.currentTimeMillis() - start));
+		System.out.println("time: " + (System.currentTimeMillis() - start) + " ms");
 		System.out.println("getPriorityQueue end.");
 		return maxHeap;
 	}

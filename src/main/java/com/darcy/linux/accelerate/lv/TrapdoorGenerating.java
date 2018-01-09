@@ -56,13 +56,17 @@ public class TrapdoorGenerating {
 		double[] andHyperIncreasingSequence = null;
 		double[] notHyperIncreasingSequence = null;
 
-		int orCharIndex = query.indexOf('!');
+
+		System.err.println(query);
+
+		int orCharIndex = query.indexOf('|');
 		// 说明查询支付字符串中有or操作符.
 		if (orCharIndex != -1) {
 			int last = query.indexOf(')', orCharIndex);
 			String temp = query.substring(orCharIndex + 2, last);
 			orKeywords = temp.split("\\s+");
 		}
+		System.err.println("or keywords:" + Arrays.toString(orKeywords));
 
 		int andCharIndex = query.indexOf('&');
 		if (andCharIndex != -1) {
@@ -70,6 +74,7 @@ public class TrapdoorGenerating {
 			String temp = query.substring(andCharIndex + 2, last);
 			andKeywords = temp.split("\\s+");
 		}
+		System.err.println("and keywords:" + Arrays.toString(andKeywords));
 
 		int notCharIndex = query.indexOf('!');
 		if (notCharIndex != -1) {
@@ -77,23 +82,26 @@ public class TrapdoorGenerating {
 			String temp = query.substring(notCharIndex + 2, last);
 			notKeywords = temp.split("\\s+");
 		}
+		System.err.println("not keywords:" + Arrays.toString(notKeywords));
 
 
-		int upper = 100;
+		int upper = 2;
 		// 生成or关键词所对应的超递增序列.
 		if (orKeywords != null) {
 			orHyperIncreasingSequence = MathUtils.generateHyperIncreasingSequence(orKeywords.length, upper);
 		}
+		System.err.println("or hyper:" + Arrays.toString(orHyperIncreasingSequence));
 
 		if (andKeywords != null) {
 			andHyperIncreasingSequence = new double[andKeywords.length];
 			if (orHyperIncreasingSequence != null) {
 				double sum = Arrays.stream(orHyperIncreasingSequence).reduce(Double::sum).getAsDouble();
 				for (int i = 0; i < andKeywords.length; i++) {
-					andHyperIncreasingSequence[i] = sum + upper * Initialization.RANDOM.nextInt(upper);
+					andHyperIncreasingSequence[i] = sum + upper * (1 +Initialization.RANDOM.nextInt(upper));
 				}
 			}
 		}
+		System.err.println("and hyper:" + Arrays.toString(andHyperIncreasingSequence));
 
 		if (notKeywords != null) {
 			double orSum = 0;
@@ -107,9 +115,10 @@ public class TrapdoorGenerating {
 			}
 
 			for (int i = 0; i < notKeywords.length; i++) {
-				notHyperIncreasingSequence[i] = -(orSum + andSum + upper * Initialization.RANDOM.nextInt(upper));
+				notHyperIncreasingSequence[i] = -(orSum + andSum + upper * (1 + Initialization.RANDOM.nextInt(upper)));
 			}
 		}
+		System.err.println("not hyper:" + Arrays.toString(notHyperIncreasingSequence));
 
 		/**
 		 * 根据FMS_II的思路,
@@ -134,6 +143,7 @@ public class TrapdoorGenerating {
 			for (String keyword : orKeywords) {
 				int index = Initialization.dict.indexOf(keyword);
 				if (index != -1) {
+					System.err.println("or index:" + index + "\t keyword:" + keyword);
 					Q[index] = orHyperIncreasingSequence[count++];
 				}
 			}
@@ -159,9 +169,10 @@ public class TrapdoorGenerating {
 			}
 		}
 
+		System.err.println("-s:" + (-s));
 		Q[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER - 1] = -s;
 		// Q 更新为 rQ
-		Q = DiagonalMatrixUtils.times(Q, r);
+		// Q = DiagonalMatrixUtils.times(Q, r);
 
 		/*
 		// 之前一直都忘记了这一部分。
@@ -205,7 +216,7 @@ public class TrapdoorGenerating {
 
 		double[] part1 = DiagonalMatrixUtils.times(AuxiliaryMatrix.M1Inverse, qa);
 		double[] part2 = DiagonalMatrixUtils.times(AuxiliaryMatrix.M2Inverse, qb);
-		System.out.println("generate trapdoor total time:" + (System.currentTimeMillis() - start));
+		System.out.println("generate trapdoor total time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("TrapdoorGenerating trapdoorGenerating finished.");
 		return new Trapdoor(part1, part2);
 	}

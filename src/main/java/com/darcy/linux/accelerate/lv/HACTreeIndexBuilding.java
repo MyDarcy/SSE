@@ -50,7 +50,7 @@ public class HACTreeIndexBuilding {
 	// 最佳取值 -0.01~0.01
 	// 这里我取值 0.005~0.005. 发现搜出来的结果没法看。
 	// 0.02的效果比0.01的效果好。
-	public RealDistribution distribution = new UniformRealDistribution(-0.001, 0.001);
+	public RealDistribution distribution = new UniformRealDistribution(-0.00001, 0.00001);
 	public Random random = new Random(System.currentTimeMillis());
 
 	/**
@@ -156,6 +156,8 @@ public class HACTreeIndexBuilding {
 		File parentFile = new File(Initialization.PLAIN_DIR);
 		File[] files = parentFile.listFiles();
 
+		System.out.println("start generate leaf node, digest, encrypted index.");
+		long leafNodeGenerateTime = System.currentTimeMillis();
 		for (int i = 0; i < files.length; i++) {
 			// System.out.println(files[i].getName());
 
@@ -170,7 +172,7 @@ public class HACTreeIndexBuilding {
 
 			int fileNumbers = Initialization.fileLength.size();
 
-			// 安装FMS_II的实现，只需要设置文档向量为0, 1值，即对关键词的包含关系即可。
+			// 按照FMS_II的实现，只需要设置文档向量为0, 1值，即对关键词的包含关系即可。
 			for (String key : keywordFrequencyInCurrentDocument.keySet()) {
 				int index = Initialization.dict.indexOf(key);
 				if (index != -1) {
@@ -252,6 +254,8 @@ public class HACTreeIndexBuilding {
 
 			currentProcessingHACTreeNodeSet.add(currentNode);
 		}
+		System.out.println("leafNodeGenerateTime:" + (System.currentTimeMillis() - leafNodeGenerateTime) + "ms");
+		System.out.println("leafnodee generate end.");
 
 		/**
 		 * 到这里已经加密了一轮文档,
@@ -264,7 +268,6 @@ public class HACTreeIndexBuilding {
 
 			PriorityQueue<HacTreeNodePairScore> maxHeap = getPriorityQueue(currentProcessingHACTreeNodeSet);
 			Set<HACTreeNode> managedNodeSet = new HashSet<>();
-
 			while (currentProcessingHACTreeNodeSet.size() > 1) {
 				// HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
 
@@ -297,6 +300,14 @@ public class HACTreeIndexBuilding {
 				managedNodeSet.add(mostCorrespondNodePair.node1);
 				managedNodeSet.add(mostCorrespondNodePair.node2);
 
+				/*List<HacTreeNodePairScore> list = maxHeap.stream().filter((nodePairScore) -> !(nodePairScore.node1 == mostCorrespondNodePair.node1
+						|| nodePairScore.node1 == mostCorrespondNodePair.node2
+						|| nodePairScore.node2 == mostCorrespondNodePair.node1
+						|| nodePairScore.node2 == mostCorrespondNodePair.node2)).collect(toList());
+
+				maxHeap = new PriorityQueue<>(maxComparator);
+				maxHeap.addAll(list);*/
+
 				newGeneratedHACTreeNodeSet.add(parentNode);
 			}
 			if (newGeneratedHACTreeNodeSet.size() > 0) {
@@ -322,14 +333,15 @@ public class HACTreeIndexBuilding {
 		System.out.println("getPriorityQueue start.");
 		long start = System.currentTimeMillis();
 		List<HACTreeNode> list = hacTreeNodePairScoreSet.stream().collect(toList());
-		PriorityQueue<HacTreeNodePairScore> maxHeap = new PriorityQueue<>(maxComparator);
+		int n = list.size();
+		PriorityQueue<HacTreeNodePairScore> maxHeap = new PriorityQueue<>(n * (n-1) / 2 +1, maxComparator);
 		for (int i = 0; i < list.size(); i++) {
 			for (int j = i + 1; j < list.size(); j++) {
 				maxHeap.add(new HacTreeNodePairScore(list.get(i), list.get(j),
 						correspondingScore(list.get(i), list.get(j))));
 			}
 		}
-		System.out.println("time:" + (System.currentTimeMillis() - start));
+		System.out.println("time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("getPriorityQueue end.");
 		return maxHeap;
 	}

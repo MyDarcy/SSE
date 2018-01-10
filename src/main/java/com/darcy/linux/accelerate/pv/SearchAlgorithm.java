@@ -22,6 +22,7 @@ public class SearchAlgorithm {
 	private int leafNodeCount = 0;
 	private int containsCount = 0;
 	private int computeCount = 0;
+	private int pruneCount = 0;
 
 	/**
 	 * 实现方式1: 采用堆的性性质.
@@ -78,6 +79,8 @@ public class SearchAlgorithm {
 		System.out.println("leafNodeCount:" + leafNodeCount);
 		System.out.println("containsCount:" + containsCount);
 		System.out.println("computeCount:" + computeCount);
+		System.out.println("pruneCount:" + pruneCount);
+
 
 		System.out.println("all document-size:" + allDocumentSocreQueue.size());
 		System.out.println("all document-score.");
@@ -111,7 +114,7 @@ public class SearchAlgorithm {
 
 			// 并且候选结果集合中没有top-K个元素.
 			int size = minHeap.size();
-			if (scoreForPrune > 0.01) {
+			if (scoreForPrune >= 0.0004) {
 				if (size < requestNumber - 1) {
 					System.out.println("< (N-1) add:" + root.fileDescriptor);
 					minHeap.add(root);
@@ -120,24 +123,28 @@ public class SearchAlgorithm {
 					minHeap.add(root);
 					System.out.println("= (N-1) add:" + root.fileDescriptor);
 					thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
+					System.out.println("new thresholdScore:" + thresholdScore);
 					computeCount++;
-					System.out.println("thresholdSocre:" + thresholdScore);
+//					System.out.println("thresholdSocre:" + thresholdScore);
 					// 仍然时叶子节点，但是候选结果集合中已经有了N个文档.
 				} else {
 					// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
 					// 候选结果集合的。
 					if (scoreForPruning(root, trapdoor) > thresholdScore) {
 						HACTreeNode minScoreNode = minHeap.poll();
-						double score = scoreForPruning(minScoreNode, trapdoor);
-						System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
+//						double score = scoreForPruning(minScoreNode, trapdoor);
+//						System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
 						minHeap.add(root);
 						thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
+					  System.out.println("new thresholdScore:" + thresholdScore);
 						computeCount++;
 					}
 				}
 			} else {
-				System.out.println("leaf node not add for score < 0.01");
+				System.out.println("leaf node not add for score < 0.0004");
 			}
+
+			// 非叶子结点。
 		} else {
 			double score = scoreForPruning(root, trapdoor);
 			computeCount++;
@@ -146,7 +153,10 @@ public class SearchAlgorithm {
 			MatrixUitls.print(trapdoor.trapdoorPart1.transpose());
 			MatrixUitls.print(trapdoor.trapdoorPart2.transpose());*/
 			System.out.printf("%-10s\t%.8f\t%-20s\t%.8f\n", "score", score, "thresholdScore", thresholdScore);
-			if (score > thresholdScore || minHeap.size() < requestNumber) {
+			// 上层父节点和查询向量之间的相关性评分都比阈值threshold小，那么下层的叶子结点会更小。
+			// 大于0.0004对于上层节点不一定有用，但是对于下层节点是可能是有效的。因为乘积只可能是
+			//
+			if (score > 0.0004 && (score > thresholdScore/* || minHeap.size() < requestNumber*/)) {
 				if (root.left != null) {
 					System.out.println("left");
 					dfs(root.left, trapdoor, requestNumber, minHeap);
@@ -156,7 +166,8 @@ public class SearchAlgorithm {
 					dfs(root.right, trapdoor, requestNumber, minHeap);
 				}
 			} else {
-				System.out.println("score:" + score + " no bigger than thresholdScore:" + thresholdScore);
+				System.out.println("score:" + score + " no bigger than thresholdScore:" + thresholdScore + " or socre <" + 0.0004);
+				pruneCount++;
 				System.out.println();
 			}
 		}

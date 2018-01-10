@@ -109,7 +109,9 @@ public class SearchAlgorithm {
 
 			// 并且候选结果集合中没有top-K个元素.
 			int size = minHeap.size();
-			if (scoreForPrune > 0.01) {
+			// 0.0004是因为统计了40,100,1000个文档，最小的关键词的tf-idf值是0.0004xxx,而在查询向量中，用户生成的偏好不会是
+			// 小于1的，又因为明文和密文pq = p'*q',所以一定有
+			if (scoreForPrune >= 0.0004) {
 				if (size < requestNumber - 1) {
 					System.out.println("< (N-1) add:" + root.fileDescriptor);
 					minHeap.add(root);
@@ -136,7 +138,7 @@ public class SearchAlgorithm {
 					}
 				}
 			} else {
-				System.out.println("leaf node not add for score < 0.01");
+				System.out.println("leaf node not add for score < 0.0004");
 			}
 		} else {
 			double score = scoreForPruning(root, trapdoor);

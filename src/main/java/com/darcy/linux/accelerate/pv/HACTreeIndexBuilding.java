@@ -49,7 +49,7 @@ public class HACTreeIndexBuilding {
 	// 添加的冗余关键词的权重取值范围
 	// 论文中取值 -0.01~0.01 -0.03~0.03 -0.05~0.05
 	// 因为本方案中文档向量中的tf-idf值是0.00x级别的。
-	public RealDistribution distribution = new UniformRealDistribution(-0.001, 0.001);
+	public RealDistribution distribution = new UniformRealDistribution(-0.00001, 0.00001);
 	public Random random = new Random(System.currentTimeMillis());
 
 	/**
@@ -155,6 +155,11 @@ public class HACTreeIndexBuilding {
 		File parentFile = new File(Initialization.PLAIN_DIR);
 		File[] files = parentFile.listFiles();
 
+		PriorityQueue<Double> tfIdfMinHeap = new PriorityQueue<>(20, Double::compare);
+		PriorityQueue<Double> tfIdfMaxHeap = new PriorityQueue<>(20, Comparator.reverseOrder());
+
+		System.out.println("start generate leaf node, digest, encrypted index.");
+		long leafNodeGenerateTime = System.currentTimeMillis();
 		for (int i = 0; i < files.length; i++) {
 			// System.out.println(files[i].getName());
 
@@ -213,6 +218,22 @@ public class HACTreeIndexBuilding {
 					System.out.printf("%-20s%-20s%.8f\n", key, "TF-IDF", tfIdfValue3);
 					System.out.println();*/
 					P[index] = tfIdfValue3;
+
+					// 取最小的几个数字.
+					if (tfIdfMaxHeap.size() < 40) {
+						tfIdfMaxHeap.add(tfIdfValue3);
+					} else if (tfIdfValue3 < tfIdfMaxHeap.peek()) {
+						tfIdfMaxHeap.add(tfIdfValue3);
+						tfIdfMaxHeap.poll();
+					}
+
+					// 取最大的几个数字.
+					if (tfIdfMinHeap.size() < 40) {
+						tfIdfMinHeap.add(tfIdfValue3);
+					} else if (tfIdfValue3 > tfIdfMinHeap.peek()) {
+						tfIdfMinHeap.add(tfIdfValue3);
+						tfIdfMinHeap.poll();
+					}
 
 					/*double tfIdfValue = */
 
@@ -293,6 +314,19 @@ public class HACTreeIndexBuilding {
 
 			currentProcessingHACTreeNodeSet.add(currentNode);
 		}
+
+		System.out.println("min max tf-idf value");
+		while (!tfIdfMaxHeap.isEmpty()) {
+			System.out.print(tfIdfMaxHeap.poll() + " ");
+		}
+		System.out.println();
+		while (!tfIdfMinHeap.isEmpty()) {
+			System.out.print(tfIdfMinHeap.poll() + " ");
+		}
+		System.out.println();
+
+		System.out.println("leafNodeGenerateTime:" + (System.currentTimeMillis() - leafNodeGenerateTime) + "ms");
+		System.out.println("leafnodee generate end.");
 
 		/**
 		 * 到这里已经加密了一轮文档,

@@ -243,7 +243,5 @@ public class AccelerateCorrespongdingScore {
 		System.out.println("sum:" + sum);
 		System.out.println("time:" + (System.currentTimeMillis() - start));
 		System.out.println("end test matrix");
-
 	}
-
 }

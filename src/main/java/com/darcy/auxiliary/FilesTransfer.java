@@ -122,43 +122,53 @@ public class FilesTransfer {
 	}
 
 	public static void main(String[] args) {
-		// 从原文件夹
-		String sourceDir = "D:\\MrDarcy\\ForGraduationWorks\\Data\\cnn_stories\\cnn\\stories";
-		// 复制到目标文件夹
-		String destinationDir = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE\\doc\\muse\\extend\\plain16";
 		// 要复制的文件的个数
-		int count = 16;
+		int count = 200;
+		while (count <= 900) {
+			// 从原文件夹
+			String sourceDir = "D:\\MrDarcy\\ForGraduationWorks\\Data\\cnn_stories\\cnn\\stories";
+			// 复制到目标文件夹
+			String destinationDir = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE\\doc\\muse\\extend\\plain" + count;
 
-		File sourceParent = new File(sourceDir);
-		String[] fileList = sourceParent.list();
+			if (!new File(destinationDir).exists()) {
+				new File(destinationDir).mkdir();
+			}
 
-		long start = System.currentTimeMillis();
-		System.out.println("start.");
-		for (int i = 0; i < count; i++) {
-			System.out.println("start copy:" + fileList[i]);
-			File sourceFile = new File(sourceDir + "\\" + fileList[i]);
-			File destinationFile = new File(destinationDir + "\\" + fileList[i]);
-			FileChannel in = null;
-			FileChannel out = null;
-			try {
-				in = new FileInputStream(sourceFile).getChannel();
-				out = new FileOutputStream(destinationFile).getChannel();
-				in.transferTo(0, in.size(), out);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
+			System.out.println("list1");
+			File sourceParent = new File(sourceDir);
+			String[] fileList = sourceParent.list();
+			System.out.println("list2");
+
+			long start = System.currentTimeMillis();
+			System.out.println("start.");
+			for (int i = 0; i < count; i++) {
+				System.out.println("start copy:" + fileList[i]);
+				File sourceFile = new File(sourceDir + "\\" + fileList[i]);
+				File destinationFile = new File(destinationDir + "\\" + fileList[i]);
+				FileChannel in = null;
+				FileChannel out = null;
 				try {
-					in.close();
-					out.close();
+					in = new FileInputStream(sourceFile).getChannel();
+					out = new FileOutputStream(destinationFile).getChannel();
+					in.transferTo(0, in.size(), out);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
+				} finally {
+					try {
+						in.close();
+						out.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
+				System.out.println("finish copy:" + fileList[i]);
 			}
-			System.out.println("finish copy:" + fileList[i]);
+			System.out.println("time consume:" + (System.currentTimeMillis() - start));
+			count += 100;
 		}
-		System.out.println("time consume:" + (System.currentTimeMillis() - start));
+
 	}
 
 }

@@ -39,8 +39,8 @@ public class Initialization {
 
 	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain1000";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted1000";
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain500";
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted500";
 
 	// 明文文件目录 	密文文件目录. 16个文件
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
@@ -49,8 +49,8 @@ public class Initialization {
 	// linux.
 //	public static /*final*/ String BASE = "/home/zqhe/data";
 //	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/pv/key/aesKey.dat";
-//	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/pv/plain100";
-//	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/pv/encrypted100";
+//	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/pv/plain10000";
+//	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/pv/encrypted10000";
 
 	public static String SEPERATOR;
 
@@ -77,6 +77,10 @@ public class Initialization {
 		SEPERATOR = "\\";
 		if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
 			SEPERATOR = "/";
+		}
+
+		if (!new File(ENCRYPTED_DIR).exists()) {
+			new File(ENCRYPTED_DIR).mkdir();
 		}
 	}
 
@@ -159,7 +163,8 @@ public class Initialization {
 
 
 	public static MySecretKey getMySecretKey() throws IOException {
-
+		System.out.println(Initialization.class.getSimpleName() + " start.");
+		long getkeyStart = System.currentTimeMillis();
 		File parentFile = new File(PLAIN_DIR);
 		// 全局关键词集合.
 		HashSet<String> globalDictSet = new HashSet<>();
@@ -295,6 +300,10 @@ public class Initialization {
 		sk.M1 = m1;
 		sk.M2 = m2;
 		sk.secretKey = secretKey;
+
+		System.out.println("time:" + (System.currentTimeMillis() - getkeyStart) + "ms");
+		System.out.println(Initialization.class.getSimpleName() + " finished.");
+
 		return sk;
 	}
 

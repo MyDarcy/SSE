@@ -46,6 +46,8 @@ public class TrapdoorGenerating {
 			interestModel.put(str, 0);
 		}
 
+		// church China hospital performance British
+		// interview Democratic citizenship broadcasting voice
 		interestModel.put("church", 4);
 		interestModel.put("china", 9);
 		interestModel.put("hospital", 2);

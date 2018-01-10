@@ -32,20 +32,21 @@ public class Initialization {
 	public static final int DUMMY_KEYWORD_NUMBER = 10;
 
 	// 项目目录. 密钥目录. 明文文件目录 	密文文件目录. 40个文件
-	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain16";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted16";
+//	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+//	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+//	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain16";
+//	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted16";
+
 //	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 //	public static final String SECRET_KEY_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\key\\aesKey.dat";
 //	public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
 //	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";
 
 	// linux.
-//	public static /*final*/ String BASE = "/home/zqhe/data";
-//	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/pv/key/aesKey.dat";
-//	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/pv/plain100";
-//	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/pv/encrypted100";
+	public static /*final*/ String BASE = "/home/zqhe/data";
+	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/pv/key/aesKey.dat";
+	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/pv/plain500";
+	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/pv/encrypted500";
 
 	public static String SEPERATOR;
 
@@ -72,6 +73,10 @@ public class Initialization {
 		SEPERATOR = "\\";
 		if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
 			SEPERATOR = "/";
+		}
+
+		if (!new File(ENCRYPTED_DIR).exists()) {
+			new File(ENCRYPTED_DIR).mkdir();
 		}
 	}
 

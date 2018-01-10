@@ -110,11 +110,11 @@
 		<!-- stanford npl -->
 		<!-- https://mvnrepository.com/artifact/edu.stanford.nlp/stanford-corenlp -->
 		<!-- https://nlp.stanford.edu/software/ -->
-		<dependency>
+		<!--<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
 			<version>3.8.0</version>
-		</dependency>
+		</dependency>-->
 
 
 		<!-- https://mvnrepository.com/artifact/com.hankcs/hanlp -->
@@ -214,7 +214,9 @@
 							<!--<mainClass>com.darcy.linux.accelerate.extend.Query2</mainClass>-->
 							<!--<mainClass>com.darcy.linux.accelerate.lv.Query2</mainClass>-->
 							<!--<mainClass>com.darcy.linux.accelerate.pv.Query2</mainClass>-->
-							<mainClass>com.darcy.linux.lv.Query2</mainClass>
+							<!--<mainClass>com.darcy.linux.pv.Query2</mainClass>-->
+							<!--<mainClass>com.darcy.linux.accelerate.pv.Query2</mainClass>-->
+							<mainClass>com.darcy.linux.pv.Query2</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

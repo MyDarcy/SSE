@@ -141,6 +141,5 @@ public class MatrixEquality {
 		double value = p.times(q).get(0, 0);
 		System.out.println("managedValue:" + managedValue);
 		System.out.println("value:" + value);
-
 	}
 }

@@ -79,7 +79,7 @@ public class HACTreeNode {
 		this.digest = signature;
 	}
 
-	@Override
+/*	@Override
 	public String toString() {
 		int pruningVectorLength = Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER;
 		int clusterCenterVectorLength = Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER;
@@ -96,7 +96,7 @@ public class HACTreeNode {
 				", fileDescriptor='" + fileDescriptor + '\'' +
 				", digest=" + digest +
 				'}';
-	}
+	}*/
 
 	/*public HACTreeNode(Matrix pruningVector, HACTreeNode left, HACTreeNode right, String fileDescriptor, String signature) {
 		this.pruningVector = pruningVector;

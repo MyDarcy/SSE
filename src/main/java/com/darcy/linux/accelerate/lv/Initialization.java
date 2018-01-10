@@ -69,6 +69,10 @@ public class Initialization {
 		if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
 			SEPERATOR = "/";
 		}
+
+		if (!new File(ENCRYPTED_DIR).exists()) {
+			new File(ENCRYPTED_DIR).mkdir();
+		}
 	}
 
 	/**

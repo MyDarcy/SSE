@@ -82,14 +82,20 @@ public class TrapdoorGenerating {
 				qa.set(i, 0, v + rand);
 				qb.set(i, 0, v - rand);*/
 
-				double v = Q[i] / 2.0;
+				/*double v = Q[i] / 2.0;
 				qa[i] = v + rand;
-				qb[i] = v - rand;
+				qb[i] = v - rand;*/
+
+				qa[i] = Q[i] * rand;
+				qb[i] = Q[i] * (1 - rand);
 
 				//S[i] == 0 相等
 			} else {
 				/*qa.set(i, 0, Q.get(i, 0));
 				qb.set(i, 0, Q.get(i, 0));*/
+				/*qa[i] = Q[i];
+				qb[i] = Q[i];*/
+
 				qa[i] = Q[i];
 				qb[i] = Q[i];
 			}

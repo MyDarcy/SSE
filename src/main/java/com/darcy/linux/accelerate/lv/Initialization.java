@@ -37,11 +37,26 @@ public class Initialization {
 //	public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
 //	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";
 
-	// linux下.
+	public static final int DOC_NUMBER = 500;
+
+	// windows. cnn data;
 	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain1000";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted1000";
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+
+	// enron data;
+//	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+//	public static final String SECRET_KEY_DIR = BASE + "\\doc\\enron\\key\\aesKey.dat";
+//	public static final String PLAIN_DIR = BASE + "\\doc\\enron\\enron" + DOC_NUMBER;
+//	public static final String ENCRYPTED_DIR = BASE + "\\doc\\enron\\encrypted" + DOC_NUMBER;
+
+
+	// linux.
+//	public static /*final*/ String BASE = "/home/zqhe/data";
+//	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/pv/key/aesKey.dat";
+//	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/pv/plain10000";
+//	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/pv/encrypted10000";
 
 	public static String SEPERATOR;
 

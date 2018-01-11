@@ -43,8 +43,14 @@ public class Query2 {
 
 			// for-40
        int requestNumber1 = 4;
-			// int requestNumber = 6;
-			List<Integer> requestNumberList = Arrays.asList(5, 8, 10, 12, 15, 18, 20, 23, 25, 28, 30, 32, 35, 38, 40);
+			List<Integer> requestNumberList = new ArrayList<>();
+			int low = (int) Math.ceil(Initialization.DOC_NUMBER * 0.05);
+			int high = (int) Math.ceil(Initialization.DOC_NUMBER * 0.4);
+			for (int i = low; i <= high; i += low) {
+				requestNumberList.add(i);
+			}
+
+			// Arrays.asList(5, 10, 15, 20, 25, 30, 40, 50, 60, 80)
 			for (int requestNumber : requestNumberList) {
 				SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 				PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
@@ -53,9 +59,11 @@ public class Query2 {
 				for (HACTreeNode node : priorityQueue) {
 					nodeScoreMap.put(node.fileDescriptor, scoreForPruning(node, trapdoor));
 				}
-				System.out.println("\nrequestNumber" + requestNumber + "\t" + query);
 				List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
 				String keywordPatternStr = getQueryPattern(query);
+
+				System.out.println("\n requestNumber:" + requestNumber + "\t" + query);
+
 				// 验证搜索结果是否包含特定的文档。
 				searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
 			}

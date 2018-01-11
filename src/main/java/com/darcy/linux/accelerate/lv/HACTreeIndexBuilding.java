@@ -50,7 +50,7 @@ public class HACTreeIndexBuilding {
 	// 最佳取值 -0.01~0.01
 	// 这里我取值 0.005~0.005. 发现搜出来的结果没法看。
 	// 0.02的效果比0.01的效果好。
-	public RealDistribution distribution = new UniformRealDistribution(-0.00001, 0.00001);
+	public RealDistribution distribution = new UniformRealDistribution(-0.0000001, 0.0000001);
 	public Random random = new Random(System.currentTimeMillis());
 
 	/**

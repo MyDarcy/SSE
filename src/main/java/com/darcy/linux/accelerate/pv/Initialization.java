@@ -30,8 +30,10 @@ public class Initialization {
 	public static int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
 	public static final int DUMMY_KEYWORD_NUMBER = 10;
+	public static final int DOC_NUMBER = 500;
 
 	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录. 40个文件
+
 //	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 //	public static final String SECRET_KEY_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\key\\aesKey.dat";
 //	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
@@ -39,8 +41,8 @@ public class Initialization {
 
 	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain500";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted500";
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
 
 	// 明文文件目录 	密文文件目录. 16个文件
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";

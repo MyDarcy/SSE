@@ -49,7 +49,7 @@ public class HACTreeIndexBuilding {
 	// 添加的冗余关键词的权重取值范围
 	// 论文中取值 -0.01~0.01 -0.03~0.03 -0.05~0.05
 	// 最佳取值 -0.01~0.01
-	public RealDistribution distribution = new UniformRealDistribution(-0.001, 0.001);
+	public RealDistribution distribution = new UniformRealDistribution(-0.000001, 0.000001);
 	public Random random = new Random(System.currentTimeMillis());
 
 	/**

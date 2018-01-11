@@ -49,7 +49,7 @@ public class HACTreeIndexBuilding {
 	// 添加的冗余关键词的权重取值范围
 	// 论文中取值 -0.01~0.01 -0.03~0.03 -0.05~0.05
 	// 因为本方案中文档向量中的tf-idf值是0.00x级别的。
-	public RealDistribution distribution = new UniformRealDistribution(-0.00001, 0.00001);
+	public RealDistribution distribution = new UniformRealDistribution(-0.000001, 0.000001);
 	public Random random = new Random(System.currentTimeMillis());
 
 	/**

@@ -92,6 +92,9 @@ public class HACTreeIndexBuilding {
 		File parentFile = new File(Initialization.PLAIN_DIR);
 		File[] files = parentFile.listFiles();
 
+		PriorityQueue<Double> tfIdfMinHeap = new PriorityQueue<>(20, Double::compare);
+		PriorityQueue<Double> tfIdfMaxHeap = new PriorityQueue<>(20, Comparator.reverseOrder());
+
 		for (int i = 0; i < files.length; i++) {
 			// System.out.println(files[i].getName());
 			Matrix P = new Matrix(1, Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER);
@@ -105,6 +108,20 @@ public class HACTreeIndexBuilding {
 			double denominator = tfDenominator(keywordFrequencyInCurrentDocument, lengthOfFile);
 			double molecule = 0;
 
+/*			// 当前文档的长度.
+			int lengthOfFile = Initialization.fileLength.get(files[i].getName());
+
+			Map<String, Integer> keywordFrequencyInCurrentDocument =
+					Initialization.keywordFrequencyInDocument.get(files[i].getName());
+
+			// double denominator = tfDenominator(keywordFrequencyInCurrentDocument, lengthOfFile);
+			// 只用重复计算一次.
+//			double denominator3 = tfDenominator3(keywordFrequencyInCurrentDocument, lengthOfFile);
+
+			double molecule = 0;*/
+
+			int fileNumbers = Initialization.fileLength.size();
+
 			for (String key : keywordFrequencyInCurrentDocument.keySet()) {
 				int index = Initialization.dict.indexOf(key);
 				if (index != -1) {
@@ -115,10 +132,34 @@ public class HACTreeIndexBuilding {
 					// 本方案中， 文档向量中存储的是归一化的TF值.
 					molecule = (1 + Math.log(keywordFrequencyInCurrentDocument.get(key))) / lengthOfFile;
 					double tfValue = molecule / denominator;
+
+
 					/*System.out.printf("%-20s %10s  %-10s %-15s %-10s\n", "key", "freq", "molecule", "denominator", "tfValue");
 					System.out.printf("%-20s %10d  %-10f %-15f %-10f\n", key, keywordFrequencyInCurrentDocument.get(key)
 							,molecule, denominator, tfValue);*/
-					P.set(0, index, tfValue);
+
+//					double tfIdfValue3 = tfIdfVersion2(lengthOfFile, keywordFrequencyInCurrentDocument.get(key),
+//							fileNumbers, Initialization.numberOfDocumentContainsKeyword.get(key));
+					P.set(0, index, tfValue /*tfIdfValue3*/);
+
+					double tfIdfValue3 = tfValue;
+
+					// 取最小的几个数字.
+					if (tfIdfMaxHeap.size() < 40) {
+						tfIdfMaxHeap.add(tfIdfValue3);
+					} else if (tfIdfValue3 < tfIdfMaxHeap.peek()) {
+						tfIdfMaxHeap.add(tfIdfValue3);
+						tfIdfMaxHeap.poll();
+					}
+
+					// 取最大的几个数字.
+					if (tfIdfMinHeap.size() < 40) {
+						tfIdfMinHeap.add(tfIdfValue3);
+					} else if (tfIdfValue3 > tfIdfMinHeap.peek()) {
+						tfIdfMinHeap.add(tfIdfValue3);
+						tfIdfMinHeap.poll();
+					}
+
 				}
 			}
 
@@ -187,6 +228,16 @@ public class HACTreeIndexBuilding {
 			}
 		}
 
+		System.out.println("min max tf-idf value");
+		while (!tfIdfMaxHeap.isEmpty()) {
+			System.out.print(tfIdfMaxHeap.poll() + " ");
+		}
+		System.out.println();
+		while (!tfIdfMinHeap.isEmpty()) {
+			System.out.print(tfIdfMinHeap.poll() + " ");
+		}
+		System.out.println();
+
 		System.out.println("currentProcessingHACTreeNodeSet.size():" + currentProcessingHACTreeNodeSet.size());
 		// currentProcessingHACTreeNodeSet中一定是有一个节点的.
 		HACTreeNode root = currentProcessingHACTreeNodeSet.iterator().next();
@@ -208,6 +259,26 @@ public class HACTreeIndexBuilding {
 		System.out.println("time:" + (System.currentTimeMillis() - start));
 		System.out.println("getPriorityQueue end.");
 		return maxHeap;
+	}
+
+	private double tfDenominator3(Map<String, Integer> keywordFrequencyInCurrentDocument, int lengthOfFile) {
+		double sum = 0.0;
+		int fileNumber = Initialization.fileLength.size();
+		for (String key : keywordFrequencyInCurrentDocument.keySet()) {
+			int frequency = keywordFrequencyInCurrentDocument.get(key);
+			int containNumber = Initialization.numberOfDocumentContainsKeyword.get(key);
+			sum += Math.pow(Math.log(1 + frequency) * Math.log(1 + fileNumber * 1.0 / containNumber), 2);
+		}
+		return Math.sqrt(sum);
+	}
+
+	private double tfIdfVersion2(int lengthOfFile, Integer frequency, int fileNumbers, Integer containNumber) {
+		return (1 + Math.log(frequency)) / lengthOfFile * Math.log(1 + fileNumbers * 1.0 / containNumber);
+	}
+
+	private double tfIdfVersion1(String key, Map<String, Integer> keywordFrequencyInCurrentDocument, int fileNumbers) {
+		return  -keywordFrequencyInCurrentDocument.get(key) *
+				Math.log10(Initialization.numberOfDocumentContainsKeyword.get(key) / fileNumbers);
 	}
 
 	/**

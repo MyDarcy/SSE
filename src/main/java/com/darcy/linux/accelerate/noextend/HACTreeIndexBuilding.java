@@ -20,11 +20,24 @@ import static java.util.stream.Collectors.toList;
  * date: 2017/12/18 22:22
  * description: 
 */
+class HacTreeNodePairScore {
+	HACTreeNode node1;
+	HACTreeNode node2;
+	double score;
+
+	public HacTreeNodePairScore(HACTreeNode node1, HACTreeNode node2, double score) {
+		this.node1 = node1;
+		this.node2 = node2;
+		this.score = score;
+	}
+}
+
 public class HACTreeIndexBuilding {
 
 	// 秘密钥
 	public MySecretKey mySecretKey;
 	public Map<String, byte[]> fileBytesMap = new HashMap<>();
+	public Comparator<HacTreeNodePairScore> maxComparator;
 
 	public HACTreeIndexBuilding(MySecretKey mySecretKey) {
 		this.mySecretKey = mySecretKey;
@@ -80,7 +93,8 @@ public class HACTreeIndexBuilding {
 				byte[] encrypt = EncryptionUtils.encrypt(bytes);
 
 				/*System.out.println(path.getFileName());*/
-				String encryptedFileName = Initialization.ENCRYPTED_DIR + "\\encrypted_" + path.getFileName().toString();
+				String encryptedFileName = Initialization.ENCRYPTED_DIR +
+						Initialization.SEPERATOR + "encrypted_" + path.getFileName().toString();
 				// 二进制文件的后缀是.dat
 				encryptedFileName = encryptedFileName.substring(0, encryptedFileName.lastIndexOf('.')) + ".dat";
 
@@ -117,6 +131,20 @@ public class HACTreeIndexBuilding {
 	public HACTreeNode buildHACTreeIndex() throws NoSuchAlgorithmException {
 		System.out.println("HACTreeIndexBuilding buildHACTreeIndex start.");
 		long start = System.currentTimeMillis();
+
+		maxComparator = new Comparator<HacTreeNodePairScore>() {
+			@Override
+			public int compare(HacTreeNodePairScore nodePairScore1, HacTreeNodePairScore nodePairScore2) {
+				if (Double.compare(nodePairScore1.score, nodePairScore2.score) > 0) {
+					return -1;
+				} else if (Double.compare(nodePairScore1.score, nodePairScore2.score) < 0) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		};
+
 		Set<HACTreeNode> currentProcessingHACTreeNodeSet = new HashSet<>();
 		Set<HACTreeNode> newGeneratedHACTreeNodeSet = new HashSet<>();
 
@@ -124,7 +152,7 @@ public class HACTreeIndexBuilding {
 		File[] files = parentFile.listFiles();
 
 		for (int i = 0; i < files.length; i++) {
-			System.out.println(files[i].getName());
+//			System.out.println(files[i].getName());
 
 			// 原来的P是M*1的矩阵。
 			double[] P = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
@@ -184,14 +212,19 @@ public class HACTreeIndexBuilding {
 					pa.set(j, 0, v + rand);
 					pb.set(j, 0, v - rand);*/
 
-					double v = P[j] / 2.0;
+					/*double v = P[j] / 2.0;
 					pa[j] = v + rand;
-					pb[j] = v - rand;
+					pb[j] = v - rand;*/
+
+					pa[j] = P[j] * rand;
+					pb[j] = P[j] * (1 - rand);
 
 					// 置1相等
 				} else {
 					// pa.set(j, 0, P.get(j, 0));
 					// pb.set(j, 0, P.get(j, 0));
+					/*pa[j] = P[j];
+					pb[j] = P[j];*/
 					pa[j] = P[j];
 					pb[j] = P[j];
 				}
@@ -241,9 +274,21 @@ public class HACTreeIndexBuilding {
 			System.out.println("the " + (round++) + "'s round to build tree.");
 			System.out.println("currentProcessingHACTreeNodeSet.size():" + currentProcessingHACTreeNodeSet.size());
 
+			PriorityQueue<HacTreeNodePairScore> maxHeap = getPriorityQueue(currentProcessingHACTreeNodeSet);
+			Set<HACTreeNode> managedNodeSet = new HashSet<>();
+
 			/*System.out.println();*/
 			while (currentProcessingHACTreeNodeSet.size() > 1) {
-				HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
+//				HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
+				HacTreeNodePairScore mostSimilarNodePair = maxHeap.poll();
+				// 最相关的两个节点有节点是已经处理过了。
+				if (managedNodeSet.contains(mostSimilarNodePair.node1)
+						|| managedNodeSet.contains(mostSimilarNodePair.node2)) {
+					continue;
+				}
+
+				HACTreeNodePair mostCorrespondNodePair = new HACTreeNodePair(mostSimilarNodePair.node1,
+						mostSimilarNodePair.node2);
 				List<double[]> parentNodePruningVectors = getParentNodePruningVector(mostCorrespondNodePair);
 
 				/*MatrixUitls.print(parentNodePruningVectors.get(0));
@@ -258,6 +303,11 @@ public class HACTreeIndexBuilding {
 						mostCorrespondNodePair.node1, mostCorrespondNodePair.node2, null, null);
 				currentProcessingHACTreeNodeSet.remove(mostCorrespondNodePair.node1);
 				currentProcessingHACTreeNodeSet.remove(mostCorrespondNodePair.node2);
+
+				// 更新待处理的节点集合。
+				managedNodeSet.add(mostCorrespondNodePair.node1);
+				managedNodeSet.add(mostCorrespondNodePair.node2);
+
 				newGeneratedHACTreeNodeSet.add(parentNode);
 			}
 			if (newGeneratedHACTreeNodeSet.size() > 0) {
@@ -272,6 +322,28 @@ public class HACTreeIndexBuilding {
 		System.out.println("build hac tree index total time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("HACTreeIndexBuilding buildHACTreeIndex finished.");
 		return root;
+	}
+
+	/**
+	 * 用于构造最大堆,用于查找最相关的两个文档.
+	 * @param hacTreeNodePairScoreSet
+	 * @return
+	 */
+	private PriorityQueue<HacTreeNodePairScore> getPriorityQueue(Set<HACTreeNode> hacTreeNodePairScoreSet) {
+		System.out.println("getPriorityQueue start.");
+		long start = System.currentTimeMillis();
+		List<HACTreeNode> list = hacTreeNodePairScoreSet.stream().collect(toList());
+		int n = list.size();
+		PriorityQueue<HacTreeNodePairScore> maxHeap = new PriorityQueue<>(n * (n-1) / 2 +1, maxComparator);
+		for (int i = 0; i < list.size(); i++) {
+			for (int j = i + 1; j < list.size(); j++) {
+				maxHeap.add(new HacTreeNodePairScore(list.get(i), list.get(j),
+						correspondingScore(list.get(i), list.get(j))));
+			}
+		}
+		System.out.println("time:" + (System.currentTimeMillis() - start) + "ms");
+		System.out.println("getPriorityQueue end.");
+		return maxHeap;
 	}
 
 	/**

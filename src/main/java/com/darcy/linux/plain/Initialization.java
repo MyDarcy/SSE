@@ -30,17 +30,18 @@ public class Initialization {
 	public static int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
 	public static final int DUMMY_KEYWORD_NUMBER = 0;
+	public static final int DOC_NUMBER = 100;
 
 	// 项目目录.
-//	public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-//	public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\plain\\key\\aesKey.dat";
-//	public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";
-//	public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\plain\\encrypted40";
+	public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
+	public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
 
-	 public static /*final*/ String BASE = "/home/zqhe/data";
-	 public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/plain/key/aesKey.dat";
-	 public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/plain/plain40";
-	 public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/plain/encrypted40";
+//	 public static /*final*/ String BASE = "/home/zqhe/data";
+//	 public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/pv/key/aesKey.dat";
+//	 public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/pv/plain" + DOC_NUMBER;
+//	 public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/pv/encrypted" + DOC_NUMBER;
 
 	// 明文文件目录 	密文文件目录. 40个文件
 	// public static final String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain40";

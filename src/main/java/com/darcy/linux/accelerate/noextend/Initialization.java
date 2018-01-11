@@ -30,21 +30,28 @@ public class Initialization {
 	public static int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
 	public static final int DUMMY_KEYWORD_NUMBER = 0;
+	public static final int DOC_NUMBER = 100;
 
-	// 项目目录.
+	// 项目目录. 密钥目录. 明文文件目录 	密文文件目录. 40个文件
 	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	// 密钥目录
 	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\noextend2\\key\\aesKey.dat";
+	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
+	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
 
-	// 明文文件目录 	密文文件目录. 40个文件
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\noextend2\\plain16";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\noextend2\\encrypted16";
 	// 明文文件目录 	密文文件目录. 16个文件
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\muse\\noextend2\\plain40";
 	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\noextend2\\encrypted40";*/
 
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\splitting\\cnn_splitting40_10";
 	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\noextend2\\encrypted40";*/
+
+	// linux.
+//	public static /*final*/ String BASE = "/home/zqhe/data";
+//	public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/pv/key/aesKey.dat";
+//	public static /*final*/ String PLAIN_DIR = BASE + "/doc/muse/pv/plain10000";
+//	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/pv/encrypted10000";
+
+	public static String SEPERATOR;
 
 	// 匹配关键词
 	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
@@ -62,6 +69,18 @@ public class Initialization {
 	// public static int[][] keywordFrequency;
 	// filename -> {keyword: count}
 	public static Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+
+
+	static{
+		SEPERATOR = "\\";
+		if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
+			SEPERATOR = "/";
+		}
+
+		if (!new File(ENCRYPTED_DIR).exists()) {
+			new File(ENCRYPTED_DIR).mkdir();
+		}
+	}
 
 	/**
 	 * 主要是为了密钥的生成。
@@ -198,9 +217,13 @@ public class Initialization {
 		// 统计1000个文档只用了3276ms
 		// System.out.println("manage documents time consume:" + (System.currentTimeMillis() - start1));
 
-		System.out.println("fileLength:" + fileLength);
-		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
-		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
+//		System.out.println("fileLength:" + fileLength);
+//		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
+//		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
+
+		System.out.println("fileLength.size():" + fileLength.size());
+		System.out.println("keywordFrequencyInDocument.size():" + keywordFrequencyInDocument.size());
+		System.out.println("numberOfDocumentContainsKeyword.size():" + numberOfDocumentContainsKeyword.size());
 
 		Map<String, Integer> duplicateNumberOfDocumentContainsKeyword = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : numberOfDocumentContainsKeyword.entrySet()) {
@@ -220,8 +243,8 @@ public class Initialization {
 			}
 		});
 
-		System.out.println("keyword - documentNumber");
-		System.out.println(duplicate);
+//		System.out.println("keyword - documentNumber");
+//		System.out.println(duplicate);
 
 		// 测试关键词频率map中的结果是否和fileLength中数值相等.
 		boolean result = testInfo(fileLength, keywordFrequencyInDocument);
@@ -240,6 +263,9 @@ public class Initialization {
 		// 拓展字典
 		List<String> extendDictPart = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
 		dict.addAll(extendDictPart);
+
+		Initialization.dict = dict.stream().sorted().collect(toList());
+
 
 		/*Arrays.stream(parentFile.listFiles()).map(File::toPath).flatMap(Files::readAllLines).collect()*/
 

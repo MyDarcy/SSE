@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +40,7 @@ public class Query2 {
 			// String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
 			String query = "|(church china) &(make took) !(status human)";
 
-			// unavailable=2 salary=4 guards=15  canceling=2  creative=22, coast=50
+//			unavailable=2 salary=4 guards=15  canceling=2  creative=22, coast=50
 //			before=403, world=389, while=386, against=331, still=331, three=330, during=302, between=300, called=300, another=299,american=238, days=236, public=235,
 //			discuss=30, managed=30, seconds=30, agent=30,zone=28, division=28, mention=28, physical=28, alive=28, legislation=28, nuclear=28, equipment=28, wonderful=28,
 //			supervisor=7, admire=7,authorization=6, predicting=6,  tuition=4,emotion=5, wasted=6,samsung=7,
@@ -52,28 +49,34 @@ public class Query2 {
 					System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
 			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
-			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-       int requestNumber = 50;
+       int requestNumber1 = 50;
 			// int requestNumber = 6;
-			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
-			System.out.println("\nQuery2 priorityQueue.size():" + priorityQueue.size());
 
-			Map<String, Double> nodeScoreMap = new HashMap<>();
-			for (HACTreeNode node : priorityQueue) {
-				nodeScoreMap.put(node.fileDescriptor, scoreForPruning(node, trapdoor));
+			List<Integer> requestNumberList = new ArrayList<>();
+			int low = (int) Math.ceil(Initialization.DOC_NUMBER * 0.01);
+			int high = (int) Math.ceil(Initialization.DOC_NUMBER * 0.2);
+			for (int i = low; i <= high; i += low) {
+				requestNumberList.add(i);
 			}
 
-			List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
+			for (int requestNumber : requestNumberList) {
+				SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
+				PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
+				System.out.println("\nQuery2 priorityQueue.size():" + priorityQueue.size());
 
-			String keywordPatternStr = getQueryPattern(query);
+				Map<String, Double> nodeScoreMap = new HashMap<>();
+				for (HACTreeNode node : priorityQueue) {
+					nodeScoreMap.put(node.fileDescriptor, scoreForPruning(node, trapdoor));
+				}
+				List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
+				String keywordPatternStr = getQueryPattern(query);
+				System.out.println("\nrequestNumber:" + requestNumber + "\t" + query);
 
-			System.out.println("\n" + query);
-
-			// 验证搜索结果是否包含特定的文档。
-			searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
-
+				// 验证搜索结果是否包含特定的文档。
+				searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();

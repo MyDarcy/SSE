@@ -44,21 +44,30 @@ public class Query2 {
 			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
 
 			// for-40
-       int requestNumber1 = 15;
+			int requestNumber1 = 15;
 			// int requestNumber = 6;
-			for (int requestNumber :
-					 Arrays.asList(/*15, 20, 25, 30, 35, 40*/20, 25, 30)) {
 
-			  SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
+			List<Integer> requestNumberList = new ArrayList<>();
+			int low = (int) Math.ceil(Initialization.DOC_NUMBER * 0.01);
+			int high = (int) Math.ceil(Initialization.DOC_NUMBER * 0.2);
+			for (int i = low; i <= high; i += low) {
+				requestNumberList.add(i);
+			}
+
+			// Arrays.asList(5, 10, 15, 20, 25, 30, 40, 50, 60, 80)
+			for (int requestNumber : requestNumberList) {
+				SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 				PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
 				System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
 				Map<String, Double> nodeScoreMap = new HashMap<>();
 				for (HACTreeNode node : priorityQueue) {
 					nodeScoreMap.put(node.fileDescriptor, scoreForPruning(node, trapdoor));
 				}
-				System.out.println("\n"+ query);
 				List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
 				String keywordPatternStr = getQueryPattern(query);
+
+				System.out.println("\n requestNumber:" + requestNumber + "\t" + query);
+
 				// 验证搜索结果是否包含特定的文档。
 				searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
 			}

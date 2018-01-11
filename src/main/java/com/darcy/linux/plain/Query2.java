@@ -6,8 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,24 +57,34 @@ public class Query2 {
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
 			Matrix queryVector = trapdoorGenerating.generateTrapdoor(query);
-			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
 			// for-40
-			int requestNumber = 10;
-			// int requestNumber = 6;
-			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, queryVector, requestNumber);
-			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
-			/*for (HACTreeNode node : priorityQueue) {
-				System.out.println(node.fileDescriptor);
-			}*/
-			System.out.println();
+			int requestNumber1 = 10;
+			List<Integer> requestNumberList = new ArrayList<>();
+			int low = (int) Math.ceil(Initialization.DOC_NUMBER * 0.01);
+			int high = (int) Math.ceil(Initialization.DOC_NUMBER * 0.1);
+			for (int i = low; i <= high; i += low) {
+				requestNumberList.add(i);
+			}
 
-			List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
+			// Arrays.asList(5, 10, 15, 20, 25, 30, 40, 50, 60, 80)
+			for (int requestNumber : requestNumberList) {
+				SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
+				PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, queryVector, requestNumber);
+				System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
+				Map<String, Double> nodeScoreMap = new HashMap<>();
+				for (HACTreeNode node : priorityQueue) {
+					nodeScoreMap.put(node.fileDescriptor, scoreForPruning(node, queryVector));
+				}
+				List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
+				String keywordPatternStr = getQueryPattern(query);
 
-			String keywordPatternStr = getQueryPattern(query);
+				System.out.println("\n requestNumber:" + requestNumber + "\t" + query);
 
-			// 验证搜索结果是否包含特定的文档。
-			searchResultVerify(filenameList, keywordPatternStr);
+				// 验证搜索结果是否包含特定的文档。
+				searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
+			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
@@ -83,10 +92,21 @@ public class Query2 {
 		}
 	}
 
-	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr) throws IOException {
+	/**
+	 * 根节点和Trapdoor之间的相关性评分.
+	 *
+	 * @param root
+	 * @param queryVector
+	 * @return
+	 */
+	private static double scoreForPruning(HACTreeNode root, Matrix queryVector) {
+		return root.pruningVector.times(queryVector).get(0, 0);
+	}
+
+	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr, Map<String, Double> nodeScoreMap) throws IOException {
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
-			System.out.println("passage " + filenameList.get(i));
+			System.out.println(filenameList.get(i) + "\tscore:" + nodeScoreMap.get(filenameList.get(i)));
 			String separator = "\\";
 			if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
 				separator = "/";

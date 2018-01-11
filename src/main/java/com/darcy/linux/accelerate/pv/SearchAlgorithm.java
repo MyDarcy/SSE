@@ -2,9 +2,7 @@ package com.darcy.linux.accelerate.pv;
 
 import com.darcy.linux.accelerate.DiagonalMatrixUtils;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /*
  * author: darcy
@@ -23,6 +21,8 @@ public class SearchAlgorithm {
 	private int containsCount = 0;
 	private int computeCount = 0;
 	private int pruneCount = 0;
+
+	private Map<HACTreeNode, Double> nodeScoreMapForThreshold;
 
 	/**
 	 * 实现方式1: 采用堆的性性质.
@@ -66,6 +66,8 @@ public class SearchAlgorithm {
 			}
 		};
 
+		nodeScoreMapForThreshold = new HashMap<>(requestNumber);
+
 		allDocumentSocreQueue = new PriorityQueue<>(maxComparator);
 		PriorityQueue<HACTreeNode> minHeap = new PriorityQueue<>(minComparator);
 		dfs(root, trapdoor, requestNumber, minHeap);
@@ -76,6 +78,7 @@ public class SearchAlgorithm {
 		System.out.println("total time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("SearchAlgorithm search end.");
 
+		System.out.println("requestNumber:" + requestNumber);
 		System.out.println("leafNodeCount:" + leafNodeCount);
 		System.out.println("containsCount:" + containsCount);
 		System.out.println("computeCount:" + computeCount);
@@ -100,21 +103,26 @@ public class SearchAlgorithm {
 		return result;
 	}
 
+	public static final double PRUNE_THRESHOLD_SCORE = 0.0004;
+
 	private void dfs(HACTreeNode root, Trapdoor trapdoor, int requestNumber, PriorityQueue<HACTreeNode> minHeap) {
 		// 是叶子结点.
 		if (root.left == null && root.right == null) {
 			leafNodeCount++;
-			if (allDocumentSocreQueue.contains(root)) {
+			/*if (allDocumentSocreQueue.contains(root)) {
 				containsCount++;
 			}
-			allDocumentSocreQueue.add(root);
+			allDocumentSocreQueue.add(root);*/
 
 			double scoreForPrune = scoreForPruning(root, trapdoor);
 			computeCount++;
+			if (!nodeScoreMapForThreshold.containsKey(root)) {
+				nodeScoreMapForThreshold.put(root, scoreForPrune);
+			}
 
 			// 并且候选结果集合中没有top-K个元素.
 			int size = minHeap.size();
-			if (scoreForPrune >= 0.0004) {
+			if (scoreForPrune >= PRUNE_THRESHOLD_SCORE) {
 				if (size < requestNumber - 1) {
 					System.out.println("< (N-1) add:" + root.fileDescriptor);
 					minHeap.add(root);
@@ -122,9 +130,15 @@ public class SearchAlgorithm {
 				} else if (size == (requestNumber - 1)) {
 					minHeap.add(root);
 					System.out.println("= (N-1) add:" + root.fileDescriptor);
-					thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
+					HACTreeNode peekNode = minHeap.peek();
+					if (nodeScoreMapForThreshold.containsKey(peekNode)) {
+						thresholdScore = nodeScoreMapForThreshold.get(peekNode);
+						containsCount++;
+					} else {
+						thresholdScore = scoreForPruning(peekNode, trapdoor);
+						computeCount++;
+					}
 					System.out.println("new thresholdScore:" + thresholdScore);
-					computeCount++;
 //					System.out.println("thresholdSocre:" + thresholdScore);
 					// 仍然时叶子节点，但是候选结果集合中已经有了N个文档.
 				} else {
@@ -135,13 +149,19 @@ public class SearchAlgorithm {
 //						double score = scoreForPruning(minScoreNode, trapdoor);
 //						System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
 						minHeap.add(root);
-						thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
+						HACTreeNode peekNode = minHeap.peek();
+						if (nodeScoreMapForThreshold.containsKey(peekNode)) {
+							thresholdScore = nodeScoreMapForThreshold.get(peekNode);
+							containsCount++;
+						} else {
+							thresholdScore = scoreForPruning(peekNode, trapdoor);
+							computeCount++;
+						}
 					  System.out.println("new thresholdScore:" + thresholdScore);
-						computeCount++;
 					}
 				}
 			} else {
-				System.out.println("leaf node not add for score < 0.0004");
+				System.out.println("leaf node not add for score < " + PRUNE_THRESHOLD_SCORE);
 			}
 
 			// 非叶子结点。
@@ -156,7 +176,7 @@ public class SearchAlgorithm {
 			// 上层父节点和查询向量之间的相关性评分都比阈值threshold小，那么下层的叶子结点会更小。
 			// 大于0.0004对于上层节点不一定有用，但是对于下层节点是可能是有效的。因为乘积只可能是
 			//
-			if (score > 0.0004 && (score > thresholdScore/* || minHeap.size() < requestNumber*/)) {
+			if (score > PRUNE_THRESHOLD_SCORE && (score > thresholdScore/* || minHeap.size() < requestNumber*/)) {
 				if (root.left != null) {
 					System.out.println("left");
 					dfs(root.left, trapdoor, requestNumber, minHeap);

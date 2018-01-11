@@ -1,5 +1,7 @@
 package com.darcy.linux.accelerate.noextend;
 
+import com.darcy.linux.accelerate.DiagonalMatrixUtils;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.File;
@@ -7,8 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +49,7 @@ public class Query2 {
 			hacTreeIndexBuilding.encryptFiles();
 			hacTreeIndexBuilding.generateAuxiliaryMatrix();
 			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
-			System.out.println(root);
+			// System.out.println(root);
 
 			// for-16
 			// String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
@@ -60,24 +61,31 @@ public class Query2 {
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
 			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
-			SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
 
-			// for-40
-			int requestNumber = 6;
-			// int requestNumber = 6;
-			PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
-			System.out.println("Query2 priorityQueue.size():" + priorityQueue.size());
-			/*for (HACTreeNode node : priorityQueue) {
-				System.out.println(node.fileDescriptor);
-			}*/
-			System.out.println();
+			int requestNumber1 = 6;
+			List<Integer> requestNumberList = new ArrayList<>();
+			int low = (int) Math.ceil(Initialization.DOC_NUMBER * 0.01);
+			int high = (int) Math.ceil(Initialization.DOC_NUMBER * 0.1);
+			for (int i = low; i <= high; i += low) {
+				requestNumberList.add(i);
+			}
 
-			List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
+			for (int requestNumber : requestNumberList) {
+				SearchAlgorithm searchAlgorithm = new SearchAlgorithm();
+				PriorityQueue<HACTreeNode> priorityQueue = searchAlgorithm.search(root, trapdoor, requestNumber);
+				System.out.println("\nQuery2 priorityQueue.size():" + priorityQueue.size());
 
-			String keywordPatternStr = getQueryPattern(query);
+				Map<String, Double> nodeScoreMap = new HashMap<>();
+				for (HACTreeNode node : priorityQueue) {
+					nodeScoreMap.put(node.fileDescriptor, scoreForPruning(node, trapdoor));
+				}
+				List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
+				String keywordPatternStr = getQueryPattern(query);
+				System.out.println("\nrequestNumber:" + requestNumber + "\t" + query);
 
-			// 验证搜索结果是否包含特定的文档。
-			searchResultVerify(filenameList, keywordPatternStr);
+				// 验证搜索结果是否包含特定的文档。
+				searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -92,10 +100,25 @@ public class Query2 {
 		}
 	}
 
-	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr) throws IOException {
+	/**
+	 * 根节点和Trapdoor之间的相关性评分.
+	 *
+	 * @param root
+	 * @param trapdoor
+	 * @return
+	 */
+	private static double scoreForPruning(HACTreeNode root, Trapdoor trapdoor) {
+		/*return root.pruningVector.times(queryVector).get(0, 0);*/
+		/*return root.pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
+				+ root.pruningVectorPart2.transpose().times(trapdoor.trapdoorPart2).get(0, 0);*/
+		return DiagonalMatrixUtils.score(root.pruningVectorPart1, trapdoor.trapdoorPart1) +
+				DiagonalMatrixUtils.score(root.pruningVectorPart2, trapdoor.trapdoorPart2);
+	}
+
+	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr, Map<String, Double> nodeScoreMap) throws IOException {
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
-			System.out.println(filenameList.get(i));
+			System.out.println(filenameList.get(i) + "\tscore:" + nodeScoreMap.get(filenameList.get(i)));
 			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR + "\\" + filenameList.get(i)).toPath());
 			String passage = allLines.stream().map(String::toLowerCase).collect(joining("\n"));
 

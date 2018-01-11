@@ -1,8 +1,6 @@
 package com.darcy.linux.pv;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /*
  * author: darcy
@@ -20,6 +18,9 @@ public class SearchAlgorithm {
 	private int leafNodeCount = 0;
 	private int containsCount = 0;
 	private int computeCount = 0;
+	private int pruneCount = 0;
+
+	private Map<HACTreeNode, Double> nodeScoreMapForThreshold;
 
 	/**
 	 * 实现方式1: 采用堆的性性质.
@@ -63,6 +64,8 @@ public class SearchAlgorithm {
 			}
 		};
 
+		nodeScoreMapForThreshold = new HashMap<>(requestNumber);
+
 		allDocumentSocreQueue = new PriorityQueue<>(maxComparator);
 		PriorityQueue<HACTreeNode> minHeap = new PriorityQueue<>(minComparator);
 		dfs(root, trapdoor, requestNumber, minHeap);
@@ -73,9 +76,11 @@ public class SearchAlgorithm {
 		System.out.println("total time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("SearchAlgorithm search end.");
 
+		System.out.println("requestNumber:" + requestNumber);
 		System.out.println("leafNodeCount:" + leafNodeCount);
 		System.out.println("containsCount:" + containsCount);
 		System.out.println("computeCount:" + computeCount);
+		System.out.println("pruneCount:" + pruneCount);
 
 		System.out.println("all document-size:" + allDocumentSocreQueue.size());
 		System.out.println("all document-score.");
@@ -95,23 +100,28 @@ public class SearchAlgorithm {
 		return result;
 	}
 
+	public static final double PRUNE_THRESHOLD_SCORE = 0.0004;
+
 	private void dfs(HACTreeNode root, Trapdoor trapdoor, int requestNumber, PriorityQueue<HACTreeNode> minHeap) {
 		// 是叶子结点.
 		if (root.left == null && root.right == null) {
 			leafNodeCount++;
-			if (allDocumentSocreQueue.contains(root)) {
-				containsCount++;
-			}
-			allDocumentSocreQueue.add(root);
+//			if (allDocumentSocreQueue.contains(root)) {
+//				containsCount++;
+//			}
+//			allDocumentSocreQueue.add(root);
 
 			double scoreForPrune = scoreForPruning(root, trapdoor);
 			computeCount++;
+			if (!nodeScoreMapForThreshold.containsKey(root)) {
+				nodeScoreMapForThreshold.put(root, scoreForPrune);
+			}
 
 			// 并且候选结果集合中没有top-K个元素.
 			int size = minHeap.size();
 			// 0.0004是因为统计了40,100,1000个文档，最小的关键词的tf-idf值是0.0004xxx,而在查询向量中，用户生成的偏好不会是
 			// 小于1的，又因为明文和密文pq = p'*q',所以一定有
-			if (scoreForPrune >= 0.0004) {
+			if (scoreForPrune >= PRUNE_THRESHOLD_SCORE) {
 				if (size < requestNumber - 1) {
 					System.out.println("< (N-1) add:" + root.fileDescriptor);
 					minHeap.add(root);
@@ -119,10 +129,15 @@ public class SearchAlgorithm {
 					// 已经找到了 N-1个文档，然后将当前文档加入, 但是要更新现在的阈值评分.
 				} else if (size == (requestNumber - 1)) {
 					minHeap.add(root);
-					System.out.println("= (N-1) add:" + root.fileDescriptor);
-					thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
-					computeCount++;
-					System.out.println("thresholdSocre:" + thresholdScore);
+					HACTreeNode peekNode = minHeap.peek();
+					if (nodeScoreMapForThreshold.containsKey(peekNode)) {
+						thresholdScore = nodeScoreMapForThreshold.get(peekNode);
+						containsCount++;
+					} else {
+						thresholdScore = scoreForPruning(peekNode, trapdoor);
+						computeCount++;
+					}
+					System.out.println("new thresholdSocre:" + thresholdScore);
 
 					// 仍然时叶子节点，但是候选结果集合中已经有了N个文档.
 				} else {
@@ -133,8 +148,15 @@ public class SearchAlgorithm {
 						double score = scoreForPruning(minScoreNode, trapdoor);
 						System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
 						minHeap.add(root);
-						thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
-						computeCount++;
+						HACTreeNode peekNode = minHeap.peek();
+						if (nodeScoreMapForThreshold.containsKey(peekNode)) {
+							thresholdScore = nodeScoreMapForThreshold.get(peekNode);
+							containsCount++;
+						} else {
+							thresholdScore = scoreForPruning(peekNode, trapdoor);
+							computeCount++;
+						}
+					  System.out.println("new thresholdSocre:" + thresholdScore);
 					}
 				}
 			} else {
@@ -159,6 +181,7 @@ public class SearchAlgorithm {
 				}
 			} else {
 				System.out.println("score:" + score + " no bigger than thresholdScore:" + thresholdScore);
+				pruneCount++;
 				System.out.println();
 			}
 

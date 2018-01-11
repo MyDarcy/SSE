@@ -21,6 +21,11 @@ public class SearchAlgorithm {
 	private PriorityQueue<HACTreeNode> allDocumentSocreQueue;
 	private int leafNodeCount = 0;
 	private int containsCount = 0;
+	private int computeCount = 0;
+	private int pruneCount = 0;
+
+	private PriorityQueue<Double> leastCorrespondingScore =
+			new PriorityQueue<>(40, Comparator.reverseOrder());
 
 	/**
 	 * 实现方式1: 采用堆的性性质.
@@ -104,8 +109,14 @@ public class SearchAlgorithm {
 		System.out.println("total time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("SearchAlgorithm search end.");
 
+		System.out.println("requestNumber:" + requestNumber);
 		System.out.println("leafNodeCount:" + leafNodeCount);
 		System.out.println("containsCount:" + containsCount);
+		System.out.println("computeCount:" + computeCount);
+		System.out.println("pruneCount:" + pruneCount);
+
+		System.out.println("least corresponding scores;");
+		System.out.println(leastCorrespondingScore);
 
 		System.out.println("all document-size:" + allDocumentSocreQueue.size());
 		System.out.println("all document-score.");
@@ -124,8 +135,9 @@ public class SearchAlgorithm {
 
 		return result;
 	}
+	public static final double PRUNE_THRESHOLD_SCORE = 0.0004;
 
-	private void dfs(HACTreeNode root, Matrix queryVecotr, int requestNumber, PriorityQueue<HACTreeNode> minHeap) {
+	private void dfs(HACTreeNode root, Matrix trapdoor, int requestNumber, PriorityQueue<HACTreeNode> minHeap) {
 		// 是叶子结点.
 		if (root.left == null && root.right == null) {
 			leafNodeCount++;
@@ -134,66 +146,70 @@ public class SearchAlgorithm {
 			}
 			allDocumentSocreQueue.add(root);
 
+			double scoreForPrune = scoreForPruning(root, trapdoor);
+			computeCount++;
+
+
 			// 并且候选结果集合中没有top-K个元素.
 			int size = minHeap.size();
-			if (size < (requestNumber - 1)) {
-				System.out.println("< (N-1) add:" + root.fileDescriptor);
-				System.out.println();
-
-				// allDocumentSocreMap.put(root, scoreForPruning(root, queryVecotr));
-				minHeap.add(root);
-
-				// 已经找到了 N-1个文档，然后将当前文档加入, 但是要更新现在的阈值评分.
-			} else if (size == (requestNumber - 1)) {
-				// allDocumentSocreMap.put(root, scoreForPruning(root, queryVecotr));
-
-				minHeap.add(root);
-				System.out.println("= (N-1) add:" + root.fileDescriptor);
-				thresholdScore = scoreForPruning(minHeap.peek(), queryVecotr);
-				System.out.println("thresholdSocre:" + thresholdScore);
-				System.out.println();
-
-				// 仍然时叶子节点，但是候选结果集合中已经有了N个文档.
-			} else {
-				// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
-				// 候选结果集合的。
-				double nodeScore = scoreForPruning(root, queryVecotr);
-				// allDocumentSocreMap.put(root, nodeScore);
-				if (nodeScore > thresholdScore) {
-					HACTreeNode minScoreNode = minHeap.poll();
-					double score = scoreForPruning(minScoreNode, queryVecotr);
-					System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
-					System.out.println();
-
+			if (scoreForPrune >= PRUNE_THRESHOLD_SCORE) {
+				if (size < requestNumber - 1) {
+					System.out.println("< (N-1) add:" + root.fileDescriptor);
 					minHeap.add(root);
-					thresholdScore = scoreForPruning(minHeap.peek(), queryVecotr);
+					// 已经找到了 N-1个文档，然后将当前文档加入, 但是要更新现在的阈值评分.
+				} else if (size == (requestNumber - 1)) {
+					minHeap.add(root);
+					System.out.println("= (N-1) add:" + root.fileDescriptor);
+					thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
+					System.out.println("new thresholdScore:" + thresholdScore);
+					computeCount++;
+//					System.out.println("thresholdSocre:" + thresholdScore);
+					// 仍然时叶子节点，但是候选结果集合中已经有了N个文档.
+				} else {
+					// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
+					// 候选结果集合的。
+					if (scoreForPruning(root, trapdoor) > thresholdScore) {
+						HACTreeNode minScoreNode = minHeap.poll();
+//						double score = scoreForPruning(minScoreNode, trapdoor);
+//						System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
+						minHeap.add(root);
+						thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
+						System.out.println("new thresholdScore:" + thresholdScore);
+						computeCount++;
+					}
 				}
+			} else {
+				System.out.println("leaf node not add for score < " + PRUNE_THRESHOLD_SCORE);
 			}
+
+			// 非叶子结点。
 		} else {
-			double score = scoreForPruning(root, queryVecotr);
+			double score = scoreForPruning(root, trapdoor);
+			computeCount++;
 			/*MatrixUitls.print(root.pruningVectorPart1);
 			MatrixUitls.print(root.pruningVectorPart2);
 			MatrixUitls.print(trapdoor.trapdoorPart1.transpose());
 			MatrixUitls.print(trapdoor.trapdoorPart2.transpose());*/
 			System.out.printf("%-10s\t%.8f\t%-20s\t%.8f\n", "score", score, "thresholdScore", thresholdScore);
-
-			// 引入合理的剪枝
-			if (score > thresholdScore) {
+			// 上层父节点和查询向量之间的相关性评分都比阈值threshold小，那么下层的叶子结点会更小。
+			// 大于0.0004对于上层节点不一定有用，但是对于下层节点是可能是有效的。因为乘积只可能是
+			//
+			if (score > PRUNE_THRESHOLD_SCORE && (score > thresholdScore/* || minHeap.size() < requestNumber*/)) {
 				if (root.left != null) {
 					System.out.println("left");
-					dfs(root.left, queryVecotr, requestNumber, minHeap);
+					dfs(root.left, trapdoor, requestNumber, minHeap);
 				}
 				if (root.right != null) {
 					System.out.println("right");
-					dfs(root.right, queryVecotr, requestNumber, minHeap);
+					dfs(root.right, trapdoor, requestNumber, minHeap);
 				}
 			} else {
-				System.out.println("score:" + score + " no bigger than thresholdScore:" + thresholdScore);
+				System.out.println("score:" + score + " no bigger than thresholdScore:" + thresholdScore + " or socre <" + 0.0004);
+				pruneCount++;
 				System.out.println();
 			}
 		}
 	}
-
 	/**
 	 * 计算跟查询向量之间最不相关的文档.
 	 *
@@ -223,7 +239,6 @@ public class SearchAlgorithm {
 	 */
 	private double scoreForPruning(HACTreeNode root, Matrix queryVector) {
 		return root.pruningVector.times(queryVector).get(0, 0);
-
 	}
 
 

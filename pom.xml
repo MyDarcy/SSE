@@ -12,6 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<corenlp.version>3.8.0</corenlp.version>
 	</properties>
 
 	<dependencies>
@@ -110,10 +111,24 @@
 		<!-- stanford npl -->
 		<!-- https://mvnrepository.com/artifact/edu.stanford.nlp/stanford-corenlp -->
 		<!-- https://nlp.stanford.edu/software/ -->
-		<!--<dependency>
+		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
-			<version>3.8.0</version>
+			<version>${corenlp.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>${corenlp.version}</version>
+			<classifier>models</classifier>
+		</dependency>
+
+<!--		<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>${corenlp.version}</version>
+			<classifier>models-chinese</classifier>
 		</dependency>-->
 
 
@@ -138,6 +153,23 @@
 			<artifactId>stream</artifactId>
 			<version>2.9.5</version>
 		</dependency>
+
+		<!-- for stem or lemmatization of keyword. -->
+		<!-- https://mvnrepository.com/artifact/edu.washington.cs.knowitall/morpha-stemmer -->
+		<dependency>
+			<groupId>edu.washington.cs.knowitall</groupId>
+			<artifactId>morpha-stemmer</artifactId>
+			<version>1.0.5</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/edu.mit/jwi -->
+		<dependency>
+			<groupId>edu.mit</groupId>
+			<artifactId>jwi</artifactId>
+			<version>2.2.3</version>
+		</dependency>
+
+
 
 
 	</dependencies>

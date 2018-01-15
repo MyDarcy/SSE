@@ -2,6 +2,7 @@ package com.darcy.linux.accelerate.pv;
 
 
 import com.darcy.linux.accelerate.DiagonalMatrixUtils;
+import com.darcy.linux.utils.StemLemmatizations;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -30,7 +31,7 @@ public class Initialization {
 	public static int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
 	public static final int DUMMY_KEYWORD_NUMBER = 10;
-	public static final int DOC_NUMBER = 500;
+	public static final int DOC_NUMBER = 100;
 
 	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录. 40个文件
 
@@ -186,6 +187,16 @@ public class Initialization {
 				for (String line : allLines) {
 					//Matcher matcher = WORD_PATTERN.matcher(line);
 					// reset要匹配的字符串.
+					// 500个文档，维度23346
+					// 1000个文档，维度32121
+					// 100个文档，维度10054
+//					matcher = matcher.reset(line);
+
+					// 500个文档，通过stem和lemmatization后， 17981维度。
+					// 1000个文档，通过stem和lemmatization后， 24776维度。
+					// 100个文档，通过stem和lemmatization后， 7865维度。
+					// 综合结论，降维还是非常有效的。
+					line = StemLemmatizations.stemLemmatization(line);
 					matcher = matcher.reset(line);
 					while (matcher.find()) {
 						// 忽略大小写.

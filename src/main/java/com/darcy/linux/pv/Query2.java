@@ -23,11 +23,16 @@ public class Query2 {
 
 	public static void test2() {
 		try {
-			MySecretKey mySecretKey = Initialization.getMySecretKey();
+
+			// 没有写textrank和plain文档分离的版本。
+			// 只是new def了两个函数。
+//			MySecretKey mySecretKey = Initialization.getMySecretKey();
+			MySecretKey mySecretKey = Initialization.getMySecretKeyWithTextRank();
 			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
 			hacTreeIndexBuilding.encryptFiles();
 			hacTreeIndexBuilding.generateAuxiliaryMatrix();
-			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
+//			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
+			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndexWithTextRank();
 			// System.out.println(root);
 
 			// for-16
@@ -35,7 +40,8 @@ public class Query2 {
 
 			// for-40
       // String query = "clinton broadcasting voice Francis honorary citizenship Democratic Revolution church president conferences";
-			String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
+			String query = "church China hospital performance British" +
+					" interview Democratic citizenship broadcasting voice official military";
 
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
@@ -44,8 +50,8 @@ public class Query2 {
 			// for-40
        int requestNumber1 = 4;
 			List<Integer> requestNumberList = new ArrayList<>();
-			int low = (int) Math.ceil(Initialization.DOC_NUMBER * 0.05);
-			int high = (int) Math.ceil(Initialization.DOC_NUMBER * 0.4);
+			int low = (int) Math.ceil(Initialization.DOC_NUMBER * 0.02);
+			int high = (int) Math.ceil(Initialization.DOC_NUMBER * 0.2);
 			for (int i = low; i <= high; i += low) {
 				requestNumberList.add(i);
 			}
@@ -62,7 +68,7 @@ public class Query2 {
 				List<String> filenameList = priorityQueue.stream().map((node) -> node.fileDescriptor).collect(toList());
 				String keywordPatternStr = getQueryPattern(query);
 
-				System.out.println("\n requestNumber:" + requestNumber + "\t" + query);
+				System.out.println("\nrequestNumber:" + requestNumber + "\t" + query);
 
 				// 验证搜索结果是否包含特定的文档。
 				searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
@@ -94,11 +100,17 @@ public class Query2 {
 			Matcher matcher = keywordPattern.matcher(passage);
 			int count = 0;
 			while (matcher.find()) {
+				assert matcher != null;
+				assert matcher.group() != null;
 				String keyword = matcher.group().toLowerCase();
 				/*System.out.println(filenameArray[i] + "\t" + keyword + "\t" + Initialization.keywordFrequencyInDocument.get(filenameArray[i]).get(keyword) + "\t" + "documentNumber\t" + Initialization.numberOfDocumentContainsKeyword.get(keyword));*/
-				System.out.printf("%-15s\t%-10s%-15s\t%10s\n", keyword,
+				/*System.out.printf("%-15s\t%-10s%-15s\t%10s\n", keyword,
 						Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
-						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));
+						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));*/
+
+				// 单纯的看输出会发现
+				System.out.printf("%-15s\t%-10s\n", keyword,
+						Initialization.fileTextRankMap.get(filenameList.get(i)).containsKey(keyword)? Initialization.fileTextRankMap.get(keyword) : "提取的关键词文件中不包含 " + keyword);
 				count++;
 			}
 			System.out.println("count:" + count);

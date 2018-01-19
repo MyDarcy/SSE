@@ -2,6 +2,7 @@ package com.darcy.linux.pv;
 
 
 import Jama.Matrix;
+import com.darcy.linux.utils.TextRankUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -30,13 +31,16 @@ public class Initialization {
 	public static int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
 	public static final int DUMMY_KEYWORD_NUMBER = 10;
-	public static final int DOC_NUMBER = 16;
+	public static /*final*/ int DOC_NUMBER = 100;
 
 	// 项目目录. 密钥目录. 明文文件目录 	密文文件目录. 40个文件
-	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+	public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
+	public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+
+	public static String TEXTRANK_WORD_WEIGHT_DIR = "D:\\MrDarcy\\ForGraduationWorks\\Code" +
+			"\\TextRank-master\\textrank\\doc\\100\\keywords";
 
 //	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 //	public static final String SECRET_KEY_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\key\\aesKey.dat";
@@ -52,9 +56,10 @@ public class Initialization {
 	public static String SEPERATOR;
 
 	// 匹配关键词
-	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
-
-	public static final Random RANDOM = new Random(System.currentTimeMillis());
+	public static /*final*/ Pattern WORD_PATTERN = Pattern.compile("\\w+");
+	public static /*final*/ Random RANDOM = new Random(System.currentTimeMillis());
+	// 通过TextRank特定目录下的key:value文件得到的 filename:{keyword:count} map
+	public static Map<String, Map<String, Double>> fileTextRankMap = null;
 
 	// 加密原语等.
 	public static Cipher cipher;
@@ -159,7 +164,17 @@ public class Initialization {
 	public static List<String> extendDummyDict;
 
 
+	/**
+	 * 用于处理原来的明文文档和生成的摘要文档。
+	 * 100   plain:10054     textrank:3272
+	 * 1000  plain:32122     textrank:12868
+	 * 10000 plain:88754     textrank:40682
+	 * @return
+	 * @throws IOException
+	 */
 	public static MySecretKey getMySecretKey() throws IOException {
+
+		// PLAIN_DIR = "D:\\MrDarcy\\ForGraduationWorks\\Code\\TextRank-master\\textrank\\doc\\10000\\summaries";
 
 		File parentFile = new File(PLAIN_DIR);
 		// 全局关键词集合.
@@ -289,6 +304,79 @@ public class Initialization {
 
 		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
+
+		Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		sk.S = bitSet;
+		sk.M1 = m1;
+		sk.M2 = m2;
+		sk.secretKey = secretKey;
+		return sk;
+	}
+
+	/**
+	 * 预处理TextRank方法提取出来的值。
+	 * 100   plain:10054     textrank:1443
+	 * 1000  plain:32122     textrank:6780
+	 * 10000 plain:88754     textrank:23934
+	 *
+	 * 这里处理TextRank提取出来的keyword-weight
+	 * 用于后续的文档向量和索引的创建，但是这里用意是用这些关键词来代替原文档，所以如果要返回文档的话，
+	 * 是需要返回原来的文档的。
+	 * @return
+	 * @throws IOException
+	 */
+	public static MySecretKey getMySecretKeyWithTextRank() throws IOException {
+
+		//String textrankFileName = "D:\\MrDarcy\\ForGraduationWorks\\Code\\TextRank-master\\textrank\\doc\\10000\\keywords";
+		File parentFile = new File(TEXTRANK_WORD_WEIGHT_DIR);
+		Map<String, Map<String, Double>> fileTextRankMap = TextRankUtils.textRankAllFilesToMap(parentFile.getAbsolutePath());
+
+
+
+		Set<String> dictSet = new HashSet<>();
+
+		for (Map.Entry<String, Map<String, Double>> item : fileTextRankMap.entrySet()) {
+			dictSet.addAll(item.getValue().keySet());
+		}
+
+		// 将textrank提取出来的key:value中的key添加到字典中。
+		List<String> dict = dictSet.stream().collect(toList());
+
+		System.out.println("initialization dict.size():" + dict.size());
+		// System.out.println(dict);
+
+		// 初始化字典的长度和字典本身.
+		Initialization.lengthOfDict = dict.size();
+
+		Initialization.DICTIONARY_SIZE = lengthOfDict;
+		// 拓展字典
+		extendDummyDict = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
+		dict.addAll(extendDummyDict);
+
+		// 现在拓展的关键词不在末尾而是按序排在合适的位置.
+		// dict = dict.stream().sorted().collect(toList());
+		// 逻辑操作的话, 冗余关键词添加到dict的末尾。
+		Initialization.dict = dict;
+
+		Initialization.fileTextRankMap = fileTextRankMap;
+
+		// 问题是p'*q' + p"*q" = p * q, 虽然p拓展到了n+e维度, 但是问题在于
+		// q向量中冗余关键词并没有设置相应的位(虽然也是n+e维度， )，那么
+		System.out.println("add dummy keywords dict.size():" + Initialization.dict.size());
+
+		MySecretKey sk = new MySecretKey();
+
+		BitSet bitSet = new BitSet(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		Random random = new Random(System.currentTimeMillis());
+		for (int i = 0; i < (DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER); i++) {
+			if (random.nextBoolean()) {
+				bitSet.set(i);
+			}
+		}
+		// 设置了该位， 此BitSet的长度才是 (DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1)的长度.
+		bitSet.set(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		System.out.println("bitSet.length:"+ bitSet.length());
 
 		Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
 		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);

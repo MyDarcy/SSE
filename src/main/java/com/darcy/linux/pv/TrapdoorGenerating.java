@@ -56,6 +56,9 @@ public class TrapdoorGenerating {
 		interestModel.put("citizenship", 4);
 		interestModel.put("broadcasting", 2);
 		interestModel.put("voice", 1);
+		interestModel.put("official", 4);
+		interestModel.put("military", 7);
+
 
 		/**
 		 * 先根据重要性进行排序.这里重要性是根据用户指定的来生成的.

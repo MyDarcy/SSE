@@ -42,6 +42,22 @@ public class HACTreeIndexBuilding {
 	public Map<String, byte[]> fileBytesMap = new HashMap<>();
 	public Comparator<HacTreeNodePairScore> maxComparator;
 
+	// 实例块中初始化maxComparator。
+	{
+		maxComparator = new Comparator<HacTreeNodePairScore>() {
+			@Override
+			public int compare(HacTreeNodePairScore nodePairScore1, HacTreeNodePairScore nodePairScore2) {
+				if (Double.compare(nodePairScore1.score, nodePairScore2.score) > 0) {
+					return -1;
+				} else if (Double.compare(nodePairScore1.score, nodePairScore2.score) < 0) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		};
+	}
+
 	public HACTreeIndexBuilding(MySecretKey mySecretKey) {
 		this.mySecretKey = mySecretKey;
 	}
@@ -135,20 +151,6 @@ public class HACTreeIndexBuilding {
 	public HACTreeNode buildHACTreeIndex() throws NoSuchAlgorithmException {
 		System.out.println("HACTreeIndexBuilding buildHACTreeIndex start.");
 		long start = System.currentTimeMillis();
-
-		maxComparator = new Comparator<HacTreeNodePairScore>() {
-			@Override
-			public int compare(HacTreeNodePairScore nodePairScore1, HacTreeNodePairScore nodePairScore2) {
-				if (Double.compare(nodePairScore1.score, nodePairScore2.score) > 0) {
-					return -1;
-				} else if (Double.compare(nodePairScore1.score, nodePairScore2.score) < 0) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		};
-
 		Set<HACTreeNode> currentProcessingHACTreeNodeSet = new HashSet<>();
 	  Set<HACTreeNode> newGeneratedHACTreeNodeSet = new HashSet<>();
 
@@ -380,6 +382,163 @@ public class HACTreeIndexBuilding {
 		HACTreeNode root = currentProcessingHACTreeNodeSet.iterator().next();
 		System.out.println("build hac tree index total time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("HACTreeIndexBuilding buildHACTreeIndex finished.");
+		return root;
+	}
+
+
+	/**
+	 * 通过提取的textRank来构造文档向量和索引。
+	 *
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 */
+	public HACTreeNode buildHACTreeIndexWithTextRank() throws NoSuchAlgorithmException {
+		System.out.println("HACTreeIndexBuilding buildHACTreeIndexWithTextRank start.");
+		long start = System.currentTimeMillis();
+		Set<HACTreeNode> currentProcessingHACTreeNodeSet = new HashSet<>();
+		Set<HACTreeNode> newGeneratedHACTreeNodeSet = new HashSet<>();
+
+		// 为此文件夹下的文件创建文档向量。
+		File parentFile = new File(Initialization.PLAIN_DIR);
+		File[] files = parentFile.listFiles();
+
+		PriorityQueue<Double> tfIdfMinHeap = new PriorityQueue<>(20, Double::compare);
+		PriorityQueue<Double> tfIdfMaxHeap = new PriorityQueue<>(20, Comparator.reverseOrder());
+
+		/*for (int i = 0; i < files.length; i++) {*/
+		for (String filename : Initialization.fileTextRankMap.keySet()) {
+			// filename -> wordWeight map.
+			Map<String, Double> keywordWeightMap = Initialization.fileTextRankMap.get(/*files[i].getName()*/ filename);
+			Matrix P = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
+			for (String key : keywordWeightMap.keySet()) {
+				int index = Initialization.dict.indexOf(key);
+				if (index != -1) {
+					Double score = keywordWeightMap.get(key);
+					P.set(index, 0, score);
+					// 取最小的几个数字.
+					if (tfIdfMaxHeap.size() < 40) {
+						tfIdfMaxHeap.add(score);
+					} else if (score < tfIdfMaxHeap.peek()) {
+						tfIdfMaxHeap.add(score);
+						tfIdfMaxHeap.poll();
+					}
+					// 取最大的几个数字.
+					if (tfIdfMinHeap.size() < 40) {
+						tfIdfMinHeap.add(score);
+					} else if (score > tfIdfMinHeap.peek()) {
+						tfIdfMinHeap.add(score);
+						tfIdfMinHeap.poll();
+					}
+				}
+			}
+
+			double[] sample = distribution.sample(Initialization.DUMMY_KEYWORD_NUMBER);
+			for (int j = 0; j < Initialization.DUMMY_KEYWORD_NUMBER; j++) {
+				String str = Initialization.extendDummyDict.get(j);
+				int index = Initialization.dict.indexOf(str);
+				if (index != -1) {
+					P.set(index, 0, sample[j]);
+				}
+			}
+
+			// 获取可逆矩阵加密后的Matrix.
+			Matrix pa = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
+			Matrix pb = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
+
+			for (int j = 0; j < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; j++) {
+				// 置0时候相加
+				if (!mySecretKey.S.get(j)) {
+					double v1 = random.nextDouble();
+					// 不是简单的v1和 p-v1,
+					pa.set(j, 0, P.get(j, 0) * v1);
+					pb.set(j, 0, P.get(j, 0) * (1 - v1));
+
+					// 置1时候相等。
+				} else {
+					pa.set(j, 0, P.get(j, 0));
+					pb.set(j, 0, P.get(j, 0));
+				}
+			}
+			// 获取消息摘要.
+			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+			byte[] keyBytes = mySecretKey.secretKey.getEncoded();
+
+			byte[] fileBytes = fileBytesMap.get(/*files[i].getName()*/filename);
+			byte[] bytes = new byte[keyBytes.length + fileBytes.length];
+			System.arraycopy(keyBytes, 0, bytes, 0, keyBytes.length);
+			System.arraycopy(fileBytes, 0, bytes, keyBytes.length, fileBytes.length);
+			messageDigest.update(bytes);
+
+			Matrix paEncrypted = AuxiliaryMatrix.M1Transpose.times(pa);
+			Matrix pbEncrypted = AuxiliaryMatrix.M2Transpose.times(pb);
+
+			HACTreeNode currentNode = new HACTreeNode(paEncrypted, pbEncrypted, P, 1,
+					null, null, /*files[i].getName()*/ filename, messageDigest);
+			currentProcessingHACTreeNodeSet.add(currentNode);
+		}
+
+		System.out.println("min max tf-idf value");
+		while (!tfIdfMaxHeap.isEmpty()) {
+			System.out.print(tfIdfMaxHeap.poll() + " ");
+		}
+		System.out.println();
+		while (!tfIdfMinHeap.isEmpty()) {
+			System.out.print(tfIdfMinHeap.poll() + " ");
+		}
+		System.out.println();
+		// 6.229580777634032E-4 6.229580777634032E-4 6.229580777634032E-4 6.229580777634032E-4 6.214128672705595E-4 6.214128672705595E-4 6.138840646709543E-4 6.126050661459377E-4 6.126050661459377E-4 5.863653013060231E-4 5.863653013060231E-4 5.826289298947782E-4 5.826289298947782E-4 5.554223438278012E-4 5.552570744117213E-4 5.552570744117213E-4 5.552570744117213E-4 5.166450368214655E-4 5.02378549053935E-4 4.4264451425788786E-4
+		// 0.01548389671941366 0.01548389671941366 0.01548389671941366 0.01548389671941366 0.016034326052022804 0.016034326052022804 0.016077196143216274 0.016133143828381706 0.01685631818262641 0.01749922606551377 0.01749922606551377 0.01760646100721609 0.018182924587935308 0.018182924587935308 0.0205980473479485 0.021298589001322744 0.022594144385877705 0.023242693164144068 0.02436700040456216 0.02668108522363412
+
+		// 叶子结点生成完毕，开始树的构造过程。
+		System.out.println("start construct hac-tree.");
+		int round = 1;
+		while (currentProcessingHACTreeNodeSet.size() > 1) {
+			System.out.println("the " + (round++) + "'s round to build tree.");
+
+			PriorityQueue<HacTreeNodePairScore> maxHeap = getPriorityQueue(currentProcessingHACTreeNodeSet);
+			Set<HACTreeNode> managedNodeSet = new HashSet<>();
+
+			while (currentProcessingHACTreeNodeSet.size() > 1) {
+				//HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
+
+				HacTreeNodePairScore mostSimilarNodePair = maxHeap.poll();
+				// 最相关的两个节点有节点是已经处理过了。
+				if (managedNodeSet.contains(mostSimilarNodePair.node1)
+						|| managedNodeSet.contains(mostSimilarNodePair.node2)) {
+					continue;
+				}
+
+				HACTreeNodePair mostCorrespondNodePair = new HACTreeNodePair(mostSimilarNodePair.node1,
+						mostSimilarNodePair.node2);
+
+				List<Matrix> parentNodePruningVectors = getParentNodePruningVector(mostCorrespondNodePair);
+
+				Matrix parentNodeCenterVector = getParentNodeCenterVector(mostCorrespondNodePair);
+				int parentNumberOfNodeInCurrentCluster = mostCorrespondNodePair.node1.numberOfNodeInCurrentCluster
+						+ mostCorrespondNodePair.node2.numberOfNodeInCurrentCluster;
+				HACTreeNode parentNode = new HACTreeNode(parentNodePruningVectors.get(0), parentNodePruningVectors.get(1),
+						parentNodeCenterVector, parentNumberOfNodeInCurrentCluster,
+						mostCorrespondNodePair.node1, mostCorrespondNodePair.node2, null, null);
+				currentProcessingHACTreeNodeSet.remove(mostCorrespondNodePair.node1);
+				currentProcessingHACTreeNodeSet.remove(mostCorrespondNodePair.node2);
+
+				// 更新待处理的节点集合。
+				managedNodeSet.add(mostCorrespondNodePair.node1);
+				managedNodeSet.add(mostCorrespondNodePair.node2);
+
+				newGeneratedHACTreeNodeSet.add(parentNode);
+			}
+			if (newGeneratedHACTreeNodeSet.size() > 0) {
+				currentProcessingHACTreeNodeSet.addAll(newGeneratedHACTreeNodeSet);
+				newGeneratedHACTreeNodeSet.clear();
+			}
+		}
+
+		System.out.println("currentProcessingHACTreeNodeSet.size():" + currentProcessingHACTreeNodeSet.size());
+		// currentProcessingHACTreeNodeSet中一定是有一个节点的.
+		HACTreeNode root = currentProcessingHACTreeNodeSet.iterator().next();
+		System.out.println("build hac tree index total time:" + (System.currentTimeMillis() - start) + "ms");
+		System.out.println("HACTreeIndexBuilding buildHACTreeIndexWithTextRank finished.");
 		return root;
 	}
 

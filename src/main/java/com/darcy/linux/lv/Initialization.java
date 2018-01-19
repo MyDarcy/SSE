@@ -2,6 +2,7 @@ package com.darcy.linux.lv;
 
 
 import Jama.Matrix;
+import com.darcy.linux.utils.TextRankUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -30,7 +31,7 @@ public class Initialization {
 	public static int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
 	public static final int DUMMY_KEYWORD_NUMBER = 1;
-	public static final int DOC_NUMBER = 16;
+	public static final int DOC_NUMBER = 10000;
 
 	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录
 	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
@@ -70,6 +71,8 @@ public class Initialization {
 	// public static int[][] keywordFrequency;
 	// filename -> {keyword: count}
 	public static Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+	// 通过TextRank特定目录下的key:value文件得到的 filename:{keyword:count} map
+	public static Map<String, Map<String, Double>> fileTextRankMap = null;
 
 	static{
 		SEPERATOR = "\\";
@@ -156,6 +159,11 @@ public class Initialization {
 	public static List<String> extendDummyDict;
 
 
+	/**
+	 * 摘要文件夹和普通明文文件夹的处理都可以使用此处理函数。
+	 * @return
+	 * @throws IOException
+	 */
 	public static MySecretKey getMySecretKey() throws IOException {
 
 		File parentFile = new File(PLAIN_DIR);
@@ -298,6 +306,73 @@ public class Initialization {
 		return sk;
 	}
 
+
+	/**
+	 * 预处理TextRank方法提取出来的值。
+	 * 100   plain:10054     textrank:1443
+	 * 1000  plain:32122     textrank:6780
+	 * 10000 plain:88754     textrank:23934
+	 *
+	 * @return
+	 * @throws IOException
+	 */
+	public static MySecretKey getMySecretKeyWithTextRank() throws IOException {
+
+		String textrankFileName = "D:\\MrDarcy\\ForGraduationWorks\\Code\\TextRank-master\\textrank\\doc\\10000\\keywords";
+		File parentFile = new File(textrankFileName);
+		Map<String, Map<String, Double>> fileTextRankMap = TextRankUtils.textRankAllFilesToMap(parentFile.getAbsolutePath());
+
+		Set<String> dictSet = new HashSet<>();
+
+		for (Map.Entry<String, Map<String, Double>> item : fileTextRankMap.entrySet()) {
+			dictSet.addAll(item.getValue().keySet());
+		}
+
+		// 将textrank提取出来的key:value中的key添加到字典中。
+		List<String> dict = dictSet.stream().collect(toList());
+
+		System.out.println("initialization dict.size():" + dict.size());
+		// System.out.println(dict);
+
+		// 初始化字典的长度和字典本身.
+		Initialization.lengthOfDict = dict.size();
+
+		Initialization.DICTIONARY_SIZE = lengthOfDict;
+		// 拓展字典
+		extendDummyDict = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
+		dict.addAll(extendDummyDict);
+
+		// 现在拓展的关键词不在末尾而是按序排在合适的位置.
+		// dict = dict.stream().sorted().collect(toList());
+		// 逻辑操作的话, 冗余关键词添加到dict的末尾。
+		Initialization.dict = dict;
+
+		// 问题是p'*q' + p"*q" = p * q, 虽然p拓展到了n+e维度, 但是问题在于
+		// q向量中冗余关键词并没有设置相应的位(虽然也是n+e维度， )，那么
+		System.out.println("add dummy keywords dict.size():" + Initialization.dict.size());
+
+		MySecretKey sk = new MySecretKey();
+
+		BitSet bitSet = new BitSet(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		Random random = new Random(System.currentTimeMillis());
+		for (int i = 0; i < (DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER); i++) {
+			if (random.nextBoolean()) {
+				bitSet.set(i);
+			}
+		}
+		// 设置了该位， 此BitSet的长度才是 (DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER + 1)的长度.
+		bitSet.set(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		System.out.println("bitSet.length:"+ bitSet.length());
+
+		Matrix m1 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		Matrix m2 = Matrix.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER, DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		sk.S = bitSet;
+		sk.M1 = m1;
+		sk.M2 = m2;
+		sk.secretKey = secretKey;
+		return sk;
+	}
+
 	private static List<String> generateExtendDictPart(int dummyKeywordNumber) {
 		Random random = new Random(31);
 		List<String> result = new ArrayList<>(dummyKeywordNumber);
@@ -403,7 +478,7 @@ public class Initialization {
 		/*generateExtendDictPart(10);*/
 
 		// test1
-		MySecretKey mySecretKey = Initialization.getMySecretKey();
+		MySecretKey mySecretKey = Initialization.getMySecretKeyWithTextRank();
 		System.out.println(mySecretKey);
 
 		long start = System.currentTimeMillis();

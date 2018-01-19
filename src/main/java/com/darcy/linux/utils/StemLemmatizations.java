@@ -30,12 +30,35 @@ public class StemLemmatizations {
 		pipeline = new StanfordCoreNLP(props, /*true*/ false);
 	}
 
+
 	/**
 	 * 词干提取，词形还原。
 	 * @param line
 	 * @return
 	 */
 	public static String stemLemmatization(String line) {
+
+		Annotation document = pipeline.process(line);
+
+		StringBuilder sb = new StringBuilder();
+		for(CoreMap sentence: document.get(CoreAnnotations.SentencesAnnotation.class))
+		{
+			for(CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class))
+			{
+				String word = token.get(CoreAnnotations.TextAnnotation.class);
+				String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
+				sb.append(lemma.toLowerCase() + " ");
+			}
+		}
+		return stem(sb.toString());
+	}
+
+	/**
+	 * 词干提取，词形还原。
+	 * @param line
+	 * @return
+	 */
+	public static String stemLemmatization1(String line) {
 		/*true*/
 		String text = "runners cats utilities factionally happily written used"; /* the string you want */;
 
@@ -70,14 +93,14 @@ public class StemLemmatizations {
 
 
 	public static void main(String[] args) {
-		List<String> list = Arrays.asList("runners cats utilities factionally happily written used",
+		List<String> list = Arrays.asList("runners cats utilities factionally happily written used improvement",
 				"In other words, Francis wants a more decentralized church and wants to hear" +
 						" reform ideas from small communities that sit far from Catholicism's power centers, Bellitto said.",
 				"cats can could running ran  runs cactus cactuses cacti community communities," +
 						" In other words, Francis wants a more decentralized church and wants to hear" +
 						" reform ideas from small communities that sit far from Catholicism's power centers, Bellitto said.");
 		for (String line : list) {
-			stemLemmatization(line);
+			System.out.println(stemLemmatization(line));
 		}
 	}
 

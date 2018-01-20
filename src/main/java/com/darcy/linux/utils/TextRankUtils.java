@@ -40,10 +40,12 @@ public class TextRankUtils {
 		});*/
 
 		wordWeightLines.stream()
-				.map((str) -> str.split(separator))
+				.map((line) -> line.split(separator))
 				.forEach((String[] array) -> {
 					if (array.length == 2) {
 						wordWeightMap.put(array[0], Double.parseDouble(array[1]));
+
+						// 可能提取出来包含多个关键词的短语。譬如 american influence  0.5633
 					} else {
 						Double score = Double.parseDouble(array[array.length - 1]);
 						for (int i = 0; i < array.length - 1; i++) {

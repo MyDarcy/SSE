@@ -1,8 +1,7 @@
-package com.darcy.linux.accelerate.pv;
+package com.frobisher.linux.accelerate.lv;
 
 
-import com.darcy.linux.accelerate.DiagonalMatrixUtils;
-import com.darcy.linux.utils.StemLemmatizations;
+import com.frobisher.linux.accelerate.DiagonalMatrixUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -14,7 +13,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -25,30 +23,34 @@ import static java.util.stream.Collectors.toList;
 */
 public class Initialization {
 
-	public static int lengthOfDict;
-	public static List<String> dict;
+	public int lengthOfDict;
+	public List<String> dict;
 
 	// 从文档中提取的关键词的数目
-	public static int DICTIONARY_SIZE;
+	public int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
-	public static final int DUMMY_KEYWORD_NUMBER = 10;
-	public static /*final*/ int DOC_NUMBER = 100;
+	public final int DUMMY_KEYWORD_NUMBER = 1;
 
-	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录. 40个文件
-
+	// 项目目录.密钥目录.明文文件目录 	密文文件目录
 //	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 //	public static final String SECRET_KEY_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\key\\aesKey.dat";
-//	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
-//	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
+//	public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
+//	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";
 
-	public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
-	public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+	public static final int DOC_NUMBER = 500;
 
-	// 明文文件目录 	密文文件目录. 16个文件
-	/*public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";*/
+	// windows. cnn data;
+	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
+	public String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+
+	// enron data;
+//	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+//	public static final String SECRET_KEY_DIR = BASE + "\\doc\\enron\\key\\aesKey.dat";
+//	public static final String PLAIN_DIR = BASE + "\\doc\\enron\\enron" + DOC_NUMBER;
+//	public static final String ENCRYPTED_DIR = BASE + "\\doc\\enron\\encrypted" + DOC_NUMBER;
+
 
 	// linux.
 //	public static /*final*/ String BASE = "/home/zqhe/data";
@@ -60,7 +62,6 @@ public class Initialization {
 
 	// 匹配关键词
 	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
-
 	public static final Random RANDOM = new Random(System.currentTimeMillis());
 
 	// 加密原语等.
@@ -69,20 +70,22 @@ public class Initialization {
 	public static SecretKey secretKey;
 
 	// 包含指定的关键词的文档的数目.
-	public static Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
+	public Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
 	// 统计所有文档的长度. 这里可以使用list, 即使当前有多少个文档并不知情.
-	public static Map<String, Integer> fileLength = new HashMap<>();
+	public Map<String, Integer> fileLength = new HashMap<>();
 	// keyword在document中出现的频率. 这里也可以使用Map<Map>来记录有文档中包含的特定的关键词有多少个.
 	// public static int[][] keywordFrequency;
 	// filename -> {keyword: count}
-	public static Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+	public Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
 
 	static{
 		SEPERATOR = "\\";
 		if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
 			SEPERATOR = "/";
 		}
+	}
 
+	{
 		if (!new File(ENCRYPTED_DIR).exists()) {
 			new File(ENCRYPTED_DIR).mkdir();
 		}
@@ -166,9 +169,8 @@ public class Initialization {
 	public static List<String> extendDummyDict;
 
 
-	public static MySecretKey getMySecretKey() throws IOException {
-		System.out.println(Initialization.class.getSimpleName() + " start.");
-		long getkeyStart = System.currentTimeMillis();
+	public MySecretKey getMySecretKey() throws IOException {
+
 		File parentFile = new File(PLAIN_DIR);
 		// 全局关键词集合.
 		HashSet<String> globalDictSet = new HashSet<>();
@@ -188,16 +190,6 @@ public class Initialization {
 				for (String line : allLines) {
 					//Matcher matcher = WORD_PATTERN.matcher(line);
 					// reset要匹配的字符串.
-					// 500个文档，维度23346
-					// 1000个文档，维度32121
-					// 100个文档，维度10054
-//					matcher = matcher.reset(line);
-
-					// 500个文档，通过stem和lemmatization后， 17981维度。
-					// 1000个文档，通过stem和lemmatization后， 24776维度。
-					// 100个文档，通过stem和lemmatization后， 7865维度。
-					// 综合结论，降维还是非常有效的。
-//					line = StemLemmatizations.stemLemmatization(line);
 					matcher = matcher.reset(line);
 					while (matcher.find()) {
 						// 忽略大小写.
@@ -240,7 +232,7 @@ public class Initialization {
 //		System.out.println("keywordFrequencyInDocument:" + keywordFrequencyInDocument);
 //		System.out.println("numberOfDocumentContainsKeyword:" + numberOfDocumentContainsKeyword);
 
-		System.out.println("fileLength.length:" + fileLength.size());
+		System.out.println("fileLength.size():" + fileLength.size());
 		System.out.println("keywordFrequencyInDocument.size():" + keywordFrequencyInDocument.size());
 		System.out.println("numberOfDocumentContainsKeyword.size():" + numberOfDocumentContainsKeyword.size());
 
@@ -263,32 +255,35 @@ public class Initialization {
 		});
 
 //		System.out.println("keyword - documentNumber");
-//		System.out.println(duplicate);
+		System.out.println(duplicate);
 
 		// 测试关键词频率map中的结果是否和fileLength中数值相等.
-//		boolean result = testInfo(fileLength, keywordFrequencyInDocument);
-//		System.out.println("testInfo:" + result);
+		boolean result = testInfo(fileLength, keywordFrequencyInDocument);
+		System.out.println("testInfo:" + result);
 
 		List<String> dict = globalDictSet.stream().sorted().collect(toList());
 
 		System.out.println("initialization dict.size():" + dict.size());
-		// System.out.println(dict);
+//		System.out.println(dict);
 
 		// 初始化字典的长度和字典本身.
-		Initialization.lengthOfDict = dict.size();
+		this.lengthOfDict = dict.size();
 
-		Initialization.DICTIONARY_SIZE = lengthOfDict;
+		this.DICTIONARY_SIZE = lengthOfDict;
 		// 拓展字典
 		extendDummyDict = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
 		dict.addAll(extendDummyDict);
 
 		// 现在拓展的关键词不在末尾而是按序排在合适的位置.
-		dict = dict.stream().sorted().collect(toList());
-		Initialization.dict = dict;
+		// dict = dict.stream().sorted().collect(toList());
+		// 逻辑操作的话, 冗余关键词添加到dict的末尾。
+		this.dict = dict;
 
 		// 问题是p'*q' + p"*q" = p * q, 虽然p拓展到了n+e维度, 但是问题在于
 		// q向量中冗余关键词并没有设置相应的位(虽然也是n+e维度， )，那么
-		System.out.println("add dummy keywords dict.size():" + Initialization.dict.size());
+		System.out.println("add dummy keywords dict.size():" + this.dict.size());
+
+		/*Arrays.stream(parentFile.listFiles()).map(File::toPath).flatMap(Files::readAllLines).collect()*/
 
 		MySecretKey sk = new MySecretKey();
 
@@ -306,16 +301,12 @@ public class Initialization {
 		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
 
-//		double[] m1 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-//		double[] m2 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-//		sk.S = bitSet;
-//		sk.M1 = m1;
-//		sk.M2 = m2;
-//		sk.secretKey = secretKey;
-
-		System.out.println("time:" + (System.currentTimeMillis() - getkeyStart) + "ms");
-		System.out.println(Initialization.class.getSimpleName() + " finished.");
-
+		double[] m1 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		double[] m2 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		sk.S = bitSet;
+		sk.M1 = m1;
+		sk.M2 = m2;
+		sk.secretKey = secretKey;
 		return sk;
 	}
 
@@ -418,33 +409,14 @@ public class Initialization {
 		return secretKey;
 	}
 
-	public static void dimensionTest() throws IOException {
-		List<Integer> documentNumber = IntStream.rangeClosed(100, 1000).filter((number) -> number % 100 == 0).boxed().collect(toList());
-		List<Integer> temp = IntStream.rangeClosed(2000, 10000).filter((number) -> number % 1000 == 0).boxed().collect(toList());
-		documentNumber.addAll(temp);
-		List<Integer> fileLengthList = new ArrayList<>(documentNumber.size());
-		for (int i = 0; i < documentNumber.size(); i++) {
-			Integer number = documentNumber.get(i);
-			Initialization.DOC_NUMBER = number;
-			Initialization.fileLength = new HashMap<>();
-			Initialization.numberOfDocumentContainsKeyword = new HashMap<>();
-			Initialization.keywordFrequencyInDocument = new HashMap<>();
-			Initialization.getMySecretKey();
-			fileLengthList.add(Initialization.DICTIONARY_SIZE);
-		}
-		System.out.println();
-		documentNumber.stream().forEach(System.out::println);
-		System.out.println();
-		fileLengthList.stream().forEach(System.out::println);
-	}
-
 	public static void main(String[] args) throws IOException {
 
 		// test
 		/*generateExtendDictPart(10);*/
 
 		// test1
-/*		MySecretKey mySecretKey = Initialization.getMySecretKey();
+		Initialization initialization = new Initialization();
+		MySecretKey mySecretKey = initialization.getMySecretKey();
 		System.out.println(mySecretKey);
 
 		long start = System.currentTimeMillis();
@@ -456,9 +428,7 @@ public class Initialization {
 
 
 		System.out.println();
-		System.out.println(Initialization.secretKey);*/
-
-   dimensionTest();
+		System.out.println(Initialization.secretKey);
 	}
 }
 

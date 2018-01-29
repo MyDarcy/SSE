@@ -46,36 +46,47 @@ public class Lemmatization {
 
 	public static void test2() {
 		Properties props = new Properties();
-		props.put("annotators", "tokenize, ssplit, pos, lemma");
+		props.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref"); // /*tokenize, ssplit, pos, lemma*/
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props, /*true*/ false);
 		String text = "runners cats utilities factionally happily written used"; /* the string you want */;
 
 		text = "In other words, Francis wants a more decentralized church and wants to hear reform ideas from small communities that sit far from Catholicism's power centers, Bellitto said.";
-		text = "cats can could running ran  runs cactus cactuses cacti community communities," +
+		text = "cats can could running ran  runs cactus cactuses cacti community communities, effectiveness harmful effective" +
 				" In other words, Francis wants a more decentralized church and wants to hear reform ideas from small communities that sit far from Catholicism's power centers, Bellitto said.";
+
+		text = "broken rainy cloudy windy snowy healthy lucky sunny funny careful thankful helpful useful beautiful " +
+				"Chinese Japanese English American Indian Australian Canadian dangerous friendly lovely careless useless " +
+				"difference silence worker jumper visitor runner beginner  waiting swimming shopping quickly heavily possibly usefully ";
+
 
 		Annotation document = pipeline.process(text);
 
-		System.out.printf("%-40s%-40s\n", "text:",  text);
+		System.out.printf("%-40s%-30s\n", "text of original:",  text);
 		StringBuilder sb = new StringBuilder();
-		IntStream.rangeClosed(1, 40).forEach(i -> System.out.print(" "));
+		StringBuilder sb2 = new StringBuilder();
+//		IntStream.rangeClosed(1, 40).forEach(i -> System.out.print(" "));
 		for(CoreMap sentence: document.get(SentencesAnnotation.class))
 		{
 			for(CoreLabel token: sentence.get(TokensAnnotation.class))
 			{
 				String word = token.get(TextAnnotation.class);
 				String lemma = token.get(LemmaAnnotation.class);
+				String stemWord = token.get(StemAnnotation.class); // 提取出来为空。
 //				String stem = token.get(StemAnnotation.class);
 //				System.out.println("lemmatized version :" + lemma);
 //				System.out.println("stem version:" + stem);
-				System.out.print(lemma + " ");
+//				System.out.print(lemma + " ");
 				sb.append(lemma.toLowerCase() + " ");
+//				sb2.append(stemWord.toLowerCase() + " ");
 			}
 		}
-		System.out.println();
+		System.out.printf("%-40s%-30s\n", "stanford.lemma(text)", sb.toString());
+		System.out.printf("%-40s%-30s\n", "stanford.stem(text)", sb.toString());
 		System.out.printf("%-40s%-30s\n", "stem(text):" , stem(text.toLowerCase()));
-		System.out.printf("%-40s%-30s\n", "stem(sb.toString()):", stem(sb.toString()));
-		System.out.printf("%-40s%-30s\n", "MorphaStemmer.morpha(sb.toString()", MorphaStemmer.morpha(text, false));
+		System.out.printf("%-40s%-30s\n", "stem(lemmatization):", stem(sb.toString()));
+		System.out.printf("%-40s%-30s\n", "MorphaStemmer.morpha(text)", MorphaStemmer.morpha(text, false));
+		System.out.printf("%-40s%-30s\n", "MorphaStemmer.stem(text)", MorphaStemmer.stem(text));
+		System.out.printf("%-40s%-30s\n", "MorphaStemmer.stem(sb.toString()", stem(text));
 
 	}
 

@@ -1,8 +1,7 @@
-package com.darcy.linux.accelerate.pv;
+package com.frobisher.linux.accelerate.pv;
 
 
-import com.darcy.linux.accelerate.DiagonalMatrixUtils;
-import com.darcy.linux.utils.StemLemmatizations;
+import com.frobisher.linux.utils.StemLemmatizations;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -25,14 +24,14 @@ import static java.util.stream.Collectors.toList;
 */
 public class Initialization {
 
-	public static int lengthOfDict;
-	public static List<String> dict;
+	public int lengthOfDict;
+	public List<String> dict;
 
 	// 从文档中提取的关键词的数目
-	public static int DICTIONARY_SIZE;
+	public int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
-	public static final int DUMMY_KEYWORD_NUMBER = 10;
-	public static /*final*/ int DOC_NUMBER = 100;
+	public int DUMMY_KEYWORD_NUMBER = 10;
+	public int DOC_NUMBER = 100;
 
 	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录. 40个文件
 
@@ -41,10 +40,10 @@ public class Initialization {
 //	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain40";
 //	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted40";
 
-	public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
-	public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";// + DOC_NUMBER;
+	public String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" ; // + DOC_NUMBER;
 
 	// 明文文件目录 	密文文件目录. 16个文件
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
@@ -69,20 +68,24 @@ public class Initialization {
 	public static SecretKey secretKey;
 
 	// 包含指定的关键词的文档的数目.
-	public static Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
+	public Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
 	// 统计所有文档的长度. 这里可以使用list, 即使当前有多少个文档并不知情.
-	public static Map<String, Integer> fileLength = new HashMap<>();
+	public Map<String, Integer> fileLength = new HashMap<>();
 	// keyword在document中出现的频率. 这里也可以使用Map<Map>来记录有文档中包含的特定的关键词有多少个.
 	// public static int[][] keywordFrequency;
 	// filename -> {keyword: count}
-	public static Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+	public Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
 
+	// 静态初始化块。
 	static{
 		SEPERATOR = "\\";
 		if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
 			SEPERATOR = "/";
 		}
+	}
 
+	// 实例初始化块
+	{
 		if (!new File(ENCRYPTED_DIR).exists()) {
 			new File(ENCRYPTED_DIR).mkdir();
 		}
@@ -166,7 +169,7 @@ public class Initialization {
 	public static List<String> extendDummyDict;
 
 
-	public static MySecretKey getMySecretKey() throws IOException {
+	public MySecretKey getMySecretKey() throws IOException {
 		System.out.println(Initialization.class.getSimpleName() + " start.");
 		long getkeyStart = System.currentTimeMillis();
 		File parentFile = new File(PLAIN_DIR);
@@ -197,7 +200,7 @@ public class Initialization {
 					// 1000个文档，通过stem和lemmatization后， 24776维度。
 					// 100个文档，通过stem和lemmatization后， 7865维度。
 					// 综合结论，降维还是非常有效的。
-//					line = StemLemmatizations.stemLemmatization(line);
+					line = StemLemmatizations.stemLemmatization(line);
 					matcher = matcher.reset(line);
 					while (matcher.find()) {
 						// 忽略大小写.
@@ -275,20 +278,20 @@ public class Initialization {
 		// System.out.println(dict);
 
 		// 初始化字典的长度和字典本身.
-		Initialization.lengthOfDict = dict.size();
+		lengthOfDict = dict.size();
 
-		Initialization.DICTIONARY_SIZE = lengthOfDict;
+		DICTIONARY_SIZE = lengthOfDict;
 		// 拓展字典
 		extendDummyDict = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
 		dict.addAll(extendDummyDict);
 
 		// 现在拓展的关键词不在末尾而是按序排在合适的位置.
 		dict = dict.stream().sorted().collect(toList());
-		Initialization.dict = dict;
+		this.dict = dict;
 
 		// 问题是p'*q' + p"*q" = p * q, 虽然p拓展到了n+e维度, 但是问题在于
 		// q向量中冗余关键词并没有设置相应的位(虽然也是n+e维度， )，那么
-		System.out.println("add dummy keywords dict.size():" + Initialization.dict.size());
+		System.out.println("add dummy keywords dict.size():" + this.dict.size());
 
 		MySecretKey sk = new MySecretKey();
 
@@ -424,13 +427,12 @@ public class Initialization {
 		documentNumber.addAll(temp);
 		List<Integer> fileLengthList = new ArrayList<>(documentNumber.size());
 		for (int i = 0; i < documentNumber.size(); i++) {
-			Integer number = documentNumber.get(i);
-			Initialization.DOC_NUMBER = number;
-			Initialization.fileLength = new HashMap<>();
-			Initialization.numberOfDocumentContainsKeyword = new HashMap<>();
-			Initialization.keywordFrequencyInDocument = new HashMap<>();
-			Initialization.getMySecretKey();
-			fileLengthList.add(Initialization.DICTIONARY_SIZE);
+			Initialization initialization = new Initialization();
+			initialization.DOC_NUMBER = documentNumber.get(i);
+			initialization.PLAIN_DIR += initialization.DOC_NUMBER;
+			initialization.ENCRYPTED_DIR += initialization.DOC_NUMBER;
+			initialization.getMySecretKey();
+			fileLengthList.add(initialization.DICTIONARY_SIZE);
 		}
 		System.out.println();
 		documentNumber.stream().forEach(System.out::println);

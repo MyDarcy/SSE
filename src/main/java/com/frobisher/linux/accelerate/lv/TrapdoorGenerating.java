@@ -271,7 +271,7 @@ public class TrapdoorGenerating {
 	public static void main(String[] args) throws IOException {
 		Initialization initialization = new Initialization();
 		MySecretKey mySecretKey = initialization.getMySecretKey();
-		TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
+		TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey, initialization);
 		String query = "Pope Francis honorary citizenship Democratic Revolution clinton owners oversee would half pick";
 		List<String> keywordList = new ArrayList<>();
 		Matcher matcher = Initialization.WORD_PATTERN.matcher(query);

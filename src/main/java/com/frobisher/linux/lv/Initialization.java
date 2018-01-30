@@ -36,8 +36,10 @@ public class Initialization {
 	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录
 	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
-	public String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+	public String BASE_PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";
+	public String BASE_ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted";
+	public String PLAIN_DIR = BASE_PLAIN_DIR + DOC_NUMBER;
+	public String ENCRYPTED_DIR = BASE_ENCRYPTED_DIR + DOC_NUMBER;
 
 //	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 //	public static final String SECRET_KEY_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\key\\aesKey.dat";
@@ -72,6 +74,8 @@ public class Initialization {
 	public Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
 	// 通过TextRank特定目录下的key:value文件得到的 filename:{keyword:count} map
 	public Map<String, Map<String, Double>> fileTextRankMap = null;
+  // 冗余关键词字典
+	public List<String> extendDummyDict;
 
 	static{
 		SEPERATOR = "\\";
@@ -161,9 +165,6 @@ public class Initialization {
 			}
 		}
 	}
-
-	public static List<String> extendDummyDict;
-
 
 	/**
 	 * 摘要文件夹和普通明文文件夹的处理都可以使用此处理函数。

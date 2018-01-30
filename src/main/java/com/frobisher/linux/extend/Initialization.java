@@ -33,10 +33,12 @@ public class Initialization {
 	public int DOC_NUMBER = 16;
 
 	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录. 40个文件
-  	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-  	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-  	public String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
-  	public String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public String BASE_PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";
+	public String BASE_ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted";
+	public String PLAIN_DIR = BASE_PLAIN_DIR + DOC_NUMBER;
+	public String ENCRYPTED_DIR = BASE_ENCRYPTED_DIR + DOC_NUMBER;
 
 	// linux下.
 /*	public static *//*final*//* String BASE = "/home/zqhe/data";

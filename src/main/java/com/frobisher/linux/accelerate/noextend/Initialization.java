@@ -2,6 +2,7 @@ package com.frobisher.linux.accelerate.noextend;
 
 
 import com.frobisher.linux.accelerate.DiagonalMatrixUtils;
+import com.sun.org.apache.xml.internal.security.Init;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -23,20 +24,22 @@ import static java.util.stream.Collectors.toList;
 */
 public class Initialization {
 
-	public static int lengthOfDict;
-	public static List<String> dict;
+	public int lengthOfDict;
+	public List<String> dict;
 
 	// 从文档中提取的关键词的数目
-	public static int DICTIONARY_SIZE;
+	public int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
-	public static final int DUMMY_KEYWORD_NUMBER = 0;
-	public static final int DOC_NUMBER = 100;
+	public int DUMMY_KEYWORD_NUMBER = 0;
+	public int DOC_NUMBER = 100;
 
 	// 项目目录. 密钥目录. 明文文件目录 	密文文件目录. 40个文件
-	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\noextend2\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\noextend2\\key\\aesKey.dat";
+	public String BASE_PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";
+	public String BASE_ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted";
+	public String PLAIN_DIR =  BASE_PLAIN_DIR + DOC_NUMBER;
+	public String ENCRYPTED_DIR = BASE_ENCRYPTED_DIR + DOC_NUMBER;
 
 	// 明文文件目录 	密文文件目录. 16个文件
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\muse\\noextend2\\plain40";
@@ -62,13 +65,13 @@ public class Initialization {
 	public static SecretKey secretKey;
 
 	// 包含指定的关键词的文档的数目.
-	public static Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
+	public Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
 	// 统计所有文档的长度. 这里可以使用list, 即使当前有多少个文档并不知情.
-	public static Map<String, Integer> fileLength = new HashMap<>();
+	public Map<String, Integer> fileLength = new HashMap<>();
 	// keyword在document中出现的频率. 这里也可以使用Map<Map>来记录有文档中包含的特定的关键词有多少个.
 	// public static int[][] keywordFrequency;
 	// filename -> {keyword: count}
-	public static Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+	public Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
 
 
 	static{
@@ -76,7 +79,9 @@ public class Initialization {
 		if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
 			SEPERATOR = "/";
 		}
+	}
 
+	{
 		if (!new File(ENCRYPTED_DIR).exists()) {
 			new File(ENCRYPTED_DIR).mkdir();
 		}
@@ -158,7 +163,7 @@ public class Initialization {
 	}
 
 
-	public static MySecretKey getMySecretKey() throws IOException {
+	public MySecretKey getMySecretKey() throws IOException {
 
 		File parentFile = new File(PLAIN_DIR);
 		// 全局关键词集合.
@@ -256,15 +261,15 @@ public class Initialization {
 		System.out.println(dict);
 
 		// 初始化字典的长度和字典本身.
-		Initialization.lengthOfDict = dict.size();
-		Initialization.dict = dict;
+		this.lengthOfDict = dict.size();
+		this.dict = dict;
 
-		Initialization.DICTIONARY_SIZE = dict.size();
+		this.DICTIONARY_SIZE = dict.size();
 		// 拓展字典
 		List<String> extendDictPart = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
 		dict.addAll(extendDictPart);
 
-		Initialization.dict = dict.stream().sorted().collect(toList());
+		this.dict = dict.stream().sorted().collect(toList());
 
 
 		/*Arrays.stream(parentFile.listFiles()).map(File::toPath).flatMap(Files::readAllLines).collect()*/
@@ -404,7 +409,8 @@ public class Initialization {
 		/*generateExtendDictPart(10);*/
 
 		// test1
-		MySecretKey mySecretKey = Initialization.getMySecretKey();
+		Initialization initialization = new Initialization();
+		MySecretKey mySecretKey = initialization.getMySecretKey();
 		System.out.println(mySecretKey);
 
 		long start = System.currentTimeMillis();

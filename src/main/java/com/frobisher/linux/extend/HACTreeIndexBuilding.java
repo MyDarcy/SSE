@@ -493,7 +493,7 @@ public class HACTreeIndexBuilding {
 	public static void main(String[] args) throws IOException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException, NoSuchAlgorithmException {
 		Initialization initialization = new Initialization();
 		MySecretKey mySecretKey = initialization.getMySecretKey();
-		HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
+		HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey, initialization);
 
 		// 在加密文件之前，需要先加密文档、生成辅助索引。
 		hacTreeIndexBuilding.encryptFiles();

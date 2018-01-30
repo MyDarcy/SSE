@@ -56,8 +56,8 @@ public class Query2 {
 			// int requestNumber = 6;
 
 			List<Integer> requestNumberList = new ArrayList<>();
-			int low = (int) Math.ceil(Initialization.DOC_NUMBER * 0.01);
-			int high = (int) Math.ceil(Initialization.DOC_NUMBER * 0.2);
+			int low = (int) Math.ceil(initialization.DOC_NUMBER * 0.01);
+			int high = (int) Math.ceil(initialization.DOC_NUMBER * 0.2);
 			for (int i = low; i <= high; i += low) {
 				requestNumberList.add(i);
 			}

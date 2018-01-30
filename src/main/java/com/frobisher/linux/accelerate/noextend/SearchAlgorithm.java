@@ -179,8 +179,8 @@ public class SearchAlgorithm {
 					// 候选结果集合的。
 					if (/*scoreForPruning(root, trapdoor)*/ scoreForPrune > thresholdScore) {
 						HACTreeNode minScoreNode = minHeap.poll();
-						double score = scoreForPruning(minScoreNode, trapdoor);
-						// System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
+//						double score = scoreForPruning(minScoreNode, trapdoor);
+//						System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);
 						minHeap.add(root);
 						HACTreeNode peekNode = minHeap.peek();
 						if (nodeScoreMapForThreshold.containsKey(peekNode)) {

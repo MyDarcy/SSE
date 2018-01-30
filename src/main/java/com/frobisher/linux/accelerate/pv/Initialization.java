@@ -1,6 +1,7 @@
 package com.frobisher.linux.accelerate.pv;
 
 
+import com.frobisher.linux.accelerate.DiagonalMatrixUtils;
 import com.frobisher.linux.utils.StemLemmatizations;
 
 import javax.crypto.Cipher;
@@ -42,8 +43,10 @@ public class Initialization {
 
 	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";// + DOC_NUMBER;
-	public String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" ; // + DOC_NUMBER;
+	public String BASE_PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";
+	public String BASE_ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted";
+	public String PLAIN_DIR = BASE_PLAIN_DIR + DOC_NUMBER;
+	public String ENCRYPTED_DIR =  BASE_ENCRYPTED_DIR + DOC_NUMBER;
 
 	// 明文文件目录 	密文文件目录. 16个文件
 	/*public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
@@ -59,7 +62,6 @@ public class Initialization {
 
 	// 匹配关键词
 	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
-
 	public static final Random RANDOM = new Random(System.currentTimeMillis());
 
 	// 加密原语等.
@@ -75,6 +77,8 @@ public class Initialization {
 	// public static int[][] keywordFrequency;
 	// filename -> {keyword: count}
 	public Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+	// 冗余关键词.
+	public List<String> extendDummyDict;
 
 	// 静态初始化块。
 	static{
@@ -165,8 +169,6 @@ public class Initialization {
 			}
 		}
 	}
-
-	public static List<String> extendDummyDict;
 
 
 	public MySecretKey getMySecretKey() throws IOException {
@@ -306,15 +308,15 @@ public class Initialization {
 		bitSet.set(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
 		System.out.println("bitSet.length:"+ bitSet.length());
 
-		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
-		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
+//		Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
+//		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 
-//		double[] m1 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-//		double[] m2 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-//		sk.S = bitSet;
-//		sk.M1 = m1;
-//		sk.M2 = m2;
-//		sk.secretKey = secretKey;
+		double[] m1 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		double[] m2 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		sk.S = bitSet;
+		sk.M1 = m1;
+		sk.M2 = m2;
+		sk.secretKey = secretKey;
 
 		System.out.println("time:" + (System.currentTimeMillis() - getkeyStart) + "ms");
 		System.out.println(Initialization.class.getSimpleName() + " finished.");
@@ -429,8 +431,8 @@ public class Initialization {
 		for (int i = 0; i < documentNumber.size(); i++) {
 			Initialization initialization = new Initialization();
 			initialization.DOC_NUMBER = documentNumber.get(i);
-			initialization.PLAIN_DIR += initialization.DOC_NUMBER;
-			initialization.ENCRYPTED_DIR += initialization.DOC_NUMBER;
+			initialization.PLAIN_DIR = initialization.BASE_PLAIN_DIR +  initialization.DOC_NUMBER;
+			initialization.ENCRYPTED_DIR = initialization.BASE_ENCRYPTED_DIR + initialization.DOC_NUMBER;
 			initialization.getMySecretKey();
 			fileLengthList.add(initialization.DICTIONARY_SIZE);
 		}

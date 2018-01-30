@@ -29,7 +29,7 @@ public class Initialization {
 	// 从文档中提取的关键词的数目
 	public int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
-	public final int DUMMY_KEYWORD_NUMBER = 1;
+	public int DUMMY_KEYWORD_NUMBER = 1;
 
 	// 项目目录.密钥目录.明文文件目录 	密文文件目录
 //	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
@@ -37,13 +37,15 @@ public class Initialization {
 //	public static final String PLAIN_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\plain";
 //	public static final String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\tf_idf_base_1\\encrypted";
 
-	public static final int DOC_NUMBER = 500;
+	public int DOC_NUMBER = 500;
 
 	// windows. cnn data;
 	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
-	public String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+	public String BASE_PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";
+	public String BASE_ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted";
+	public String PLAIN_DIR = BASE_PLAIN_DIR + DOC_NUMBER;
+	public String ENCRYPTED_DIR = BASE_ENCRYPTED_DIR + DOC_NUMBER;
 
 	// enron data;
 //	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
@@ -68,6 +70,8 @@ public class Initialization {
 	public static Cipher cipher;
 	public static KeyGenerator keyGenerator;
 	public static SecretKey secretKey;
+
+	public List<String> extendDummyDict;
 
 	// 包含指定的关键词的文档的数目.
 	public Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
@@ -166,7 +170,6 @@ public class Initialization {
 		}
 	}
 
-	public static List<String> extendDummyDict;
 
 
 	public MySecretKey getMySecretKey() throws IOException {

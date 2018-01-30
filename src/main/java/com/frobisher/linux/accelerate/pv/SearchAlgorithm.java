@@ -144,7 +144,7 @@ public class SearchAlgorithm {
 				} else {
 					// 那么此时如果当前结点跟查询之间的相关性评分大于阈值，那么是需要更新
 					// 候选结果集合的。
-					if (scoreForPruning(root, trapdoor) > thresholdScore) {
+					if (/*scoreForPruning(root, trapdoor)*/ scoreForPrune > thresholdScore) {
 						HACTreeNode minScoreNode = minHeap.poll();
 //						double score = scoreForPruning(minScoreNode, trapdoor);
 //						System.out.println("== (N) remove:" + minScoreNode.fileDescriptor + " socre:" + score);

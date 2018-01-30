@@ -25,7 +25,8 @@ public class Query2 {
 
 	public static void test1() {
 		try {
-			MySecretKey mySecretKey = Initialization.getMySecretKey();
+			Initialization initialization = new Initialization();
+			MySecretKey mySecretKey = initialization.getMySecretKey();
 			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
 			hacTreeIndexBuilding.buildHACTreeIndex();
 
@@ -44,8 +45,9 @@ public class Query2 {
 
 	public static void test2() {
 		try {
-			MySecretKey mySecretKey = Initialization.getMySecretKey();
-			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
+			Initialization initialization = new Initialization();
+			MySecretKey mySecretKey = initialization.getMySecretKey();
+			HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey, initialization);
 			hacTreeIndexBuilding.encryptFiles();
 			hacTreeIndexBuilding.generateAuxiliaryMatrix();
 			HACTreeNode root = hacTreeIndexBuilding.buildHACTreeIndex();
@@ -59,13 +61,13 @@ public class Query2 {
 			String query = "church China hospital performance British interview Democratic citizenship broadcasting voice";
 
 			System.out.println("Query2 start generating trapdoor.");
-			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
+			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey, initialization);
 			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
 
 			int requestNumber1 = 6;
 			List<Integer> requestNumberList = new ArrayList<>();
-			int low = (int) Math.ceil(Initialization.DOC_NUMBER * 0.01);
-			int high = (int) Math.ceil(Initialization.DOC_NUMBER * 0.1);
+			int low = (int) Math.ceil(initialization.DOC_NUMBER * 0.01);
+			int high = (int) Math.ceil(initialization.DOC_NUMBER * 0.1);
 			for (int i = low; i <= high; i += low) {
 				requestNumberList.add(i);
 			}
@@ -84,7 +86,7 @@ public class Query2 {
 				System.out.println("\nrequestNumber:" + requestNumber + "\t" + query);
 
 				// 验证搜索结果是否包含特定的文档。
-				searchResultVerify(filenameList, keywordPatternStr, nodeScoreMap);
+				searchResultVerify(initialization, filenameList, keywordPatternStr, nodeScoreMap);
 			}
 
 		} catch (IOException e) {
@@ -115,11 +117,11 @@ public class Query2 {
 				DiagonalMatrixUtils.score(root.pruningVectorPart2, trapdoor.trapdoorPart2);
 	}
 
-	private static void searchResultVerify(List<String> filenameList, String keywordPatternStr, Map<String, Double> nodeScoreMap) throws IOException {
+	private static void searchResultVerify(Initialization initialization, List<String> filenameList, String keywordPatternStr, Map<String, Double> nodeScoreMap) throws IOException {
 		Pattern keywordPattern = Pattern.compile(keywordPatternStr);
 		for (int i = 0; i < filenameList.size(); i++) {
 			System.out.println(filenameList.get(i) + "\tscore:" + nodeScoreMap.get(filenameList.get(i)));
-			List<String> allLines = Files.readAllLines(new File(Initialization.PLAIN_DIR + "\\" + filenameList.get(i)).toPath());
+			List<String> allLines = Files.readAllLines(new File(initialization.PLAIN_DIR + "\\" + filenameList.get(i)).toPath());
 			String passage = allLines.stream().map(String::toLowerCase).collect(joining("\n"));
 
 			Matcher matcher = keywordPattern.matcher(passage);
@@ -132,8 +134,8 @@ public class Query2 {
 						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));*/
 
 				System.out.printf("%-15s\t%-10s%-15s\t%10s\n", keyword,
-						Initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
-						"docsNumber", Initialization.numberOfDocumentContainsKeyword.get(keyword));
+						initialization.keywordFrequencyInDocument.get(filenameList.get(i)).get(keyword),
+						"docsNumber", initialization.numberOfDocumentContainsKeyword.get(keyword));
 
 				count++;
 			}

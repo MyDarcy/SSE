@@ -145,7 +145,7 @@ public class TrapdoorGenerating {
 
 		// 之前一直都忘记了这一部分。
 		for (int i = 0; i < initialization.DUMMY_KEYWORD_NUMBER; i++) {
-			String str = Initialization.extendDummyDict.get(i);
+			String str = initialization.extendDummyDict.get(i);
 			int index = initialization.dict.indexOf(str);
 			if (index != -1) {
 				// 设置一部分bit为1.
@@ -237,7 +237,7 @@ public class TrapdoorGenerating {
 	public static void main(String[] args) throws IOException {
 		Initialization initialization = new Initialization();
 		MySecretKey mySecretKey = initialization.getMySecretKey();
-		TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
+		TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey, initialization);
 		String query = "Pope Francis honorary citizenship Democratic Revolution clinton owners oversee would half pick";
 		List<String> keywordList = new ArrayList<>();
 		Matcher matcher = Initialization.WORD_PATTERN.matcher(query);

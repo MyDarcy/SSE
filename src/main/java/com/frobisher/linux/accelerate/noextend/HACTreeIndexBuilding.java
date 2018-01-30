@@ -38,9 +38,15 @@ public class HACTreeIndexBuilding {
 	public MySecretKey mySecretKey;
 	public Map<String, byte[]> fileBytesMap = new HashMap<>();
 	public Comparator<HacTreeNodePairScore> maxComparator;
+	public Initialization initialization;
 
 	public HACTreeIndexBuilding(MySecretKey mySecretKey) {
 		this.mySecretKey = mySecretKey;
+	}
+
+	public HACTreeIndexBuilding(MySecretKey mySecretKey, Initialization initialization) {
+		this.mySecretKey = mySecretKey;
+		this.initialization = initialization;
 	}
 
 	public Random random = new Random(System.currentTimeMillis());
@@ -81,7 +87,7 @@ public class HACTreeIndexBuilding {
 	public void encryptFiles() throws IOException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
 		System.out.println("HACTreeIndexBuilding encryptFiles start.");
 		long start = System.currentTimeMillis();
-		File parentDir = new File(Initialization.PLAIN_DIR);
+		File parentDir = new File(initialization.PLAIN_DIR);
 		if (parentDir.exists()) {
 			File[] files = parentDir.listFiles();
 			for (int i = 0; i < files.length; i++) {
@@ -93,7 +99,7 @@ public class HACTreeIndexBuilding {
 				byte[] encrypt = EncryptionUtils.encrypt(bytes);
 
 				/*System.out.println(path.getFileName());*/
-				String encryptedFileName = Initialization.ENCRYPTED_DIR +
+				String encryptedFileName = initialization.ENCRYPTED_DIR +
 						Initialization.SEPERATOR + "encrypted_" + path.getFileName().toString();
 				// 二进制文件的后缀是.dat
 				encryptedFileName = encryptedFileName.substring(0, encryptedFileName.lastIndexOf('.')) + ".dat";
@@ -148,26 +154,26 @@ public class HACTreeIndexBuilding {
 		Set<HACTreeNode> currentProcessingHACTreeNodeSet = new HashSet<>();
 		Set<HACTreeNode> newGeneratedHACTreeNodeSet = new HashSet<>();
 
-		File parentFile = new File(Initialization.PLAIN_DIR);
+		File parentFile = new File(initialization.PLAIN_DIR);
 		File[] files = parentFile.listFiles();
 
 		for (int i = 0; i < files.length; i++) {
 //			System.out.println(files[i].getName());
 
 			// 原来的P是M*1的矩阵。
-			double[] P = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
+			double[] P = new double[initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER];
 
 			// 当前文档的长度.
-			int lengthOfFile = Initialization.fileLength.get(files[i].getName());
+			int lengthOfFile = initialization.fileLength.get(files[i].getName());
 
 			Map<String, Integer> keywordFrequencyInCurrentDocument =
-					Initialization.keywordFrequencyInDocument.get(files[i].getName());
+					initialization.keywordFrequencyInDocument.get(files[i].getName());
 
 			double denominator = tfDenominator(keywordFrequencyInCurrentDocument, lengthOfFile);
 			double molecule = 0;
 
 			for (String key : keywordFrequencyInCurrentDocument.keySet()) {
-				int index = Initialization.dict.indexOf(key);
+				int index = initialization.dict.indexOf(key);
 				if (index != -1) {
 					/*int score = (int)Math.ceil(upper * score(lengthOfFile, keywordFrequencyInCurrentDocument.get(key),
 							Initialization.numberOfDocumentContainsKeyword.get(key), files.length));
@@ -188,23 +194,23 @@ public class HACTreeIndexBuilding {
 
 			// 这里设置Dummy-keyword-number置为0;
 			// 所以不能使用realDistribution来生成数据，
-			double[] sample = new double[Initialization.DUMMY_KEYWORD_NUMBER];
-			for (int j = 0; j < (Initialization.DUMMY_KEYWORD_NUMBER); j++) {
+			double[] sample = new double[initialization.DUMMY_KEYWORD_NUMBER];
+			for (int j = 0; j < (initialization.DUMMY_KEYWORD_NUMBER); j++) {
 				// P.set(Initialization.DICTIONARY_SIZE + j, 0, sample[j]);
-				P[Initialization.DICTIONARY_SIZE + j] = sample[j];
+				P[initialization.DICTIONARY_SIZE + j] = sample[j];
 			}
 
 			// 获取可逆矩阵加密后的Matrix.
 			// Matrix pa = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 			// Matrix pb = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
-			double[] pa = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
-			double[] pb = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
+			double[] pa = new double[initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER];
+			double[] pb = new double[initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER];
 
 			/**
 			 * S[i] = 0, pa[i] + pb[i] = P[i]
 			 * S[i] = 1, pa[i] = pb[i] = P[i]
 			 */
-			for (int j = 0; j < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; j++) {
+			for (int j = 0; j < initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER; j++) {
 				// 置0相加
 				if (!mySecretKey.S.get(j)) {
 					double rand = random.nextDouble();
@@ -363,8 +369,8 @@ public class HACTreeIndexBuilding {
 		return parentCenterVector;*/
 
 		int newNumberOfNode = nodePair.node1.numberOfNodeInCurrentCluster + nodePair.node2.numberOfNodeInCurrentCluster;
-		double[] parentCenterVector = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
-		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
+		double[] parentCenterVector = new double[initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER];
+		for (int i = 0; i < initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER; i++) {
 			double sum = nodePair.node1.clusterCenterVector[i] * nodePair.node1.numberOfNodeInCurrentCluster
 					+ nodePair.node2.clusterCenterVector[i] + nodePair.node2.numberOfNodeInCurrentCluster;
 			parentCenterVector[i] = sum / newNumberOfNode;
@@ -424,9 +430,9 @@ public class HACTreeIndexBuilding {
 		}
 		return Arrays.asList(parent1, parent2);*/
 
-		double[] parent1 = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
-		double[] parent2 = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
-		for (int i = 0; i < Initialization.DUMMY_KEYWORD_NUMBER + Initialization.DICTIONARY_SIZE; i++) {
+		double[] parent1 = new double[initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER];
+		double[] parent2 = new double[initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER];
+		for (int i = 0; i < initialization.DUMMY_KEYWORD_NUMBER + initialization.DICTIONARY_SIZE; i++) {
 			parent1[i] = Double.max(pair.node1.pruningVectorPart1[i], pair.node2.pruningVectorPart1[i]);
 			parent2[i] = Double.max(pair.node1.pruningVectorPart2[i], pair.node2.pruningVectorPart2[i]);
 		}
@@ -487,8 +493,9 @@ public class HACTreeIndexBuilding {
 	}
 
 	public static void main(String[] args) throws IOException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException, NoSuchAlgorithmException {
-		MySecretKey mySecretKey = Initialization.getMySecretKey();
-		HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
+		Initialization initialization = new Initialization();
+		MySecretKey mySecretKey = initialization.getMySecretKey();
+		HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey, initialization);
 
 		// 在加密文件之前，需要先加密文档、生成辅助索引。
 		hacTreeIndexBuilding.encryptFiles();

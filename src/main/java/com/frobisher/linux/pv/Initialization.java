@@ -36,9 +36,11 @@ public class Initialization {
 	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录
 	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
-	public String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
-		public String TEXTRANK_WORD_WEIGHT_DIR = "D:\\MrDarcy\\ForGraduationWorks\\Code" +
+	public String BASE_PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";
+	public String BASE_ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted";
+	public String PLAIN_DIR = BASE_PLAIN_DIR + DOC_NUMBER;
+	public String ENCRYPTED_DIR = BASE_ENCRYPTED_DIR + DOC_NUMBER;
+	public String TEXTRANK_WORD_WEIGHT_DIR = "D:\\MrDarcy\\ForGraduationWorks\\Code" +
 			"\\TextRank-master\\textrank\\doc\\100\\keywords";
 
 	// 项目目录. 密钥目录. 明文文件目录 	密文文件目录. 40个文件
@@ -78,6 +80,8 @@ public class Initialization {
 	// public static int[][] keywordFrequency;
 	// filename -> {keyword: count}
 	public Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+	// 冗余关键词
+	public List<String> extendDummyDict;
 
 	static{
 		SEPERATOR = "\\";
@@ -166,9 +170,6 @@ public class Initialization {
 			}
 		}
 	}
-
-	public List<String> extendDummyDict;
-
 
 	/**
 	 * 用于处理原来的明文文档和生成的摘要文档。

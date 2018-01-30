@@ -250,7 +250,7 @@ public class HACTreeIndexBuilding {
 
 			double[] sample = distribution.sample(initialization.DUMMY_KEYWORD_NUMBER);
 			for (int j = 0; j < initialization.DUMMY_KEYWORD_NUMBER; j++) {
-				String str = Initialization.extendDummyDict.get(j);
+				String str = initialization.extendDummyDict.get(j);
 				int index = initialization.dict.indexOf(str);
 				// System.out.printf("%-20s%-8d%-20s%.8f\n", "index", index, str, sample[j]);
 				if (index != -1) {
@@ -549,7 +549,7 @@ public class HACTreeIndexBuilding {
 	public static void main(String[] args) throws IOException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException, NoSuchAlgorithmException {
 		Initialization initialization = new Initialization();
 		MySecretKey mySecretKey = initialization.getMySecretKey();
-		HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey);
+		HACTreeIndexBuilding hacTreeIndexBuilding = new HACTreeIndexBuilding(mySecretKey, initialization);
 
 		// 在加密文件之前，需要先加密文档、生成辅助索引。
 		hacTreeIndexBuilding.encryptFiles();

@@ -16,9 +16,15 @@ import java.util.regex.Matcher;
 public class TrapdoorGenerating {
 
 	private MySecretKey mySecretKey;
+	public Initialization initialization;
 
 	public TrapdoorGenerating(MySecretKey mySecretKey) {
 		this.mySecretKey = mySecretKey;
+	}
+
+	public TrapdoorGenerating(MySecretKey mySecretKey, Initialization initialization) {
+		this.mySecretKey = mySecretKey;
+		this.initialization = initialization;
 	}
 
 	static class ValueComparator implements Comparator<Map.Entry<String, Integer>> {
@@ -44,12 +50,12 @@ public class TrapdoorGenerating {
 
 		Map<String, Double> idfs = generateIDFs(keywordList);
 
-		double[] Q = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
+		double[] Q = new double[initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER];
 
 
 		for (int i = 0; i < keywordList.size(); i++) {
 			String keyword = keywordList.get(i);
-			int index = Initialization.dict.indexOf(keyword);
+			int index = initialization.dict.indexOf(keyword);
 			if (index != -1) {
 				System.out.printf("%-10s\t%-10s\t%.8f\n", keyword, "idf-value", idfs.get(keyword));
 				Q[index] = idfs.get(keyword);
@@ -58,9 +64,9 @@ public class TrapdoorGenerating {
 		}
 
 		// 之前一直都忘记了这一部分。
-		for (int i = 0; i < Initialization.DUMMY_KEYWORD_NUMBER; i++) {
-			String str = Initialization.extendDummyDict.get(i);
-			int index = Initialization.dict.indexOf(str);
+		for (int i = 0; i < initialization.DUMMY_KEYWORD_NUMBER; i++) {
+			String str = initialization.extendDummyDict.get(i);
+			int index = initialization.dict.indexOf(str);
 			if (index != -1) {
 				// 设置一部分bit为1.
 				if (Initialization.RANDOM.nextBoolean()) {
@@ -75,11 +81,11 @@ public class TrapdoorGenerating {
 
 		Random random = new Random(31);
 
-		double[] qa = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
-		double[] qb = new double[Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER];
+		double[] qa = new double[initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER];
+		double[] qb = new double[initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER];
 
 
-		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
+		for (int i = 0; i < initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER; i++) {
 			// S[i] == 1;
 			if (mySecretKey.S.get(i)) {
 				double v1 = random.nextDouble();
@@ -112,12 +118,12 @@ public class TrapdoorGenerating {
 		double sum = 0;
 		// 文档的个数.
 		List<Double> keywordIDFLists = new ArrayList<>(keywordList.size());
-		int fileNumber = Initialization.fileLength.size();
+		int fileNumber = initialization.fileLength.size();
 		for (int i = 0; i < keywordList.size(); i++) {
 			String keyword = keywordList.get(i);
-			if (Initialization.dict.contains(keyword)) {
+			if (initialization.dict.contains(keyword)) {
 				// sum(ln(1 + m / fwi) ^ 2)
-				double idf = Math.log(1 + fileNumber / Initialization.numberOfDocumentContainsKeyword.get(keyword));
+				double idf = Math.log(1 + fileNumber / initialization.numberOfDocumentContainsKeyword.get(keyword));
 				sum += Math.pow(idf, 2);
 				keywordIDFLists.add(idf);
 			} else {
@@ -138,20 +144,21 @@ public class TrapdoorGenerating {
 	private double idfDenominator(List<String> keywordList) {
 		double sum = 0;
 		// 文档的个数.
-		int fileNumber = Initialization.fileLength.size();
+		int fileNumber = initialization.fileLength.size();
 		for (int i = 0; i < keywordList.size(); i++) {
 			String keyword = keywordList.get(i);
-			if (Initialization.dict.contains(keyword)) {
+			if (initialization.dict.contains(keyword)) {
 				// sum(ln(1 + m / fwi) ^ 2)
-				sum += Math.pow(Math.log(1 + fileNumber / Initialization.numberOfDocumentContainsKeyword.get(keyword)), 2);
+				sum += Math.pow(Math.log(1 + fileNumber / initialization.numberOfDocumentContainsKeyword.get(keyword)), 2);
 			}
 		}
 		return Math.sqrt(sum);
 	}
 
 	public static void main(String[] args) throws IOException {
-		MySecretKey mySecretKey = Initialization.getMySecretKey();
-		TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey);
+		Initialization initialization = new Initialization();
+		MySecretKey mySecretKey = initialization.getMySecretKey();
+		TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey, initialization);
 		String query = "Pope Francis honorary citizenship Democratic Revolution clinton owners oversee would half pick";
 		List<String> keywordList = new ArrayList<>();
 		Matcher matcher = Initialization.WORD_PATTERN.matcher(query);
@@ -159,13 +166,13 @@ public class TrapdoorGenerating {
 			keywordList.add(matcher.group().toLowerCase());
 		}
 
-		System.out.println(Initialization.dict.contains("clinton"));
-		System.out.println(Initialization.numberOfDocumentContainsKeyword.keySet().contains("clinton"));
+		System.out.println(initialization.dict.contains("clinton"));
+		System.out.println(initialization.numberOfDocumentContainsKeyword.keySet().contains("clinton"));
 
 		for (int i = 0; i < keywordList.size(); i++) {
 			String keyword = keywordList.get(i);
-			if (Initialization.dict.contains(keyword)) {
-				System.out.printf("%-15s\t %6d\n", keyword, Initialization.numberOfDocumentContainsKeyword.get(keyword));
+			if (initialization.dict.contains(keyword)) {
+				System.out.printf("%-15s\t %6d\n", keyword, initialization.numberOfDocumentContainsKeyword.get(keyword));
 			} else {
 				System.out.printf("%-15s\t %6d\n", keyword, 0);
 			}

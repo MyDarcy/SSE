@@ -23,20 +23,22 @@ import static java.util.stream.Collectors.toList;
 */
 public class Initialization {
 
-	public static int lengthOfDict;
-	public static List<String> dict;
+	public int lengthOfDict;
+	public List<String> dict;
 
 	// 从文档中提取的关键词的数目
-	public static int DICTIONARY_SIZE;
+	public int DICTIONARY_SIZE;
 	// 添加用于混淆的冗余关键词的数目
-	public static final int DUMMY_KEYWORD_NUMBER = 10;
+	public int DUMMY_KEYWORD_NUMBER = 10;
 
 	// 项目目录.密钥目录.明文文件目录.密文文件目录. 40个文件
-	public static final int DOC_NUMBER = 100;
-	public static final String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static final String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
-	public static final String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain" + DOC_NUMBER;
-	public static final String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted" + DOC_NUMBER;
+	public int DOC_NUMBER = 100;
+	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public String BASE_PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";
+	public String BASE_ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted";
+	public String PLAIN_DIR = BASE_PLAIN_DIR + DOC_NUMBER;
+	public String ENCRYPTED_DIR = BASE_ENCRYPTED_DIR + DOC_NUMBER;
 
 	// linux下.
 //	public static /*final*/ String BASE = "/home/zqhe/data";
@@ -45,10 +47,8 @@ public class Initialization {
 //	public static /*final*/ String ENCRYPTED_DIR = BASE + "/doc/muse/extend/encrypted1000";
 
 	public static String SEPERATOR;
-
 	// 匹配关键词
 	public static final Pattern WORD_PATTERN = Pattern.compile("\\w+");
-
 	public static final Random RANDOM = new Random(System.currentTimeMillis());
 
 	// 加密原语等.
@@ -57,24 +57,26 @@ public class Initialization {
 	public static SecretKey secretKey;
 
 	// 包含指定的关键词的文档的数目.
-	public static Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
+	public Map<String, Integer> numberOfDocumentContainsKeyword = new HashMap<>();
 	// 统计所有文档的长度. 这里可以使用list, 即使当前有多少个文档并不知情.
-	public static Map<String, Integer> fileLength = new HashMap<>();
+	public Map<String, Integer> fileLength = new HashMap<>();
 	// keyword在document中出现的频率. 这里也可以使用Map<Map>来记录有文档中包含的特定的关键词有多少个.
 	// public static int[][] keywordFrequency;
 	// filename -> {keyword: count}
-	public static Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+	public Map<String, Map<String, Integer>> keywordFrequencyInDocument = new HashMap<>();
+	public List<String> extendDummyDict;
 
 	static{
 		SEPERATOR = "\\";
 		if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
 			SEPERATOR = "/";
 		}
+	}
 
+	{
 		if (!new File(ENCRYPTED_DIR).exists()) {
 			new File(ENCRYPTED_DIR).mkdir();
 		}
-
 	}
 
 	/**
@@ -152,10 +154,9 @@ public class Initialization {
 		}
 	}
 
-	public static List<String> extendDummyDict;
 
 
-	public static MySecretKey getMySecretKey() throws IOException {
+	public MySecretKey getMySecretKey() throws IOException {
 
 		File parentFile = new File(PLAIN_DIR);
 		// 全局关键词集合.
@@ -253,23 +254,20 @@ public class Initialization {
 		// System.out.println(dict);
 
 		// 初始化字典的长度和字典本身.
-		Initialization.lengthOfDict = dict.size();
+		this.lengthOfDict = dict.size();
 
-		Initialization.DICTIONARY_SIZE = lengthOfDict;
+		this.DICTIONARY_SIZE = lengthOfDict;
 		// 拓展字典
 		extendDummyDict = generateExtendDictPart(DUMMY_KEYWORD_NUMBER);
 		dict.addAll(extendDummyDict);
 
 		// 现在拓展的关键词不在末尾而是按序排在合适的位置.
 		dict = dict.stream().sorted().collect(toList());
-		Initialization.dict = dict;
+		this.dict = dict;
 
 		// 问题是p'*q' + p"*q" = p * q, 虽然p拓展到了n+e维度, 但是问题在于
 		// q向量中冗余关键词并没有设置相应的位(虽然也是n+e维度， )，那么
-		System.out.println("add dummy keywords dict.size():" + Initialization.dict.size());
-
-		/*Arrays.stream(parentFile.listFiles()).map(File::toPath).flatMap(Files::readAllLines).collect()*/
-
+		System.out.println("add dummy keywords dict.size():" + this.dict.size());
 		MySecretKey sk = new MySecretKey();
 
 		BitSet bitSet = new BitSet(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
@@ -283,8 +281,8 @@ public class Initialization {
 		bitSet.set(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
 		System.out.println("bitSet.length:" + bitSet.length());
 
-		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
-		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
+//		Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
+//		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 
 		double[] m1 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
 		double[] m2 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
@@ -401,7 +399,8 @@ public class Initialization {
 		/*generateExtendDictPart(10);*/
 
 		// test1
-		MySecretKey mySecretKey = Initialization.getMySecretKey();
+		Initialization initialization = new Initialization();
+		MySecretKey mySecretKey = initialization.getMySecretKey();
 		System.out.println(mySecretKey);
 
 		long start = System.currentTimeMillis();

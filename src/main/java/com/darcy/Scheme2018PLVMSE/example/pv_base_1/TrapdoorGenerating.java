@@ -155,7 +155,6 @@ public class TrapdoorGenerating {
 		Matrix qa = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 		Matrix qb = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 
-
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
 			// S[i] == 1;
 			if (mySecretKey.S.get(i)) {
@@ -172,10 +171,6 @@ public class TrapdoorGenerating {
 
 		/*MatrixUitls.print(qa.transpose());
 		MatrixUitls.print(qb.transpose());*/
-
-		/*System.out.println(mySecretKey.M1.getRowDimension() + "\t" + mySecretKey.M2.getColumnDimension());
-		System.out.println(inverseM1.getRowDimension() + "\t" +inverseM2.getColumnDimension());
-		System.out.println(qa.getRowDimension() + "\t" +qb.getColumnDimension());*/
 
 		Matrix part1 = AuxiliaryMatrix.M1Inverse.times(qa);
 		Matrix part2 = AuxiliaryMatrix.M2Inverse.times(qb);

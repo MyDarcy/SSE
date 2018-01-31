@@ -115,7 +115,7 @@ public class SearchAlgorithm {
 			} else if (size == (requestNumber - 1)) {
 				minHeap.add(root);
 				thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
-				System.out.println(root.fileDescriptor + ":" + thresholdScore);
+				System.out.println(root.fileDescriptor + ":" + scoreForPruning(root, trapdoor));
 				System.out.println("= (N-1) add:" + root.fileDescriptor);
 				System.out.println();
 
@@ -132,6 +132,7 @@ public class SearchAlgorithm {
 
 					minHeap.add(root);
 					thresholdScore = scoreForPruning(minHeap.peek(), trapdoor);
+					System.out.println(root.fileDescriptor + ":" + scoreForPruning(root, trapdoor));
 				} else {
 					System.out.println(root.fileDescriptor + ":" + score1);
 					System.out.println("== (N) but the node cannot reach the point.");
@@ -188,8 +189,20 @@ public class SearchAlgorithm {
 	 */
 	private double scoreForPruning(HACTreeNode root, Trapdoor trapdoor) {
 		/*return root.pruningVector.times(queryVector).get(0, 0);*/
-		return root.pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
-				+ root.pruningVectorPart2.transpose().times(trapdoor.trapdoorPart2).get(0, 0);
+//		return root.pruningVectorPart1.transpose().times(trapdoor.trapdoorPart1).get(0, 0)
+//				+ root.pruningVectorPart2.transpose().times(trapdoor.trapdoorPart2).get(0, 0);
+		double[][] pv1 = root.pruningVectorPart1.getArray();
+		double[][] pv2 = root.pruningVectorPart2.getArray();
+		double[][] tp1 = trapdoor.trapdoorPart1.getArray();
+		double[][] tp2 = trapdoor.trapdoorPart2.getArray();
+		double sum = 0;
+		for (int i = 0; i < pv1.length; i++) {
+			sum += pv1[i][0] * tp1[i][0];
+		}
+		for (int i = 0; i < pv2.length; i++) {
+			sum += pv2[i][0] * tp2[i][0];
+		}
+		return sum;
 	}
 
 

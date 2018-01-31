@@ -298,7 +298,7 @@ public class HACTreeIndexBuilding {
 		Matrix parentCenterVector = new Matrix(1, initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER);
 		for (int i = 0; i < initialization.DICTIONARY_SIZE + initialization.DUMMY_KEYWORD_NUMBER; i++) {
 			double sum = nodePair.node1.clusterCenterVector.get(0, i) * nodePair.node1.numberOfNodeInCurrentCluster
-					+ nodePair.node2.clusterCenterVector.get(0, i) + nodePair.node2.numberOfNodeInCurrentCluster;
+					+ nodePair.node2.clusterCenterVector.get(0, i) * nodePair.node2.numberOfNodeInCurrentCluster;
 			parentCenterVector.set(0, i, sum / newNumberOfNode);
 		}
 		return parentCenterVector;

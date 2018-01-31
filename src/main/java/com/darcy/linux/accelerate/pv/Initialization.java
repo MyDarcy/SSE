@@ -306,12 +306,12 @@ public class Initialization {
 		/*Matrix m1 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);
 		Matrix m2 = Matrix.random(lengthOfDict + 1, lengthOfDict + 1);*/
 
-//		double[] m1 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-//		double[] m2 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
-//		sk.S = bitSet;
-//		sk.M1 = m1;
-//		sk.M2 = m2;
-//		sk.secretKey = secretKey;
+		double[] m1 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		double[] m2 = DiagonalMatrixUtils.random(DICTIONARY_SIZE + DUMMY_KEYWORD_NUMBER);
+		sk.S = bitSet;
+		sk.M1 = m1;
+		sk.M2 = m2;
+		sk.secretKey = secretKey;
 
 		System.out.println("time:" + (System.currentTimeMillis() - getkeyStart) + "ms");
 		System.out.println(Initialization.class.getSimpleName() + " finished.");

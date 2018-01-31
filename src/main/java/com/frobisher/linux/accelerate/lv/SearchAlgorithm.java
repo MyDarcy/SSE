@@ -174,7 +174,7 @@ public class SearchAlgorithm {
 		} else {
 			double score = scoreForPruning(root, trapdoor);
 			computeCount++;
-//			System.out.printf("%-10s\t%.8f\t%-20s\t%.8f\n", "score", score, "thresholdScore", thresholdScore);
+			System.out.printf("%-10s\t%.8f\t%-20s\t%.8f\n", "score", score, "thresholdScore", thresholdScore);
 			if (score > thresholdScore || minHeap.size() < requestNumber) {
 				if (root.left != null) {
 					System.out.println("left");

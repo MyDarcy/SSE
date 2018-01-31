@@ -46,6 +46,8 @@ public class Query2 {
 			String query = "church China hospital performance British" +
 					" interview Democratic citizenship broadcasting voice official military";
 
+//			String query = "java python go";
+
 			System.out.println("Query2 start generating trapdoor.");
 			TrapdoorGenerating trapdoorGenerating = new TrapdoorGenerating(mySecretKey, initialization);
 			Trapdoor trapdoor = trapdoorGenerating.generateTrapdoor(query);
@@ -53,8 +55,10 @@ public class Query2 {
 			// for-40
        int requestNumber1 = 4;
 			List<Integer> requestNumberList = new ArrayList<>();
-			int low = (int) Math.ceil(initialization.DOC_NUMBER * 0.02);
-			int high = (int) Math.ceil(initialization.DOC_NUMBER * 0.2);
+//			int low = (int) Math.ceil(initialization.DOC_NUMBER * 0.02);
+//			int high = (int) Math.ceil(initialization.DOC_NUMBER * 0.2);
+			int low = 2;
+			int high = 2;
 			for (int i = low; i <= high; i += low) {
 				requestNumberList.add(i);
 			}

@@ -33,9 +33,9 @@ public class Initialization {
 
 	// 项目目录.
 	public static /*final*/ String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
-	public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\plain\\key\\aesKey.dat";
-	public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\plain\\plain1000";
-	public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\plain\\encrypted1000";
+	public static /*final*/ String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
+	public static /*final*/ String PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain16";
+	public static /*final*/ String ENCRYPTED_DIR = BASE + "\\doc\\muse\\extend\\encrypted16";
 
 	// public static /*final*/ String BASE = "/home/zqhe/data";
 	// public static /*final*/ String SECRET_KEY_DIR = BASE + "/doc/muse/plain/key/aesKey.dat";

@@ -23,11 +23,31 @@ import static java.util.stream.Collectors.toList;
  * date: 2017/12/18 22:22
  * description: 
 */
+class HacTreeNodePairScore {
+	HACTreeNode node1;
+	HACTreeNode node2;
+	double score;
+
+	public HacTreeNodePairScore(HACTreeNode node1, HACTreeNode node2, double score) {
+		this.node1 = node1;
+		this.node2 = node2;
+		this.score = score;
+	}
+
+	@Override
+	public String toString() {
+		return node1.fileDescriptor + ":" + node2.fileDescriptor + ":" + score;
+	}
+}
+
 public class HACTreeIndexBuilding {
 
 	// 秘密钥
 	public MySecretKey mySecretKey;
 	public Map<String, byte[]> fileBytesMap = new HashMap<>();
+	public Comparator<HacTreeNodePairScore> maxComparator;
+
+	// 实例块中初始化maxComparator。
 
 	public HACTreeIndexBuilding(MySecretKey mySecretKey) {
 		this.mySecretKey = mySecretKey;
@@ -120,6 +140,20 @@ public class HACTreeIndexBuilding {
 	 */
 	public HACTreeNode buildHACTreeIndex() throws NoSuchAlgorithmException {
 		System.out.println("HACTreeIndexBuilding buildHACTreeIndex start.");
+
+		maxComparator = new Comparator<HacTreeNodePairScore>() {
+			@Override
+			public int compare(HacTreeNodePairScore nodePairScore1, HacTreeNodePairScore nodePairScore2) {
+				if (Double.compare(nodePairScore1.score, nodePairScore2.score) > 0) {
+					return -1;
+				} else if (Double.compare(nodePairScore1.score, nodePairScore2.score) < 0) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		};
+
 		long start = System.currentTimeMillis();
 		Set<HACTreeNode> currentProcessingHACTreeNodeSet = new HashSet<>();
 	  Set<HACTreeNode> newGeneratedHACTreeNodeSet = new HashSet<>();
@@ -179,6 +213,7 @@ public class HACTreeIndexBuilding {
 					// 如果是计算兴趣模型的，那么参照2016-a-tpds-enabling fine grained...
 					double tfIdfValue3 = tfIdfVersion2(lengthOfFile, keywordFrequencyInCurrentDocument.get(key),
 							fileNumbers, Initialization.numberOfDocumentContainsKeyword.get(key));
+					System.out.println(key + ":" + tfIdfValue3);
 
 
 					/*System.out.printf("%-20s%-10d%-20s%-20d\n", "frequency", keywordFrequencyInCurrentDocument.get(key),
@@ -279,9 +314,21 @@ public class HACTreeIndexBuilding {
 		int round = 1;
 		while (currentProcessingHACTreeNodeSet.size() > 1) {
 			System.out.println("the " + (round++) + "'s round to build tree.");
-			/*System.out.println();*/
+
+			PriorityQueue<HacTreeNodePairScore> maxHeap = getPriorityQueue(currentProcessingHACTreeNodeSet);
+			maxHeap.stream().forEach(System.out::println);
+			Set<HACTreeNode> managedNodeSet = new HashSet<>();
+
 			while (currentProcessingHACTreeNodeSet.size() > 1) {
-				HACTreeNodePair mostCorrespondNodePair = findMostCorrespondNodePair(currentProcessingHACTreeNodeSet);
+				HacTreeNodePairScore mostSimilarNodePair = maxHeap.poll();
+				// 最相关的两个节点有节点是已经处理过了。
+				if (managedNodeSet.contains(mostSimilarNodePair.node1)
+						|| managedNodeSet.contains(mostSimilarNodePair.node2)) {
+					continue;
+				}
+
+				HACTreeNodePair mostCorrespondNodePair = new HACTreeNodePair(mostSimilarNodePair.node1,
+						mostSimilarNodePair.node2);
 				System.out.println("("+ mostCorrespondNodePair.node1.fileDescriptor + "," + mostCorrespondNodePair.node2.fileDescriptor + ")");
 				List<Matrix> parentNodePruningVectors = getParentNodePruningVector(mostCorrespondNodePair);
 
@@ -291,7 +338,7 @@ public class HACTreeIndexBuilding {
 				Matrix parentNodeCenterVector = getParentNodeCenterVector(mostCorrespondNodePair);
 				int parentNumberOfNodeInCurrentCluster = mostCorrespondNodePair.node1.numberOfNodeInCurrentCluster
 						+ mostCorrespondNodePair.node2.numberOfNodeInCurrentCluster;
-				// 存疑，这样构造出来的剪枝向量有效吗？
+
 				String f1 = mostCorrespondNodePair.node1.fileDescriptor;
 				String f2 = mostCorrespondNodePair.node2.fileDescriptor;
 				String fileDescriptor = f1.substring(0, f1.lastIndexOf(".")) + f2.substring(0, f2.lastIndexOf(".")) + ".txt";
@@ -300,6 +347,11 @@ public class HACTreeIndexBuilding {
 						mostCorrespondNodePair.node1, mostCorrespondNodePair.node2, fileDescriptor, null);
 				currentProcessingHACTreeNodeSet.remove(mostCorrespondNodePair.node1);
 				currentProcessingHACTreeNodeSet.remove(mostCorrespondNodePair.node2);
+
+				// 更新待处理的节点集合。
+				managedNodeSet.add(mostCorrespondNodePair.node1);
+				managedNodeSet.add(mostCorrespondNodePair.node2);
+
 				newGeneratedHACTreeNodeSet.add(parentNode);
 			}
 			if (newGeneratedHACTreeNodeSet.size() > 0) {
@@ -314,6 +366,22 @@ public class HACTreeIndexBuilding {
 		System.out.println("build hac tree index total time:" + (System.currentTimeMillis() - start) + "ms");
 		System.out.println("HACTreeIndexBuilding buildHACTreeIndex finished.");
 		return root;
+	}
+
+	private PriorityQueue<HacTreeNodePairScore> getPriorityQueue(Set<HACTreeNode> hacTreeNodePairScoreSet) {
+		System.out.println("getPriorityQueue start.");
+		long start = System.currentTimeMillis();
+		List<HACTreeNode> list = hacTreeNodePairScoreSet.stream().collect(toList());
+		PriorityQueue<HacTreeNodePairScore> maxHeap = new PriorityQueue<>(maxComparator);
+		for (int i = 0; i < list.size() - 1; i++) {
+			for (int j = i + 1; j < list.size(); j++) {
+				maxHeap.add(new HacTreeNodePairScore(list.get(i), list.get(j),
+						correspondingScore(list.get(i), list.get(j))));
+			}
+		}
+		System.out.println("time:" + (System.currentTimeMillis() - start));
+		System.out.println("getPriorityQueue end.");
+		return maxHeap;
 	}
 
 	private double tfDenominator3(Map<String, Integer> keywordFrequencyInCurrentDocument, int lengthOfFile) {
@@ -338,6 +406,7 @@ public class HACTreeIndexBuilding {
 
 	/**
 	 * 获取两个聚类的中心向量.
+	 * fix-20170131 乘法写成了加法。一个bug.
 	 * @param nodePair
 	 * @return
 	 */
@@ -346,51 +415,22 @@ public class HACTreeIndexBuilding {
 		Matrix parentCenterVector = new Matrix(Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER, 1);
 		for (int i = 0; i < Initialization.DICTIONARY_SIZE + Initialization.DUMMY_KEYWORD_NUMBER; i++) {
 			double sum = nodePair.node1.clusterCenterVector.get(i, 0) * nodePair.node1.numberOfNodeInCurrentCluster
-					+ nodePair.node2.clusterCenterVector.get(i, 0) + nodePair.node2.numberOfNodeInCurrentCluster;
+					+ nodePair.node2.clusterCenterVector.get(i, 0) * nodePair.node2.numberOfNodeInCurrentCluster;
+//			System.out.println(nodePair.node1.clusterCenterVector.get(i, 0) + "\t" + nodePair.node1.numberOfNodeInCurrentCluster);
+//			System.out.println(nodePair.node2.clusterCenterVector.get(i, 0) + "\t" + nodePair.node2.numberOfNodeInCurrentCluster);
+//			System.out.println("sum/number: " + sum + "/" + newNumberOfNode);
 			parentCenterVector.set(i, 0, sum / newNumberOfNode);
 		}
+//		System.out.println("centerVector");
+//		MatrixUitls.print(nodePair.node1.clusterCenterVector.transpose());
+//		MatrixUitls.print(nodePair.node2.clusterCenterVector.transpose());
+//		MatrixUitls.print(parentCenterVector.transpose());
+
 		return parentCenterVector;
 	}
 
 	/**
-	 * 一堆HACTreeNode中找最相关的文档。即相关性评分最高的文档.
-	 * <p>
-	 * version-1: 暴力的方法, n/2 * n * n * (向量维度的平方);
-	 * version-2: 网上的凸包问题的解法, n^2 -> nlogn, 但是那个是2维平面的点，用到了2维的特性，拓展到n维，效率有没有提升，多大的提升都是未知的.
-	 *
-	 * @param currentProcessingHACTreeNodeSet
-	 * @return
-	 */
-	private HACTreeNodePair findMostCorrespondNodePair(Set<HACTreeNode> currentProcessingHACTreeNodeSet) {
-		// System.out.println("findMostCorrespondNodePair start.");
-		long start = System.currentTimeMillis();
-		int maxIndex1 = 0;
-		int maxIndex2 = 0;
-		double max = Double.MIN_VALUE;
-		List<HACTreeNode> list = currentProcessingHACTreeNodeSet.stream().collect(toList());
-		for (int i = 0; i < list.size(); i++) {
-			for (int j = i + 1; j < list.size(); j++) {
-				double score = correspondingScore(list.get(i), list.get(j));
-				if (score > max) {
-					maxIndex1 = i;
-					maxIndex2 = j;
-					max = score;
-				}
-				/*System.out.println(list.get(i) + "\t" + list.get(j) + "\tscore:" +score );*/
-			}
-		}
-		/*System.out.println(list.get(maxIndex1) + "\t" + list.get(maxIndex2) + "\t max score:" + max);
-		System.out.println();*/
-		// System.out.println("total time:" + (System.currentTimeMillis() - start) + "ms");
-		// System.out.println("findMostCorrespondNodePair finished.");
-		return new HACTreeNodePair(list.get(maxIndex1), list.get(maxIndex2));
-	}
-
-	/**
 	 * 获取两个子节点剪枝向量对应位置max值组成的父节点的剪枝向量.
-	 *
-	 * 但是问题是，使用矩阵加密后，仍然是这样的构造父节点的剪枝向量吗
-	 * 这样有效吗?
 	 * @param pair
 	 * @return
 	 */
@@ -401,6 +441,33 @@ public class HACTreeIndexBuilding {
 			parent1.set(i, 0, Double.max(pair.node1.pruningVectorPart1.get(i, 0), pair.node2.pruningVectorPart1.get(i, 0)));
 			parent2.set(i, 0, Double.max(pair.node1.pruningVectorPart2.get(i, 0), pair.node2.pruningVectorPart2.get(i, 0)));
 		}
+		System.out.println("parentPruning1");
+		MatrixUitls.print(pair.node1.pruningVectorPart1.transpose());
+		MatrixUitls.print(pair.node2.pruningVectorPart1.transpose());
+		MatrixUitls.print(parent1.transpose());
+
+		System.out.println("parentPruning2");
+		MatrixUitls.print(pair.node1.pruningVectorPart2.transpose());
+		MatrixUitls.print(pair.node2.pruningVectorPart2.transpose());
+		MatrixUitls.print(parent2.transpose());
+
+//		double sum1 = 0;
+//		double[][] parent1Array = parent1.getArray();
+//		for (int i = 0; i < parent1Array.length; i++) {
+//			sum1 += parent1Array[i][0];
+//		}
+//
+//		double sum2 = 0;
+//		double[][] parent2Array = parent1.getArray();
+//		for (int i = 0; i < parent2Array.length; i++) {
+//			sum2 += parent2Array[i][0];
+//		}
+//		if (sum1 > sum2) {
+//			return Arrays.asList(parent1, parent2);
+//		} else {
+//			return Arrays.asList(parent1, parent2);
+//		}
+
 		return Arrays.asList(parent1, parent2);
 	}
 
@@ -418,9 +485,19 @@ public class HACTreeIndexBuilding {
 
 		// 应该是使用相关性评分来求节点与节点之间的关系。
 		// 节点之间的关系通过聚类中心向量之间的score来体现。
-		Matrix matrix = node1.clusterCenterVector.transpose().times(node2.clusterCenterVector);
-		return matrix.get(0, 0);
+//		Matrix matrix = node1.clusterCenterVector.transpose().times(node2.clusterCenterVector);
+//		return matrix.get(0, 0);
 		/*System.out.println(matrix.getRowDimension() + "\t" + matrix.getColumnDimension());*/
+		double sum = 0.0;
+		double[][] node1Array = node1.clusterCenterVector.getArray();
+		double[][] node2Array = node2.clusterCenterVector.getArray();
+		// m*1的。
+		for (int i = 0; i < node1Array.length; i++) {
+			// 加速查找。
+			// 矩阵的转置，乘法都比double[][]的乘法要慢。
+			sum += node1Array[i][0] * node2Array[i][0];
+		}
+		return sum;
 	}
 
 	/**

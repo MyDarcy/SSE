@@ -21,7 +21,6 @@ public class MatrixUitls {
 				}
 			}
 			System.out.println("]");
-			System.out.println();
 		}
 	}
 

@@ -33,7 +33,7 @@ public class Initialization {
 	public final int DUMMY_KEYWORD_NUMBER = 10;
 	public int DOC_NUMBER = 16;
 
-	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录
+//	// 项目目录. 密钥目录. 明文文件目录. 密文文件目录
 	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
 	public static String SECRET_KEY_DIR = BASE + "\\doc\\muse\\extend\\key\\aesKey.dat";
 	public String BASE_PLAIN_DIR = BASE + "\\doc\\muse\\extend\\plain";
@@ -42,6 +42,12 @@ public class Initialization {
 	public String ENCRYPTED_DIR = BASE_ENCRYPTED_DIR + DOC_NUMBER;
 	public String TEXTRANK_WORD_WEIGHT_DIR = "D:\\MrDarcy\\ForGraduationWorks\\Code" +
 			"\\TextRank-master\\textrank\\doc\\100\\keywords";
+
+//	public int DUMMY_KEYWORD_NUMBER = 2;
+//	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
+//	public static String SECRET_KEY_DIR = BASE + "\\doc\\plvmuse\\example\\key\\aesKey.dat";
+//	public String PLAIN_DIR = BASE + "\\doc\\plvmuse\\example\\plain";
+//	public String ENCRYPTED_DIR = BASE + "\\doc\\plvmuse\\example\\encrypted";
 
 	// 项目目录. 密钥目录. 明文文件目录 	密文文件目录. 40个文件
 //	public static String BASE = "D:\\MrDarcy\\ForGraduationWorks\\Code\\SSE";
